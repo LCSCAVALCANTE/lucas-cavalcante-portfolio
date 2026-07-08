@@ -103,7 +103,7 @@ function ProjectDetail() {
           Tecnologias utilizadas
         </div>
         <div className="flex flex-wrap gap-2">
-          {project.technologies.map((t) => (
+          {project.technologies.map((t: string) => (
             <span
               key={t}
               className="rounded-md border border-border bg-background/40 px-3 py-1 font-mono text-xs"
