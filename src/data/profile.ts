@@ -1,8 +1,8 @@
 export const profile = {
-  name: "Lucas Cavalcante",
-  title: "Analista de Dados | Automação | Desenvolvimento de Dashboards",
+  name: "Lucas Barros Cavalcante",
+  title: "Analista de Dados | Automa\u00e7\u00f5es | SQL | Python",
   tagline:
-    "Transformo dados em decisões. Desenvolvo dashboards, automações e integrações que otimizam processos e geram resultados reais.",
+    "Transformo dados em decis\u00f5es. Desenvolvo dashboards, automa\u00e7\u00f5es e integra\u00e7\u00f5es que otimizam processos e geram resultados reais.",
   about: `Sou apaixonado por transformar dados em soluções práticas. Ao longo da minha trajetória, venho atuando com análise de dados, desenvolvimento de dashboards, automação de processos e integrações entre sistemas. Meu objetivo é entregar clareza, eficiência e escala para negócios por meio da tecnologia — unindo pensamento analítico, curiosidade constante e domínio técnico em ferramentas como Power BI, SQL, Python e n8n.`,
   contact: {
     email: "lucas.cavalcante@email.com",
