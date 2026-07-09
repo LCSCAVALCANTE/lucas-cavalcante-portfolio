@@ -5,15 +5,15 @@ import { profile } from "@/data/profile";
 export const Route = createFileRoute("/contato")({
   head: () => ({
     meta: [
-      { title: "Contato — Lucas Cavalcante" },
+      { title: "Contato - Lucas Cavalcante" },
       {
         name: "description",
-        content: "Fale com Lucas Cavalcante — e-mail, LinkedIn, GitHub e WhatsApp.",
+        content: "Fale com Lucas Cavalcante - e-mail, LinkedIn, GitHub e WhatsApp.",
       },
-      { property: "og:title", content: "Contato — Lucas Cavalcante" },
+      { property: "og:title", content: "Contato - Lucas Cavalcante" },
       {
         property: "og:description",
-        content: "Vamos conversar sobre dados, automação e dashboards.",
+        content: "Vamos conversar sobre dados, automacao e dashboards.",
       },
     ],
   }),
@@ -62,8 +62,8 @@ function ContactPage() {
           Vamos <span className="gradient-text">conversar</span>
         </h1>
         <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-          Aberto a novos projetos, colaborações e oportunidades em dados,
-          automação e desenvolvimento. Escolha o canal que preferir.
+          Aberto a novos projetos, colaboracoes e oportunidades em dados,
+          automacao e desenvolvimento. Escolha o canal que preferir.
         </p>
       </div>
 
@@ -96,9 +96,9 @@ function ContactPage() {
 
       <div className="mt-12 glass-card rounded-2xl p-6 text-center sm:p-10">
         <p className="font-display text-lg text-muted-foreground">
-          "A melhor decisão nasce de um bom dado."
+          "A melhor decisao nasce de um bom dado."
         </p>
-        <p className="mt-2 font-mono text-xs text-primary">— {profile.name}</p>
+        <p className="mt-2 font-mono text-xs text-primary">- {profile.name}</p>
       </div>
     </div>
   );

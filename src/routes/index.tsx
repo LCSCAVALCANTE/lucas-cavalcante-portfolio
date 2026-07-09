@@ -9,16 +9,15 @@ export const Route = createFileRoute("/")({
 function Home() {
   return (
     <div className="mx-auto max-w-6xl px-6">
-      {/* HERO */}
       <section className="relative pt-16 pb-24 sm:pt-24 sm:pb-32">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
         <div className="animate-fade-up">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/50 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-            Disponível para novos projetos
+            Disponivel para novos projetos
           </div>
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-            Olá, sou <span className="gradient-text">{profile.name}</span>
+            Ola, sou <span className="gradient-text">{profile.name}</span>
           </h1>
           <p className="mt-4 font-mono text-sm text-primary sm:text-base">
             {profile.title}
@@ -45,8 +44,7 @@ function Home() {
         </div>
       </section>
 
-      {/* SOBRE */}
-      <Section id="sobre" eyebrow="01 — Sobre" title="Sobre mim" icon={<Sparkles className="h-4 w-4" />}>
+      <Section id="sobre" eyebrow="01 - Sobre" title="Sobre mim" icon={<Sparkles className="h-4 w-4" />}>
         <div className="glass-card rounded-2xl p-6 sm:p-10">
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
             {profile.about}
@@ -55,7 +53,7 @@ function Home() {
             {[
               { k: "+5", v: "Anos com dados" },
               { k: "+30", v: "Dashboards" },
-              { k: "+15", v: "Automações" },
+              { k: "+15", v: "Automacoes" },
               { k: "100%", v: "Foco em resultado" },
             ].map((s) => (
               <div key={s.v} className="rounded-xl border border-border/60 bg-background/40 p-4">
@@ -67,8 +65,7 @@ function Home() {
         </div>
       </Section>
 
-      {/* HABILIDADES */}
-      <Section eyebrow="02 — Stack" title="Habilidades">
+      <Section eyebrow="02 - Stack" title="Habilidades">
         <div className="flex flex-wrap gap-2">
           {skills.map((s, i) => (
             <span
@@ -83,13 +80,12 @@ function Home() {
         </div>
       </Section>
 
-      {/* CURRÍCULO */}
-      <Section eyebrow="03 — Trajetória" title="Currículo">
+      <Section eyebrow="03 - Trajetoria" title="Curriculo">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
             <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-foreground">
               <Briefcase className="h-4 w-4 text-primary" />
-              Experiência
+              Experiencia
             </div>
             <ol className="relative space-y-4 border-l border-border/60 pl-6">
               {experiences.map((e) => (
@@ -108,7 +104,7 @@ function Home() {
           <div>
             <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-foreground">
               <GraduationCap className="h-4 w-4 text-purple" />
-              Formação & Cursos
+              Formacao & Cursos
             </div>
             <ol className="relative space-y-4 border-l border-border/60 pl-6">
               {education.map((e) => (
@@ -126,10 +122,10 @@ function Home() {
               <a
                 href="#"
                 className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
-                aria-label="Baixar currículo"
+                aria-label="Baixar curriculo"
               >
                 <Download className="h-4 w-4" />
-                Baixar currículo (PDF)
+                Baixar curriculo (PDF)
               </a>
             </div>
           </div>

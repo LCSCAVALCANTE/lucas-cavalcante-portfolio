@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="mt-24 border-t border-border/50">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
         <p className="text-sm text-muted-foreground">
-          © {year} {profile.name}. Todos os direitos reservados.
+          (c) {year} {profile.name}. Todos os direitos reservados.
         </p>
         <div className="flex items-center gap-2">
           <a href={`mailto:${profile.contact.email}`} className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" aria-label="E-mail">

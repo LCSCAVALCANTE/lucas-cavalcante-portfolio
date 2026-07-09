@@ -1,4 +1,4 @@
-export type ProjectStatus = "Concluído" | "Em andamento" | "Protótipo";
+export type ProjectStatus = "Concluido" | "Em andamento" | "Prototipo";
 
 export interface Project {
   id: string;
@@ -17,44 +17,44 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: "dashboard-ocupacao-agenda",
-    name: "Dashboard de Ocupação de Agenda",
+    name: "Dashboard de Ocupacao de Agenda",
     shortDescription:
-      "Painel em Power BI que monitora ocupação de agendas em tempo real, com filtros por profissional e unidade.",
+      "Painel em Power BI que monitora ocupacao de agendas em tempo real, com filtros por profissional e unidade.",
     fullDescription:
-      "Solução completa de BI para acompanhamento diário da ocupação de agendas de atendimento, com integração direta ao banco de dados operacional e atualização automática.",
+      "Solucao completa de BI para acompanhamento diario da ocupacao de agendas de atendimento, com integracao direta ao banco de dados operacional e atualizacao automatica.",
     problem:
-      "A gestão não tinha visibilidade em tempo real sobre horários ociosos e capacidade utilizada, dificultando decisões operacionais.",
+      "A gestao nao tinha visibilidade em tempo real sobre horarios ociosos e capacidade utilizada, dificultando decisoes operacionais.",
     results:
-      "Aumento de 22% na ocupação média das agendas e redução de tempo gasto em relatórios manuais em 80%.",
+      "Aumento de 22% na ocupacao media das agendas e reducao de tempo gasto em relatorios manuais em 80%.",
     technologies: ["Power BI", "SQL", "DAX", "Power Query"],
-    status: "Concluído",
+    status: "Concluido",
     github: "https://github.com/lucascavalcante",
   },
   {
     id: "painel-propostas-executadas",
     name: "Painel de Propostas Executadas",
     shortDescription:
-      "Dashboard consolidado de propostas comerciais com funil, taxa de conversão e ticket médio.",
+      "Dashboard consolidado de propostas comerciais com funil, taxa de conversao e ticket medio.",
     fullDescription:
-      "Painel executivo que consolida propostas de múltiplas fontes, apresentando indicadores de conversão, tempo médio de fechamento e desempenho por vendedor.",
+      "Painel executivo que consolida propostas de multiplas fontes, apresentando indicadores de conversao, tempo medio de fechamento e desempenho por vendedor.",
     problem:
-      "Informações de propostas estavam pulverizadas em planilhas e sistemas diferentes, dificultando análises consistentes.",
+      "Informacoes de propostas estavam pulverizadas em planilhas e sistemas diferentes, dificultando analises consistentes.",
     results:
-      "Visão unificada do funil comercial e ganho de agilidade em reuniões estratégicas.",
+      "Visao unificada do funil comercial e ganho de agilidade em reunioes estrategicas.",
     technologies: ["Power BI", "SQL", "Excel"],
-    status: "Concluído",
+    status: "Concluido",
   },
   {
     id: "automacao-relatorios",
-    name: "Automação de Relatórios",
+    name: "Automacao de Relatorios",
     shortDescription:
-      "Fluxo em n8n que gera e envia relatórios recorrentes por e-mail automaticamente.",
+      "Fluxo em n8n que gera e envia relatorios recorrentes por e-mail automaticamente.",
     fullDescription:
-      "Automação end-to-end que extrai dados via API, formata relatórios em PDF/Excel e distribui para stakeholders em horários programados.",
+      "Automacao end-to-end que extrai dados via API, formata relatorios em PDF/Excel e distribui para stakeholders em horarios programados.",
     problem:
-      "Equipe gastava horas semanais compilando e enviando relatórios repetitivos manualmente.",
+      "Equipe gastava horas semanais compilando e enviando relatorios repetitivos manualmente.",
     results:
-      "Economia de mais de 15 horas de trabalho por semana e eliminação de erros de envio.",
+      "Economia de mais de 15 horas de trabalho por semana e eliminacao de erros de envio.",
     technologies: ["n8n", "Python", "APIs", "SMTP"],
     status: "Em andamento",
     github: "https://github.com/lucascavalcante",
@@ -63,30 +63,30 @@ export const projects: Project[] = [
     id: "consolidador-esocial",
     name: "Consolidador de Arquivos eSocial",
     shortDescription:
-      "Script Python que consolida centenas de arquivos XML do eSocial em uma base analítica única.",
+      "Script Python que consolida centenas de arquivos XML do eSocial em uma base analitica unica.",
     fullDescription:
-      "Ferramenta que percorre diretórios, faz parsing dos XMLs do eSocial, valida esquemas e gera uma base tabular pronta para análise em Power BI e Excel.",
+      "Ferramenta que percorre diretorios, faz parsing dos XMLs do eSocial, valida esquemas e gera uma base tabular pronta para analise em Power BI e Excel.",
     problem:
-      "Consolidar arquivos XML do eSocial manualmente era inviável dado o volume e a complexidade da estrutura.",
+      "Consolidar arquivos XML do eSocial manualmente era inviavel dado o volume e a complexidade da estrutura.",
     results:
-      "Consolidação de mais de 5.000 arquivos em minutos, com relatórios prontos para auditoria.",
+      "Consolidacao de mais de 5.000 arquivos em minutos, com relatorios prontos para auditoria.",
     technologies: ["Python", "Pandas", "XML", "Power BI"],
-    status: "Concluído",
+    status: "Concluido",
     github: "https://github.com/lucascavalcante",
   },
   {
     id: "controle-estoque-clinico",
-    name: "Sistema de Controle de Estoque Clínico",
+    name: "Sistema de Controle de Estoque Clinico",
     shortDescription:
-      "Aplicação web para controle de estoque de insumos clínicos com alertas e relatórios.",
+      "Aplicacao web para controle de estoque de insumos clinicos com alertas e relatorios.",
     fullDescription:
-      "Sistema web que registra entradas e saídas de insumos, envia alertas de estoque mínimo e gera relatórios de consumo por setor e período.",
+      "Sistema web que registra entradas e saidas de insumos, envia alertas de estoque minimo e gera relatorios de consumo por setor e periodo.",
     problem:
-      "Falta de controle causava rupturas de estoque e desperdício de insumos com validade próxima.",
+      "Falta de controle causava rupturas de estoque e desperdicio de insumos com validade proxima.",
     results:
-      "Redução de 35% em perdas por vencimento e visibilidade em tempo real do estoque.",
+      "Reducao de 35% em perdas por vencimento e visibilidade em tempo real do estoque.",
     technologies: ["React", "Node.js", "PostgreSQL", "Tailwind"],
-    status: "Protótipo",
+    status: "Prototipo",
     demo: "#",
   },
 ];

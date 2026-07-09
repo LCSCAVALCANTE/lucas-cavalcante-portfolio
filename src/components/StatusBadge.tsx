@@ -1,9 +1,9 @@
 import type { ProjectStatus } from "@/data/projects";
 
 const styles: Record<ProjectStatus, string> = {
-  "Concluído": "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
+  Concluido: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
   "Em andamento": "bg-amber-500/10 text-amber-300 border-amber-500/30",
-  "Protótipo": "bg-purple/10 text-purple border-purple/30",
+  Prototipo: "bg-purple/10 text-purple border-purple/30",
 };
 
 export function StatusBadge({ status }: { status: ProjectStatus }) {
