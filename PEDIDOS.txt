@@ -26,13 +26,13 @@ Selo pequeno:
 Disponivel para novos projetos
 
 Titulo principal:
-Ola, sou Lucas Barros Cavalcante
+Ola, sou Lucas Cavalcante
 
 Subtitulo:
-Analista de Dados | Automacoes | SQL | Python
+Analista de Dados | Automaçôes | SQL | Python
 
 Texto principal:
-Transformo dados em decisoes. Desenvolvo dashboards, automacoes e integracoes que otimizam processos e geram resultados reais.
+Transformo dados em decisões. Desenvolvo dashboards, automacoes e integracoes que otimizam processos e geram resultados reais.
 
 Botao principal:
 Ver Projetos
@@ -51,14 +51,14 @@ Titulo da secao:
 Sobre mim
 
 Texto da secao:
-Sou apaixonado por transformar dados em solucoes praticas. Ao longo da minha trajetoria, venho atuando com analise de dados, desenvolvimento de dashboards, automacao de processos e integracoes entre sistemas. Meu objetivo e entregar clareza, eficiencia e escala para negocios por meio da tecnologia — unindo pensamento analitico, curiosidade constante e dominio tecnico em ferramentas como Power BI, SQL, Python e n8n.
+Sou apaixonado por transformar dados em solucoes praticas. Ao longo da minha trajetoria, venho atuando com analise de dados, desenvolvimento de dashboards, automacao de processos e integracoes entre sistemas. Meu objetivo e entregar clareza, eficiencia e escala para negocios por meio da tecnologia, unindo pensamento analitico, curiosidade constante e dominio tecnico em ferramentas como Power BI, SQL, Python e n8n.
 
 Card 1:
-+5
++4
 Anos com dados
 
 Card 2:
-+30
++10
 Dashboards
 
 Card 3:
@@ -82,13 +82,12 @@ Habilidades
 Habilidades:
 SQL
 Power BI
-Excel Avancado
+Excel Avançado
 Python
-Automacao de Processos
+Automação de Processos
 Dashboards
-Google Sheets
 APIs
-Analise de Dados
+Análise de Dados
 React
 GitHub
 n8n
