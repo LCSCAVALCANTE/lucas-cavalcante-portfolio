@@ -122,7 +122,7 @@ function Home() {
                 </li>
               ))}
             </ol>
-            <div className="mt-6">
+            <div className="mt-16 sm:mt-24">
               <a
                 href="#"
                 className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent"

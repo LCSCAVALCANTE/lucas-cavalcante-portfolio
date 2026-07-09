@@ -1,0 +1,10 @@
+01
+Escreva aqui o que voce quer alterar no portfolio.
+
+Exemplo:
+- Na pagina inicial, trocar o texto principal por: "..."
+- Na pagina Projetos, adicionar um projeto chamado "..."
+- Na pagina Contato, remover ou alterar algum botao.
+
+Quando terminar de escrever, me envie apenas: 01
+Eu vou ler este arquivo, aplicar as mudancas no codigo e subir para GitHub/Lovable.
