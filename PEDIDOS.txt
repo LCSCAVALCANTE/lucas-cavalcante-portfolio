@@ -1,10 +1,295 @@
-01
-Escreva aqui o que voce quer alterar no portfolio.
+PEDIDOS / TEXTOS DO SITE
 
-Exemplo:
-- Na pagina inicial, trocar o texto principal por: "..."
-- Na pagina Projetos, adicionar um projeto chamado "..."
-- Na pagina Contato, remover ou alterar algum botao.
+Como usar:
+Edite os textos abaixo como se este arquivo fosse a fonte escrita do site.
+Nao precisa mexer em codigo.
+Quando terminar, me envie apenas: 01
+Eu vou ler este arquivo, passar as alteracoes para o codigo e subir no GitHub/Lovable.
 
-Quando terminar de escrever, me envie apenas: 01
-Eu vou ler este arquivo, aplicar as mudancas no codigo e subir para GitHub/Lovable.
+============================================================
+MENU
+============================================================
+
+Logo / marca:
+Lucas.dev
+
+Links do menu:
+Home
+Projetos
+Contato
+
+============================================================
+PAGINA INICIAL / HERO
+============================================================
+
+Selo pequeno:
+Disponivel para novos projetos
+
+Titulo principal:
+Ola, sou Lucas Barros Cavalcante
+
+Subtitulo:
+Analista de Dados | Automacoes | SQL | Python
+
+Texto principal:
+Transformo dados em decisoes. Desenvolvo dashboards, automacoes e integracoes que otimizam processos e geram resultados reais.
+
+Botao principal:
+Ver Projetos
+
+Botao secundario:
+Entrar em contato
+
+============================================================
+PAGINA INICIAL / SOBRE
+============================================================
+
+Marcador da secao:
+01 - Sobre
+
+Titulo da secao:
+Sobre mim
+
+Texto da secao:
+Sou apaixonado por transformar dados em solucoes praticas. Ao longo da minha trajetoria, venho atuando com analise de dados, desenvolvimento de dashboards, automacao de processos e integracoes entre sistemas. Meu objetivo e entregar clareza, eficiencia e escala para negocios por meio da tecnologia — unindo pensamento analitico, curiosidade constante e dominio tecnico em ferramentas como Power BI, SQL, Python e n8n.
+
+Card 1:
++5
+Anos com dados
+
+Card 2:
++30
+Dashboards
+
+Card 3:
++15
+Automacoes
+
+Card 4:
+100%
+Foco em resultado
+
+============================================================
+PAGINA INICIAL / HABILIDADES
+============================================================
+
+Marcador da secao:
+02 - Stack
+
+Titulo da secao:
+Habilidades
+
+Habilidades:
+SQL
+Power BI
+Excel Avancado
+Python
+Automacao de Processos
+Dashboards
+Google Sheets
+APIs
+Analise de Dados
+React
+GitHub
+n8n
+
+============================================================
+PAGINA INICIAL / CURRICULO
+============================================================
+
+Marcador da secao:
+03 - Trajetoria
+
+Titulo da secao:
+Curriculo
+
+Titulo da coluna esquerda:
+Experiencia
+
+Experiencia 1:
+Periodo: 2023 - Presente
+Cargo: Analista de Dados
+Empresa: Empresa Atual
+Descricao: Desenvolvimento de dashboards estrategicos em Power BI, automacoes em Python e n8n, e integracoes via API para otimizacao de processos operacionais.
+
+Experiencia 2:
+Periodo: 2021 - 2023
+Cargo: Analista de BI
+Empresa: Empresa Anterior
+Descricao: Modelagem de dados em SQL, criacao de relatorios executivos e desenvolvimento de paineis analiticos.
+
+Experiencia 3:
+Periodo: 2019 - 2021
+Cargo: Assistente de Dados
+Empresa: Primeira Experiencia
+Descricao: Consolidacao de bases, analises exploratorias e suporte a tomada de decisao com Excel Avancado.
+
+Titulo da coluna direita:
+Formacao & Cursos
+
+Formacao 1:
+Periodo: 2020 - 2024
+Curso: Bacharelado em Sistemas de Informacao
+Instituicao: Universidade XYZ
+
+Formacao 2:
+Periodo: 2023
+Curso: Especializacao em Power BI e Analise de Dados
+Instituicao: Curso Online
+
+Formacao 3:
+Periodo: 2022
+Curso: Automacao com Python e n8n
+Instituicao: Curso Online
+
+Botao:
+Baixar curriculo (PDF)
+
+============================================================
+PAGINA PROJETOS
+============================================================
+
+Titulo pequeno:
+Portfolio
+
+Titulo principal:
+Meus Projetos
+
+Texto principal:
+Uma selecao de solucoes, dashboards, automacoes e sistemas que desenvolvi para transformar dados em decisoes e otimizar processos.
+
+Texto do link de cada projeto:
+Ver detalhes
+
+============================================================
+PROJETOS / CARDS E DETALHES
+============================================================
+
+Projeto 1:
+ID: dashboard-ocupacao-agenda
+Nome: Dashboard de Ocupacao de Agenda
+Descricao curta: Painel em Power BI que monitora ocupacao de agendas em tempo real, com filtros por profissional e unidade.
+Descricao completa: Solucao completa de BI para acompanhamento diario da ocupacao de agendas de atendimento, com integracao direta ao banco de dados operacional e atualizacao automatica.
+Problema: A gestao nao tinha visibilidade em tempo real sobre horarios ociosos e capacidade utilizada, dificultando decisoes operacionais.
+Resultados: Aumento de 22% na ocupacao media das agendas e reducao de tempo gasto em relatorios manuais em 80%.
+Tecnologias: Power BI, SQL, DAX, Power Query
+Status: Concluido
+
+Projeto 2:
+ID: painel-propostas-executadas
+Nome: Painel de Propostas Executadas
+Descricao curta: Dashboard consolidado de propostas comerciais com funil, taxa de conversao e ticket medio.
+Descricao completa: Painel executivo que consolida propostas de multiplas fontes, apresentando indicadores de conversao, tempo medio de fechamento e desempenho por vendedor.
+Problema: Informacoes de propostas estavam pulverizadas em planilhas e sistemas diferentes, dificultando analises consistentes.
+Resultados: Visao unificada do funil comercial e ganho de agilidade em reunioes estrategicas.
+Tecnologias: Power BI, SQL, Excel
+Status: Concluido
+
+Projeto 3:
+ID: automacao-relatorios
+Nome: Automacao de Relatorios
+Descricao curta: Fluxo em n8n que gera e envia relatorios recorrentes por e-mail automaticamente.
+Descricao completa: Automacao end-to-end que extrai dados via API, formata relatorios em PDF/Excel e distribui para stakeholders em horarios programados.
+Problema: Equipe gastava horas semanais compilando e enviando relatorios repetitivos manualmente.
+Resultados: Economia de mais de 15 horas de trabalho por semana e eliminacao de erros de envio.
+Tecnologias: n8n, Python, APIs, SMTP
+Status: Em andamento
+
+Projeto 4:
+ID: consolidador-esocial
+Nome: Consolidador de Arquivos eSocial
+Descricao curta: Script Python que consolida centenas de arquivos XML do eSocial em uma base analitica unica.
+Descricao completa: Ferramenta que percorre diretorios, faz parsing dos XMLs do eSocial, valida esquemas e gera uma base tabular pronta para analise em Power BI e Excel.
+Problema: Consolidar arquivos XML do eSocial manualmente era inviavel dado o volume e a complexidade da estrutura.
+Resultados: Consolidacao de mais de 5.000 arquivos em minutos, com relatorios prontos para auditoria.
+Tecnologias: Python, Pandas, XML, Power BI
+Status: Concluido
+
+Projeto 5:
+ID: controle-estoque-clinico
+Nome: Sistema de Controle de Estoque Clinico
+Descricao curta: Aplicacao web para controle de estoque de insumos clinicos com alertas e relatorios.
+Descricao completa: Sistema web que registra entradas e saidas de insumos, envia alertas de estoque minimo e gera relatorios de consumo por setor e periodo.
+Problema: Falta de controle causava rupturas de estoque e desperdicio de insumos com validade proxima.
+Resultados: Reducao de 35% em perdas por vencimento e visibilidade em tempo real do estoque.
+Tecnologias: React, Node.js, PostgreSQL, Tailwind
+Status: Prototipo
+
+============================================================
+PAGINA DETALHE DO PROJETO
+============================================================
+
+Link voltar:
+Voltar aos projetos
+
+Label de tecnologias:
+tecnologias
+
+Botao GitHub:
+GitHub
+
+Botao demonstracao:
+Ver demonstracao
+
+Card problema:
+Problema
+
+Card resultados:
+Resultados
+
+Titulo tecnologias:
+Tecnologias utilizadas
+
+Titulo previa:
+Previa
+
+Texto previa:
+Prints e imagens do projeto aparecerao aqui.
+
+Mensagem projeto nao encontrado:
+Projeto nao encontrado
+
+Texto projeto nao encontrado:
+Este projeto pode ter sido removido ou movido.
+
+============================================================
+PAGINA CONTATO
+============================================================
+
+Titulo pequeno:
+Contato
+
+Titulo principal:
+Vamos conversar
+
+Texto principal:
+Aberto a novos projetos, colaboracoes e oportunidades em dados, automacao e desenvolvimento. Escolha o canal que preferir.
+
+Canal 1:
+E-mail
+lucas.cavalcante@email.com
+
+Canal 2:
+LinkedIn
+linkedin.com/in/lucascavalcante
+
+Canal 3:
+GitHub
+github.com/lucascavalcante
+
+Canal 4:
+WhatsApp
+Enviar mensagem
+
+Frase final:
+"A melhor decisao nasce de um bom dado."
+
+Assinatura:
+- Lucas Barros Cavalcante
+
+============================================================
+RODAPE
+============================================================
+
+Texto:
+Todos os direitos reservados.
