@@ -38,11 +38,75 @@ function AdminPage() {
   });
   const [status, setStatus] = useState("");
   const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
 
   const preview = useMemo(() => buildProfileFile(form), [form]);
 
   function update(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  function getHeaders() {
+    return {
+      Authorization: `Bearer ${token.trim()}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    };
+  }
+
+  async function testGithubAccess() {
+    if (!token.trim()) {
+      setStatus("Cole um token do GitHub antes de testar.");
+      return;
+    }
+
+    setTesting(true);
+    setStatus("Testando token no GitHub...");
+    localStorage.setItem("portfolio_github_token", token.trim());
+
+    try {
+      const userResponse = await fetch("https://api.github.com/user", {
+        headers: getHeaders(),
+      });
+
+      if (!userResponse.ok) {
+        throw new Error("Token invalido ou expirado. Crie um novo token fine-grained no GitHub.");
+      }
+
+      const user = await userResponse.json();
+      setStatus(`Token valido para ${user.login}. Conferindo acesso ao repositorio...`);
+
+      const repoResponse = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}`, {
+        headers: getHeaders(),
+      });
+
+      if (repoResponse.status === 404) {
+        throw new Error("Token valido, mas sem acesso a este repositorio. No token fine-grained, selecione o repositorio LCSCAVALCANTE/lucas-cavalcante-portfolio.");
+      }
+
+      if (!repoResponse.ok) {
+        throw new Error(`Nao consegui conferir o repositorio. Status ${repoResponse.status}.`);
+      }
+
+      const fileResponse = await fetch(
+        `https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}?ref=${repo.branch}`,
+        { headers: getHeaders() },
+      );
+
+      if (fileResponse.status === 404) {
+        throw new Error("Token valido e repositorio acessivel, mas nao encontrei src/data/profile.ts no branch main.");
+      }
+
+      if (!fileResponse.ok) {
+        throw new Error(`Nao consegui ler o arquivo do portfolio. Status ${fileResponse.status}.`);
+      }
+
+      setStatus("Acesso confirmado. Agora voce pode alterar os campos e clicar em Salvar no GitHub.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Erro inesperado ao testar o acesso.");
+    } finally {
+      setTesting(false);
+    }
   }
 
   async function saveToGithub() {
@@ -58,11 +122,7 @@ function AdminPage() {
     try {
       const url = `https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}?ref=${repo.branch}`;
       const current = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token.trim()}`,
-          Accept: "application/vnd.github+json",
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
+        headers: getHeaders(),
       });
 
       if (!current.ok) {
@@ -77,11 +137,7 @@ function AdminPage() {
 
       const response = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token.trim()}`,
-          Accept: "application/vnd.github+json",
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
+        headers: getHeaders(),
         body: JSON.stringify({
           message: "Update portfolio profile from admin editor",
           content: toBase64(preview),
@@ -170,9 +226,18 @@ function AdminPage() {
             />
             <button
               type="button"
-              disabled={saving}
+              disabled={saving || testing}
+              onClick={testGithubAccess}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border/70 bg-secondary/80 px-5 py-3 text-sm font-semibold text-foreground transition-all hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <Github className="h-4 w-4" />
+              {testing ? "Testando..." : "Testar acesso"}
+            </button>
+            <button
+              type="button"
+              disabled={saving || testing}
               onClick={saveToGithub}
-              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Save className="h-4 w-4" />
               {saving ? "Salvando..." : "Salvar no GitHub"}
