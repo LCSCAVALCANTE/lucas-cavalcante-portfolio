@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProjetosRouteImport } from './routes/projetos'
 import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjetosIdRouteImport } from './routes/projetos.$id'
 
@@ -22,6 +23,11 @@ const ProjetosRoute = ProjetosRouteImport.update({
 const ContatoRoute = ContatoRouteImport.update({
   id: '/contato',
   path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const ProjetosIdRoute = ProjetosIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
   '/projetos': typeof ProjetosRouteWithChildren
   '/projetos/$id': typeof ProjetosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
   '/projetos': typeof ProjetosRouteWithChildren
   '/projetos/$id': typeof ProjetosIdRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
   '/projetos': typeof ProjetosRouteWithChildren
   '/projetos/$id': typeof ProjetosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/contato' | '/projetos' | '/projetos/$id'
+  fullPaths: '/' | '/admin' | '/contato' | '/projetos' | '/projetos/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/contato' | '/projetos' | '/projetos/$id'
-  id: '__root__' | '/' | '/contato' | '/projetos' | '/projetos/$id'
+  to: '/' | '/admin' | '/contato' | '/projetos' | '/projetos/$id'
+  id: '__root__' | '/' | '/admin' | '/contato' | '/projetos' | '/projetos/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   ContatoRoute: typeof ContatoRoute
   ProjetosRoute: typeof ProjetosRouteWithChildren
 }
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       path: '/contato'
       fullPath: '/contato'
       preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -115,9 +132,20 @@ const ProjetosRouteWithChildren = ProjetosRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   ContatoRoute: ContatoRoute,
   ProjetosRoute: ProjetosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
