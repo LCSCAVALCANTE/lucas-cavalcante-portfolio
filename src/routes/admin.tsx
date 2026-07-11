@@ -51,7 +51,37 @@ function AdminPage() {
       Authorization: `Bearer ${token.trim()}`,
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
+      "Cache-Control": "no-cache",
     };
+  }
+
+  async function fetchCurrentProfileFile() {
+    const url = `https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}?ref=${repo.branch}`;
+    const current = await fetch(url, {
+      headers: getHeaders(),
+    });
+
+    if (!current.ok) {
+      if (current.status === 401 || current.status === 403 || current.status === 404) {
+        throw new Error("Nao consegui acessar o arquivo com esse token. Crie um token fine-grained para o repositorio LCSCAVALCANTE/lucas-cavalcante-portfolio com Contents: Read and write.");
+      }
+      throw new Error(`Nao consegui ler o arquivo no GitHub. Status ${current.status}.`);
+    }
+
+    return current.json();
+  }
+
+  async function updateProfileFile(sha: string) {
+    return fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        message: "Update portfolio profile from admin editor",
+        content: toBase64(preview),
+        sha,
+        branch: repo.branch,
+      }),
+    });
   }
 
   async function testGithubAccess() {
@@ -120,34 +150,25 @@ function AdminPage() {
     localStorage.setItem("portfolio_github_token", token.trim());
 
     try {
-      const url = `https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}?ref=${repo.branch}`;
-      const current = await fetch(url, {
-        headers: getHeaders(),
-      });
-
-      if (!current.ok) {
-        if (current.status === 401 || current.status === 403 || current.status === 404) {
-          throw new Error("Nao consegui acessar o arquivo com esse token. Crie um token fine-grained para o repositorio LCSCAVALCANTE/lucas-cavalcante-portfolio com Contents: Read and write.");
-        }
-        throw new Error(`Nao consegui ler o arquivo no GitHub. Status ${current.status}.`);
-      }
-
-      const currentJson = await current.json();
+      const currentJson = await fetchCurrentProfileFile();
       setStatus("Salvando alteracoes no GitHub...");
 
-      const response = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}`, {
-        method: "PUT",
-        headers: getHeaders(),
-        body: JSON.stringify({
-          message: "Update portfolio profile from admin editor",
-          content: toBase64(preview),
-          sha: currentJson.sha,
-          branch: repo.branch,
-        }),
-      });
+      let response = await updateProfileFile(currentJson.sha);
+      let githubErrorMessage = "";
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
+        githubErrorMessage = typeof error.message === "string" ? error.message : "";
+        if (response.status === 409 || githubErrorMessage.includes("does not match")) {
+          setStatus("O arquivo mudou no GitHub. Buscando a versao mais nova e tentando novamente...");
+          const latestJson = await fetchCurrentProfileFile();
+          response = await updateProfileFile(latestJson.sha);
+          githubErrorMessage = "";
+        }
+      }
+
+      if (!response.ok) {
+        const error = githubErrorMessage ? { message: githubErrorMessage } : await response.json().catch(() => ({}));
         if (response.status === 401 || response.status === 403) {
           throw new Error("Token sem permissao para salvar. Crie um token fine-grained com acesso ao repositorio LCSCAVALCANTE/lucas-cavalcante-portfolio e permissao Contents: Read and write.");
         }
