@@ -59,14 +59,13 @@ function AdminPage() {
       const url = `https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}?ref=${repo.branch}`;
       const current = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${token.trim()}`,
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
         },
       });
 
       if (!current.ok) {
-        throw new Error("Nao consegui ler o arquivo no GitHub. Confira o token e permissoes.");
+        throw new Error(`Nao consegui ler o arquivo no GitHub. Status ${current.status}. Confira se o repositorio esta publico e se o caminho existe.`);
       }
 
       const currentJson = await current.json();
@@ -89,7 +88,10 @@ function AdminPage() {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.message ?? "Nao consegui salvar no GitHub.");
+        if (response.status === 401 || response.status === 403) {
+          throw new Error("Token sem permissao para salvar. Crie um token fine-grained com acesso ao repositorio LCSCAVALCANTE/lucas-cavalcante-portfolio e permissao Contents: Read and write.");
+        }
+        throw new Error(error.message ?? `Nao consegui salvar no GitHub. Status ${response.status}.`);
       }
 
       setStatus("Salvo no GitHub. A Lovable deve atualizar quando sincronizar o repositorio.");
@@ -109,7 +111,7 @@ function AdminPage() {
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
           Altere os campos abaixo e salve direto no GitHub. Use um token fine-grained com permissao de leitura/escrita
-          em Contents para este repositorio.
+          em Contents para este repositorio. O token fine-grained normalmente comeca com github_pat_.
         </p>
       </div>
 
@@ -160,7 +162,7 @@ function AdminPage() {
               value={token}
               onChange={(event) => setToken(event.target.value)}
               className="editor-input mt-2"
-              placeholder="ghp_..."
+              placeholder="github_pat_..."
             />
             <button
               type="button"
