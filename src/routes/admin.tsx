@@ -51,7 +51,6 @@ function AdminPage() {
       Authorization: `Bearer ${token.trim()}`,
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
-      "Cache-Control": "no-cache",
     };
   }
 
@@ -59,6 +58,7 @@ function AdminPage() {
     const url = `https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}?ref=${repo.branch}`;
     const current = await fetch(url, {
       headers: getHeaders(),
+      cache: "no-store",
     });
 
     if (!current.ok) {
