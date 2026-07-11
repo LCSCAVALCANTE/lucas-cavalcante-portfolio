@@ -1,13 +1,13 @@
 export const profile = {
   "name": "Lucas Cavalcante",
-  "title": "Analista de Dados | Automacoes | SQL | Python",
-  "tagline": "Transformo dados em decisoes. Desenvolvo dashboards, automacoes e integracoes que otimizam processos e geram resultados reais.",
-  "about": "Sou apaixonado por transformar dados em solucoes praticas. Ao longo da minha trajetoria, venho atuando com analise de dados, desenvolvimento de dashboards, automacao de processos e integracoes entre sistemas. Meu objetivo e entregar clareza, eficiencia e escala para negocios por meio da tecnologia - unindo pensamento analitico, curiosidade constante e dominio tecnico em ferramentas como Power BI, SQL, Python e n8n.",
+  "title": "Analista de Dados | Automações | SQL | Python",
+  "tagline": "Desenvolvo dashboards, automações e integrações que otimizam processos, aumentam a eficiência e geram resultados reais para o negócio.\n",
+  "about": "Transformo dados em soluções práticas e estratégicas. Ao longo da minha trajetória, venho atuando com análise de dados, desenvolvimento de dashboards, automação de processos e integração entre sistemas.\n\nMeu objetivo é gerar mais clareza, eficiência e escalabilidade para os negócios por meio da tecnologia, combinando pensamento analítico, aprendizado contínuo e domínio técnico de ferramentas como Power BI, SQL, Python e n8n.\n",
   "contact": {
-    "email": "lucas.cavalcante@email.com",
-    "linkedin": "https://linkedin.com/in/lucascavalcante",
-    "github": "https://github.com/lucascavalcante",
-    "whatsapp": "https://wa.me/5500000000000"
+    "email": "lucasbcava@hotmail.com.br",
+    "linkedin": "www.linkedin.com/in/lucasbcavalcante",
+    "github": "https://github.com/LCSCAVALCANTE",
+    "whatsapp": "https://wa.me/5511959917438"
   }
 };
 
