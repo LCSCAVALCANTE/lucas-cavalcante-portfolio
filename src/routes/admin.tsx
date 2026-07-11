@@ -59,13 +59,17 @@ function AdminPage() {
       const url = `https://api.github.com/repos/${repo.owner}/${repo.name}/contents/${repo.path}?ref=${repo.branch}`;
       const current = await fetch(url, {
         headers: {
+          Authorization: `Bearer ${token.trim()}`,
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
         },
       });
 
       if (!current.ok) {
-        throw new Error(`Nao consegui ler o arquivo no GitHub. Status ${current.status}. Confira se o repositorio esta publico e se o caminho existe.`);
+        if (current.status === 401 || current.status === 403 || current.status === 404) {
+          throw new Error("Nao consegui acessar o arquivo com esse token. Crie um token fine-grained para o repositorio LCSCAVALCANTE/lucas-cavalcante-portfolio com Contents: Read and write.");
+        }
+        throw new Error(`Nao consegui ler o arquivo no GitHub. Status ${current.status}.`);
       }
 
       const currentJson = await current.json();
