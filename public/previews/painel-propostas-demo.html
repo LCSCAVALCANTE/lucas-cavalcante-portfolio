@@ -1035,24 +1035,16 @@
     </div></div>`;
   }
   function App(){
+    // Ambiente de previa: sem tela de login - entra direto no dashboard
+    // com os dados ficticios ja carregados.
     const [user, setUser] = useState(null);
     const [store, setStore] = useState(null);
-    const [err, setErr] = useState("");
-    const [busy, setBusy] = useState(false);
-    const inFlight = React.useRef({}); // evita disparar o mesmo fetch sob-demanda 2x
-    async function onLogin(login, pwd){
-      setBusy(true); setErr("");
-      try {
-        const lg = (login || "demo").trim().toLowerCase();
-        await new Promise(res => setTimeout(res, 400));
-        const u = { login: lg, unidade: DEMO_UNIDADES[0], isMaster: true };
-        const s = await loadCore(u);
-        setUser(u); setStore(s);
-      } catch(e){ setErr(e.message || "Falha ao entrar."); }
-      finally { setBusy(false); }
-    }
-    function logout(){ setUser(null); setStore(null); setErr(""); }
-    // ensureX: so busca se ainda nao foi buscado (campo null) e nao ha um fetch em andamento
+    const inFlight = React.useRef({});
+    useEffect(() => {
+      const u = { login: "demo", unidade: DEMO_UNIDADES[0], isMaster: true };
+      loadCore(u).then(s => { setUser(u); setStore(s); });
+    }, []);
+    function logout(){ location.reload(); }
     const ensureProfProc = () => {
       if(!store || store.dmd !== null || inFlight.current.profProc) return;
       inFlight.current.profProc = true;
@@ -1070,8 +1062,7 @@
       });
     };
     if(user && store) return html`<${Dashboard} user=${user} store=${store} ensureProfProc=${ensureProfProc} ensurePropostaMetrics=${ensurePropostaMetrics} onLogout=${logout} />`;
-    if(user && !store) return html`<div style=${{padding:"40px",textAlign:"center",color:"#8a8378"}}>Carregando…</div>`;
-    return html`<${Login} onLogin=${onLogin} err=${err} busy=${busy} />`;
+    return html`<div style=${{padding:"40px",textAlign:"center",color:"#8a8378"}}>Carregando…</div>`;
   }
   ReactDOM.createRoot(document.getElementById("pbx-root")).render(html`<${App} />`);
 </script>
