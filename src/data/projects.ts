@@ -24,12 +24,12 @@ export const projects: Project[] = [
       "A gestao nao tinha visibilidade em tempo real sobre horarios ociosos e capacidade utilizada, dificultando decisoes operacionais.",
     results:
       "Aumento de 22% na ocupacao media das agendas e reducao de tempo gasto em relatorios manuais em 80%.",
-    technologies: ["Power BI", "SQL", "DAX", "Power Query"],
+    technologies: ["DAX", "SQL", "API", "N8N", "SHEETS", "POSTGRES", "JAVASCRIPT", "CSS", "HTML", "REACT", "VPS"],
     status: "Concluido",
   },
   {
     id: "painel-propostas-executadas",
-    name: "Painel de Propostas Executadas",
+    name: "Painel de Propostas",
     shortDescription:
       "Dashboard consolidado de propostas comerciais com funil, taxa de conversao e ticket medio.",
     fullDescription:
@@ -38,7 +38,7 @@ export const projects: Project[] = [
       "Informacoes de propostas estavam pulverizadas em planilhas e sistemas diferentes, dificultando analises consistentes.",
     results:
       "Visao unificada do funil comercial e ganho de agilidade em reunioes estrategicas.",
-    technologies: ["Power BI", "SQL", "Excel"],
+    technologies: ["DAX", "SQL", "POSTGRES", "CSS", "HTML", "REACT", "GIT", "VPS"],
     status: "Concluido",
   },
 ];
