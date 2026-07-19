@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de Propostas</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<style>
+  body { margin: 0; background: #ece9e4; padding: 18px; }
+  .pbx { --ac:#E8830F; --ac-d:#cf7400; --ac-soft:rgba(232,131,15,.14); --ac-tint:#fdf1e3; --ac-text:#9a5a06;
+         font-family: "Segoe UI", system-ui, sans-serif; color: #2b2a28; background: #f4f2ef; border: 1px solid #e3ded7; border-radius: 14px; overflow: hidden; max-width: 1520px; margin: 0 auto; box-shadow: 0 10px 30px rgba(80,50,10,.08); }
+  .pbx * { box-sizing: border-box; }
+  .pbx .gate { min-height: 520px; display: flex; align-items: center; justify-content: center; background: radial-gradient(120% 120% at 50% 0%, #fff 0%, #faf7f2 60%, #f4ede2 100%); padding: 24px; }
+  .pbx .gate-card { width: 340px; background: #fff; border: 1px solid #efe7da; border-radius: 16px; padding: 32px 28px; box-shadow: 0 12px 34px rgba(120,70,10,.12); text-align: center; }
+  .pbx .gate-card img.logo { width: 170px; height: auto; margin: 0 auto 6px; display: block; }
+  .pbx .gate-sub { color: #8a8378; font-size: 12.5px; margin: 0 0 18px; }
+  .pbx label { display: block; font-size: 12px; color: #8a8378; margin: 12px 0 5px; text-align: left; }
+  .pbx input { width: 100%; height: 40px; padding: 0 12px; border: 1px solid #d9d2c7; border-radius: 9px; font-size: 14px; background: #fff; color: #2b2a28; transition: border-color .15s, box-shadow .15s; }
+  .pbx input:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px var(--ac-soft); }
+  .pbx .btn { width: 100%; height: 42px; margin-top: 20px; background: var(--ac); color: #fff; border: 0; border-radius: 9px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .15s, transform .08s; }
+  .pbx .btn:hover { background: var(--ac-d); }
+  .pbx .btn:active { transform: scale(.985); }
+  .pbx .btn:disabled { opacity: .6; cursor: default; }
+  .pbx .err { color: #b3261e; font-size: 12.5px; margin-top: 10px; min-height: 16px; }
+  .pbx .hint { margin-top: 16px; font-size: 12px; color: #a59c8d; border-top: 1px solid #f1ece3; padding-top: 13px; }
+  .pbx .hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; background: #fff; border-bottom: 1px solid #eee6da; flex-wrap: wrap; }
+  .pbx .hdr-l { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .pbx .hdr-l img.logo { height: 34px; width: auto; }
+  .pbx .hdr-l b { font-size: 14.5px; font-weight: 500; color: #4a443c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pbx .hdr-r { display: flex; align-items: center; gap: 8px; }
+  .pbx .chip { display: inline-flex; align-items: center; gap: 7px; background: #faf7f2; border: 1px solid #eee6da; border-radius: 22px; padding: 5px 12px 5px 6px; font-size: 13px; }
+  .pbx .chip .av { width: 24px; height: 24px; border-radius: 50%; background: var(--ac); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .pbx .lo { background: none; border: 0; color: #8a8378; cursor: pointer; font-size: 18px; padding: 5px; border-radius: 8px; transition: background .15s, color .15s; }
+  .pbx .lo:hover { color: var(--ac); background: var(--ac-soft); }
+  .pbx .inbox-ico { display: inline-block; position: relative; width: 20px; height: 17px; vertical-align: middle; }
+  .pbx .inbox-ico::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 11px; border: 1.8px solid #E8830F; border-radius: 2px; }
+  .pbx .inbox-ico::after { content: ''; position: absolute; top: 0; left: 4px; right: 4px; height: 10px; border: 1.8px solid #E8830F; border-bottom: 0; border-radius: 2px 2px 0 0; background: #fff; }
+  @keyframes inbox-pulse { 0%,100%{ transform:scale(1); box-shadow:0 0 0 0 rgba(232,131,15,0); } 50%{ transform:scale(1.13); box-shadow:0 0 0 5px rgba(232,131,15,.18); } }
+  .pbx .lo-pulse { animation: inbox-pulse 2.2s ease-in-out infinite; border-radius: 8px; }
+  .pbx .fbar { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; padding: 12px 18px; background: #fcfbf9; border-bottom: 1px solid #eee6da; }
+  .pbx .fld { display: flex; flex-direction: column; gap: 4px; }
+  .pbx .fld > span { font-size: 11px; color: #a59c8d; font-weight: 500; }
+  .pbx select.uni, .pbx input.dt { height: 34px; border: 1px solid #d9d2c7; border-radius: 9px; font-size: 13px; padding: 0 10px; background: #fff; color: #2b2a28; font-family: inherit; width: auto; }
+  .pbx .mfin { width: 220px; height: 34px; border: 1px solid #d9d2c7; border-radius: 9px; font-size: 13px; padding: 0 10px; background: #fff; color: #2b2a28; }
+  .pbx .lock { height: 34px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #4a443c; padding: 0 6px; }
+  .pbx .daterange { display: flex; align-items: center; gap: 7px; }
+  .pbx .daterange small { color: #a59c8d; }
+  .pbx .canvas { padding: 16px 18px; }
+  .pbx .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(195px,1fr)); gap: 12px; margin-bottom: 16px; }
+  .pbx .kpi .ic { font-size: 22px; line-height: 1; }
+  .pbx .kpi { background: #fff; border: 1px solid #eee6da; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 13px; box-shadow: 0 1px 3px rgba(80,50,10,.05); transition: transform .12s, box-shadow .12s; }
+  .pbx .kpi:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(80,50,10,.09); }
+  .pbx .kpi .ic { width: 42px; height: 42px; border-radius: 11px; background: var(--ac-soft); color: var(--ac); display: flex; align-items: center; justify-content: center; font-size: 21px; flex-shrink: 0; }
+  .pbx .kpi .val { font-size: 21px; font-weight: 600; color: #2b2a28; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .pbx .kpi .lbl { font-size: 12px; color: #8a8378; margin-top: 3px; }
+  .pbx .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); gap: 16px; margin-bottom: 16px; }
+  .pbx .visual { background: #fff; border: 1px solid #eee6da; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(80,50,10,.05); margin-bottom: 16px; }
+  .pbx .grid2 .visual { margin-bottom: 0; }
+  .pbx .visual-h { font-size: 14px; font-weight: 500; color: #4a443c; padding: 13px 16px 9px; display: flex; align-items: center; gap: 7px; }
+  .pbx .visual-h i { color: var(--ac); font-size: 16px; }
+  .pbx .visual-h small { color: #a59c8d; font-weight: 400; }
+  .pbx table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .pbx thead th { text-align: left; font-size: 11px; color: #a59c8d; font-weight: 500; padding: 7px 14px; border-bottom: 1px solid #eee6da; }
+  .pbx thead th.num { text-align: right; }
+  .pbx tbody td { padding: 0 14px; height: 30px; border-bottom: 1px solid #f5f1ea; }
+  .pbx tbody td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pbx thead th.num { white-space: nowrap; }
+  .pbx tbody tr:hover td { background: #fdfbf8; }
+  .pbx .barcell { position: relative; }
+  .pbx .bar { position: absolute; left: 0; top: 5px; bottom: 5px; background: var(--ac-soft); border-radius: 3px; }
+  .pbx .barcell span { position: relative; }
+  .pbx .pct { color: var(--ac-text); font-weight: 600; }
+  .pbx .total td { border-top: 1.5px solid #e3ded7; border-bottom: 0; font-weight: 600; background: #fcfaf7; height: 34px; }
+  .pbx tr.grp { cursor: pointer; }
+  .pbx tr.grp td { font-weight: 500; border-top: 1px solid #f1ece3; }
+  .pbx tr.grp td i { color: var(--ac); font-size: 14px; margin-right: 6px; }
+  .pbx tr.grp:hover td { background: #fdf6ee; }
+  .pbx td.ind { padding-left: 32px; color: #8a8378; }
+  .pbx tr.day td { color: #8a8378; height: 28px; }
+  .pbx .subh { font-size: 12px; font-weight: 600; color: #6e675c; padding: 11px 14px 4px; border-top: 1px solid #f3eee6; }
+  .pbx .subh small { font-weight: 400; color: #b8ad9c; }
+  .pbx .mchip { font-size: 12px; padding: 6px 12px; border: 1px solid #d9d2c7; border-radius: 18px; cursor: pointer; color: #6e675c; background: #fff; transition: all .12s; }
+  .pbx .mchip:hover { border-color: var(--ac); }
+  .pbx .mchip.on { background: var(--ac-tint); border-color: var(--ac); color: var(--ac-text); font-weight: 500; }
+  .pbx .months { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pbx .seg { display: flex; border: 1px solid #d9d2c7; border-radius: 9px; overflow: hidden; height: 34px; }
+  .pbx .seg button { border: 0; background: #fff; color: #6e675c; font-size: 12.5px; padding: 0 14px; cursor: pointer; border-right: 1px solid #e7e0d6; font-family: inherit; transition: background .12s; }
+  .pbx .seg button:last-child { border-right: 0; }
+  .pbx .seg button.on { background: var(--ac); color: #fff; font-weight: 500; }
+  .pbx .tabs { display: flex; gap: 4px; padding: 8px 14px; background: #fff; border-top: 1px solid #eee6da; flex-wrap: wrap; }
+  .pbx .tab { font-size: 12.5px; color: #6e675c; padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: background .12s; }
+  .pbx .tab:hover { background: #faf7f2; }
+  .pbx .tab.active { background: var(--ac-tint); color: var(--ac-text); font-weight: 500; }
+  .pbx .chartbox { position: relative; padding: 4px 12px 14px; }
+  .pbx .body { display: flex; align-items: stretch; }
+  .pbx .side { width: 234px; flex-shrink: 0; background: #fff; border-right: 1px solid #eee6da; padding: 14px 12px; }
+  .pbx .side-t { font-size: 11px; font-weight: 600; color: #b8ad9c; text-transform: uppercase; letter-spacing: .5px; padding: 4px 12px 9px; }
+  .pbx .nav { display: flex; align-items: center; gap: 11px; padding: 11px 12px; border-radius: 10px; font-size: 13.5px; color: #6e675c; cursor: pointer; transition: background .12s, color .12s; margin-bottom: 3px; }
+  .pbx .nav i { font-size: 19px; color: #b8ad9c; }
+  .pbx .nav:hover { background: #faf7f2; }
+  .pbx .nav.active { background: var(--ac-tint); color: var(--ac-text); font-weight: 500; }
+  .pbx .nav.active i { color: var(--ac); }
+  .pbx .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  @media (max-width: 760px) {
+    .pbx .body { flex-direction: column; }
+    .pbx .side { width: auto; display: flex; gap: 4px; overflow-x: auto; border-right: 0; border-bottom: 1px solid #eee6da; padding: 8px 10px; }
+    .pbx .side-t { display: none; }
+    .pbx .nav { white-space: nowrap; margin-bottom: 0; }
+  }
+  @media (max-width: 560px) {
+    body { padding: 8px; }
+    .pbx .hdr-l b { font-size: 12.5px; white-space: normal; }
+    .pbx .canvas { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="pbx" id="pbx-root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+  // MODO DEMO: preview publico do portfolio. Nenhuma chamada de rede real
+  // acontece aqui - todos os dados abaixo sao gerados no navegador so para
+  // esta demonstracao. A logica de agregacao, filtros, graficos e
+  // drill-down e a mesma do painel de producao; só a fonte dos dados muda.
+  const AC = "#E8830F";
+  const DEMO_UNIDADES = ["Unidade Centro", "Unidade Sul", "Unidade Norte"];
+  const DEMO_PROFISSIONAIS = ["Ana Souza", "Bruno Lima", "Camila Rocha", "Diego Alves", "Elaine Prado"];
+  const DEMO_PROCEDIMENTOS = ["Procedimento A", "Procedimento B", "Procedimento C", "Procedimento D"];
+  const DEMO_PACOTES = ["Pacote Basico", "Pacote Premium", "Pacote Anual"];
+  function seededRandom(seed){ let s = seed % 2147483647; if(s <= 0) s += 2147483646; return () => (s = s * 16807 % 2147483647) / 2147483647; }
+  const demoRnd = seededRandom(42);
+  function buildDemoEvents(){
+    const events = []; const today = new Date();
+    for(let i = 0; i < 150; i++){
+      const d = new Date(today); d.setDate(d.getDate() - i);
+      const dia = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+      DEMO_UNIDADES.forEach(unidade => {
+        const n = 1 + Math.floor(demoRnd()*4);
+        for(let j = 0; j < n; j++){
+          const r = demoRnd();
+          const status = r<0.55 ? "Executada" : r<0.78 ? "Aguardando aprovação" : r<0.85 ? "Aprovada pelo cliente" : "Rejeitada";
+          const profissional = DEMO_PROFISSIONAIS[Math.floor(demoRnd()*DEMO_PROFISSIONAIS.length)];
+          const procedimento = DEMO_PROCEDIMENTOS[Math.floor(demoRnd()*DEMO_PROCEDIMENTOS.length)];
+          const pacote = demoRnd() < 0.3 ? DEMO_PACOTES[Math.floor(demoRnd()*DEMO_PACOTES.length)] : null;
+          const valor = Math.round((800 + demoRnd()*3600) * 100) / 100;
+          events.push({ unidade, status, profissional, procedimento, pacote, dia, valor });
+        }
+      });
+    }
+    return events;
+  }
+  const DEMO_EVENTS = buildDemoEvents();
+  function demoGroup(rows, keys, valueFn){
+    const map = {};
+    rows.forEach(r => {
+      const k = keys.map(k2 => r[k2]).join("||");
+      if(!map[k]) map[k] = Object.assign({}, Object.fromEntries(keys.map(k2 => [k2, r[k2]])), { valor:0, qtd_propostas:0, qtd_itens:0, qtd:0 });
+      map[k].valor += valueFn(r); map[k].qtd_propostas += 1; map[k].qtd_itens += 1; map[k].qtd += 1;
+    });
+    return Object.values(map);
+  }
+  const DEMO_VIEWS = {
+    vw_dia: demoGroup(DEMO_EVENTS, ["unidade","status","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, dia:r.dia, valor:r.valor, qtd_propostas:r.qtd_propostas, qtd_itens:r.qtd_itens })),
+    vw_prof_dia: demoGroup(DEMO_EVENTS, ["unidade","status","profissional","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, profissional_proposta:r.profissional, dia:r.dia, valor:r.valor })),
+    vw_proc_dia: demoGroup(DEMO_EVENTS, ["unidade","status","procedimento","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, nome_procedimento:r.procedimento, dia:r.dia, valor:r.valor })),
+    vw_pacote_dia: demoGroup(DEMO_EVENTS.filter(r=>r.pacote), ["unidade","status","pacote","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, nome_pacote:r.pacote, dia:r.dia, valor:r.valor })),
+    vw_prof_proc: demoGroup(DEMO_EVENTS, ["unidade","status","profissional","dia","procedimento"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, profissional_proposta:r.profissional, dia:r.dia, nome_procedimento:r.procedimento, valor:r.valor, qtd:r.qtd })),
+    vw_dia_proposta: demoGroup(DEMO_EVENTS, ["unidade","status","dia"], r=>r.valor*1.12).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, dia:r.dia, valor:r.valor })),
+    vw_prof_dia_proposta: demoGroup(DEMO_EVENTS, ["unidade","status","profissional","dia"], r=>r.valor*1.12).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, profissional_proposta:r.profissional, dia:r.dia, valor:r.valor }))
+  };
+  const { useState, useEffect } = React;
+  const html = htm.bind(React.createElement);
+
+  const brl = v => "R$ " + v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const brl0 = v => "R$ " + Math.round(v).toLocaleString("pt-BR");
+  const pct = p => p.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + "%";
+  const MLBL = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  const fmtD = s => { const p = s.split("-").map(Number); const dt = new Date(p[0],p[1]-1,p[2]); const wd = ["dom","seg","ter","qua","qui","sex","sáb"][dt.getDay()]; return wd+" "+String(p[2]).padStart(2,"0")+"/"+String(p[1]).padStart(2,"0"); };
+  const ddmm = s => s.slice(8,10)+"/"+s.slice(5,7);
+  const monthLbl = ym => { const [y,m] = ym.split("-"); return MLBL[+m-1]+"/"+y.slice(2); };
+  const periodDays = (pmode, months, de, ate, calMin, calMax) => {
+    const out = [];
+    const push = (f0, t0) => {
+      let f = f0 < calMin ? calMin : f0, t = t0 > calMax ? calMax : t0;
+      if(f > t) return;
+      let d = new Date(f+"T00:00:00"); const end = new Date(t+"T00:00:00");
+      while(d <= end){ out.push(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")); d.setDate(d.getDate()+1); }
+    };
+    if(pmode === "mes"){ months.forEach(ym => { const [y,m] = ym.split("-").map(Number); const last = new Date(y, m, 0).getDate(); push(ym+"-01", ym+"-"+String(last).padStart(2,"0")); }); }
+    else { push(de, ate); }
+    return out;
+  };
+
+  // Status sempre vazio na origem (nunca tem proposta de verdade) - some
+  // do painel inteiro (filtro, gráficos, tabelas) direto na leitura dos
+  // dados, pra não precisar filtrar em cada lugar separado.
+  const STATUS_OCULTOS = ["Aprovada pelo cliente"];
+
+  // orderCols: colunas pra ordenar de forma 100% determinística - sem isso,
+  // paginar em lotes (range) pode perder ou duplicar linha entre uma página
+  // e outra, porque o Postgres nao garante ordem estavel sem ORDER BY.
+  async function fetchAll(view, orderCols){
+    const rows = DEMO_VIEWS[view] || [];
+    return rows.filter(r => !STATUS_OCULTOS.includes(r.status_proposta));
+  }
+
+  // Carga "essencial" (o que a Análise Geral/Comparação mostram de cara) -
+  // dmd/dmp (drill de profissional->procedimento) e duP/dmProp (metrica
+  // valor_proposta pros status != Executada) ficam de fora daqui, so'
+  // carregam sob demanda (ver loadProfProc/loadPropostaMetrics) - assim a
+  // tela inicial nao espera dados que talvez nunca sejam abertos.
+  async function loadCore(user){
+    const [dia, prof, proc, pac] = await Promise.all([
+      fetchAll("vw_dia", ["unidade_nome","status_proposta","dia"]),
+      fetchAll("vw_prof_dia", ["unidade_nome","status_proposta","profissional_proposta","dia"]),
+      fetchAll("vw_proc_dia", ["unidade_nome","status_proposta","nome_procedimento","dia"]),
+      fetchAll("vw_pacote_dia", ["unidade_nome","status_proposta","nome_pacote","dia"]).catch(() => [])
+    ]);
+    let dRows = dia, pRows = prof, cRows = proc, kRows = pac;
+    if(!user.isMaster){
+      dRows = dRows.filter(r => r.unidade_nome === user.unidade);
+      pRows = pRows.filter(r => r.unidade_nome === user.unidade);
+      cRows = cRows.filter(r => r.unidade_nome === user.unidade);
+      kRows = kRows.filter(r => r.unidade_nome === user.unidade);
+    }
+    const units = [...new Set(dRows.map(r => r.unidade_nome))].sort();
+    const uidx = {}; units.forEach((u,i) => uidx[u] = i);
+    const statuses = [...new Set(dRows.map(r => r.status_proposta || "Sem status"))].sort();
+    const sidx = {}; statuses.forEach((s,i) => sidx[s] = i);
+    const su = r => sidx[r.status_proposta || "Sem status"];
+    const du = dRows.map(r => [uidx[r.unidade_nome], su(r), r.dia, Number(r.valor), Number(r.qtd_propostas), Number(r.qtd_itens)]);
+    const dm = {}; pRows.forEach(r => { const k = r.profissional_proposta || "(sem profissional)"; (dm[k] = dm[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
+    const dproc = {}; cRows.forEach(r => { const k = r.nome_procedimento || "(sem procedimento)"; (dproc[k] = dproc[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
+    const dpac = {}; kRows.forEach(r => { const k = r.nome_pacote || "(sem pacote)"; (dpac[k] = dpac[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
+    const dates = du.map(r => r[2]).sort();
+    const anoAtual = String(new Date().getFullYear());
+    const months = [...new Set(dates.map(d => d.slice(0,7)))].filter(ym => ym.startsWith(anoAtual)).sort().map(ym => [ym, monthLbl(ym)]);
+    const dmin = dates[0]||"", dmax = dates[dates.length-1]||"";
+    const calMin = (dmin ? dmin.slice(0,4) : anoAtual) + "-01-01";
+    const statExecutada = statuses.indexOf("Executada");
+    return { units, statuses, statExecutada, du, dm, dproc, dpac, dmin, dmax, calMin, calMax: dmax, months,
+      dmd: null, dmp: null, duP: null, dmProp: null };
+  }
+
+  // Sob demanda: drill profissional -> dia -> procedimento (abas
+  // Profissionais/Procedimentos - Detalhado). Precisa de units/statuses do
+  // store ja carregado pra manter os mesmos indices (uidx/sidx).
+  async function loadProfProc(user, store){
+    let ppRows = await fetchAll("vw_prof_proc", ["unidade_nome","status_proposta","profissional_proposta","dia","nome_procedimento"]).catch(() => []);
+    if(!user.isMaster) ppRows = ppRows.filter(r => r.unidade_nome === user.unidade);
+    const uidx = {}; store.units.forEach((u,i) => uidx[u] = i);
+    const sidx = {}; store.statuses.forEach((s,i) => sidx[s] = i);
+    const su = r => sidx[r.status_proposta || "Sem status"];
+    const dmd = {}; ppRows.forEach(r => { const k = r.profissional_proposta+"||"+r.dia; (dmd[k] = dmd[k]||[]).push({ proc: r.nome_procedimento, valor: Number(r.valor), un: uidx[r.unidade_nome], st: su(r), qtd: Number(r.qtd||0) }); });
+    const dmp = {}; ppRows.forEach(r => { const nom = r.profissional_proposta; if(!dmp[nom]) dmp[nom] = {}; const p = r.nome_procedimento; dmp[nom][p] = (dmp[nom][p]||0) + Number(r.valor); });
+    return { dmd, dmp };
+  }
+
+  // Sob demanda: metrica valor_proposta (dia + por profissional), so'
+  // usada quando o Status selecionado != Executada.
+  async function loadPropostaMetrics(user, store){
+    const [diaProp, profProp] = await Promise.all([
+      fetchAll("vw_dia_proposta", ["unidade_nome","status_proposta","dia"]).catch(() => []),
+      fetchAll("vw_prof_dia_proposta", ["unidade_nome","status_proposta","profissional_proposta","dia"]).catch(() => [])
+    ]);
+    let dpRows = diaProp, ppfRows = profProp;
+    if(!user.isMaster){
+      dpRows = dpRows.filter(r => r.unidade_nome === user.unidade);
+      ppfRows = ppfRows.filter(r => r.unidade_nome === user.unidade);
+    }
+    const uidx = {}; store.units.forEach((u,i) => uidx[u] = i);
+    const sidx = {}; store.statuses.forEach((s,i) => sidx[s] = i);
+    const su = r => sidx[r.status_proposta || "Sem status"];
+    const duP = dpRows.map(r => [uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]);
+    const dmProp = {}; ppfRows.forEach(r => { const k = r.profissional_proposta || "(sem profissional)"; (dmProp[k] = dmProp[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
+    return { duP, dmProp };
+  }
+
+  // stat: indice do UNICO status selecionado (nao soma mais de um -
+  // valor_proposta e valor_final_item nao podem ser combinados).
+  function buildPred(unis, stat, pmode, months, de, ate){
+    return (u, s, d) => {
+      if(unis.length > 0 && !unis.includes(u)) return false;
+      if(s !== stat) return false;
+      if(pmode === "mes") return months.includes(d.slice(0,7));
+      return d >= de && d <= ate;
+    };
+  }
+  function MultiSelect({ options, value, onChange, placeholder, searchable }){
+    const [open, setOpen] = useState(false);
+    const [q, setQ] = useState("");
+    const ref = React.useRef(null);
+    useEffect(() => {
+      if(!open){ setQ(""); return; }
+      const h = e => { if(ref.current && !ref.current.contains(e.target)) setOpen(false); };
+      document.addEventListener("mousedown", h);
+      return () => document.removeEventListener("mousedown", h);
+    }, [open]);
+    const toggle = v => onChange(value.includes(v) ? value.filter(x => x !== v) : [...value, v]);
+    const filtered = searchable && q.trim() ? options.filter(([,lbl2]) => lbl2.toLowerCase().includes(q.trim().toLowerCase())) : options;
+    const allOn = value.length === options.length;
+    const lbl = value.length === 0 ? placeholder : allOn ? "Todas" : value.length + " selecionado(s)";
+    return html`<div style=${{position:"relative",display:"inline-block"}} ref=${ref}>
+      <button onClick=${() => setOpen(o => !o)} style=${{height:"34px",border:"1px solid #d9d2c7",borderRadius:"9px",fontSize:"13px",padding:"0 10px 0 12px",background:"#fff",color:value.length?"#2b2a28":"#a59c8d",fontFamily:"inherit",cursor:"pointer",display:"flex",alignItems:"center",gap:"8px",minWidth:"180px",justifyContent:"space-between",whiteSpace:"nowrap"}}>
+        <span>${lbl}</span><i class=${"ti ti-chevron-"+(open?"up":"down")} style=${{fontSize:"12px",color:"#a59c8d",flexShrink:0}}></i>
+      </button>
+      ${open ? html`<div style=${{position:"absolute",top:"38px",left:"0",background:"#fff",border:"1px solid #e3ded7",borderRadius:"10px",boxShadow:"0 8px 24px rgba(80,50,10,.14)",zIndex:200,minWidth:"210px",maxHeight:"320px",display:"flex",flexDirection:"column",padding:"0"}}>
+        ${searchable ? html`<div style=${{padding:"8px 10px",borderBottom:"1px solid #f3eee6",flexShrink:0}}>
+          <input autoFocus value=${q} onChange=${e => setQ(e.target.value)} placeholder="Buscar…" style=${{width:"100%",height:"30px",border:"1px solid #d9d2c7",borderRadius:"7px",padding:"0 10px",fontSize:"12.5px",fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onClick=${e => e.stopPropagation()} />
+        </div>` : null}
+        <div style=${{overflowY:"auto",flex:1,padding:"4px 0"}}>
+          ${!q.trim() ? html`<label style=${{display:"flex",alignItems:"center",gap:"8px",padding:"7px 14px",cursor:"pointer",fontSize:"12.5px",color:"#6e675c",borderBottom:"1px solid #f3eee6",fontWeight:500}}>
+            <input type="checkbox" checked=${allOn} onChange=${() => onChange(allOn ? [] : options.map(o => o[0]))} style=${{accentColor:AC,cursor:"pointer",width:"14px",height:"14px"}} />
+            Todos
+          </label>` : null}
+          ${filtered.length === 0 ? html`<div style=${{padding:"10px 14px",fontSize:"12px",color:"#b8ad9c"}}>Nenhum resultado</div>` : null}
+          ${filtered.map(([v,lbl2]) => html`<label key=${v} style=${{display:"flex",alignItems:"center",gap:"8px",padding:"6px 14px",cursor:"pointer",fontSize:"12.5px",color:"#2b2a28"}}>
+            <input type="checkbox" checked=${value.includes(v)} onChange=${() => toggle(v)} style=${{accentColor:AC,cursor:"pointer",width:"14px",height:"14px"}} />
+            ${lbl2}
+          </label>`)}
+        </div>
+      </div>` : null}
+    </div>`;
+  }
+  function aggDaily(store, pred){
+    const m = {}, qp = {}, qi = {};
+    store.du.forEach(([u,s,d,vf,qtdp,qtdi]) => { if(pred(u,s,d)){ m[d]=(m[d]||0)+vf; qp[d]=(qp[d]||0)+qtdp; qi[d]=(qi[d]||0)+qtdi; } });
+    return Object.keys(m).sort().reverse().map(d => [d, m[d], qp[d], qi[d]]);
+  }
+  function aggEntity(data, pred){
+    return Object.entries(data).map(([name, arr]) => {
+      const days = {};
+      arr.forEach(([u,s,d,vf]) => { if(pred(u,s,d)) days[d]=(days[d]||0)+vf; });
+      const dl = Object.keys(days).sort().reverse().map(d => [d, days[d]]);
+      return { name, days: dl, total: dl.reduce((s,r) => s+r[1], 0) };
+    }).filter(e => e.days.length > 0).sort((a,b) => b.total - a.total);
+  }
+
+  // ===== Aba Comparação: meses fechados (2025-2026, exclui o mes corrente) =====
+  function closedMonthsFrom(store){
+    const today = new Date();
+    const anoMesAtual = today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0");
+    const all = [...new Set(store.du.map(r => r[2].slice(0,7)))]
+      .filter(ym => ym >= "2025-01" && ym <= "2026-12" && ym < anoMesAtual)
+      .sort();
+    return all.map(ym => [ym, monthLbl(ym)]);
+  }
+  // meses: array de "YYYY-MM" - permite comparar grupos com mais de um mes
+  // (ex.: mes anterior = [jan/25,fev/25] x mes posterior = [jan/26,fev/26]).
+  function predGrupo(store, unis, meses){
+    return (u,s,d) => (unis.length===0||unis.includes(u)) && s===store.statExecutada && meses.includes(d.slice(0,7));
+  }
+  function kpiGrupo(store, unis, meses){
+    const pred = predGrupo(store, unis, meses);
+    let vf=0, qtd=0;
+    store.du.forEach(([u,s,d,valor,qtdp]) => { if(pred(u,s,d)){ vf+=valor; qtd+=qtdp; } });
+    let dias = 0;
+    meses.forEach(ym => { const [y,m] = ym.split("-").map(Number); dias += new Date(y, m, 0).getDate(); });
+    return { vf, qtd, ticket: qtd?vf/qtd:0, media: dias?vf/dias:0, dias };
+  }
+  const groupLabel = meses => meses.map(monthLbl).join(" + ");
+
+  // valueType "brl" (padrao, valores em dinheiro) ou "count" (quantidade,
+  // sem "R$" - ex.: Propostas por status)
+  function Chartjs({ labels, data, horizontal, height, valueType }){
+    const ref = React.useRef(null), inst = React.useRef(null);
+    const sig = labels.join("|") + "#" + data.map(n => Math.round(n)).join(",");
+    const fmtTip = valueType === "count" ? (v => v.toLocaleString("pt-BR")) : brl;
+    useEffect(() => {
+      if(!ref.current || !window.Chart) return;
+      if(inst.current){ inst.current.destroy(); inst.current = null; }
+      inst.current = new Chart(ref.current, {
+        type: "bar",
+        data: { labels, datasets: [{ data, backgroundColor: AC, hoverBackgroundColor: "#cf7400", borderRadius: 4, maxBarThickness: horizontal ? 16 : 30 }] },
+        options: {
+          indexAxis: horizontal ? "y" : "x",
+          responsive: true, maintainAspectRatio: false,
+          animation: { duration: 350 },
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => fmtTip(Number(c.raw)) } } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10 }, color: "#a59c8d", maxRotation: 0, autoSkip: true, maxTicksLimit: horizontal ? 6 : 16 } },
+            y: { grid: { color: "#f3eee6" }, ticks: { font: { size: 10 }, color: "#a59c8d", autoSkip: !horizontal ? false : true } }
+          }
+        }
+      });
+      return () => { if(inst.current){ inst.current.destroy(); inst.current = null; } };
+    }, [sig, horizontal]);
+    return html`<div class="chartbox" style=${{ height: (height||230)+"px" }}><canvas ref=${ref}></canvas></div>`;
+  }
+
+  // Grafico combinado (mes anterior x mes posterior) - dia do mes no eixo X.
+  // Mes anterior = coluna (barra), mes posterior = linha, conforme pedido.
+  // Componente separado do Chartjs (que so faz barra simples) pra nao
+  // arriscar quebrar os graficos existentes.
+  function ComboChartjs({ labels, dataBar, dataLine, labelBar, labelLine, height }){
+    const ref = React.useRef(null), inst = React.useRef(null);
+    const sig = labels.join(",") + "#" + dataBar.map(n=>Math.round(n||0)).join(",") + "#" + dataLine.map(n=>Math.round(n||0)).join(",");
+    useEffect(() => {
+      if(!ref.current || !window.Chart) return;
+      if(inst.current){ inst.current.destroy(); inst.current = null; }
+      inst.current = new Chart(ref.current, {
+        type: "bar",
+        data: { labels, datasets: [
+          { type: "bar", label: labelBar, data: dataBar, backgroundColor: "#b8ad9c", hoverBackgroundColor: "#a59c8d", borderRadius: 4, maxBarThickness: 22, order: 2 },
+          { type: "line", label: labelLine, data: dataLine, borderColor: AC, backgroundColor: AC, pointRadius: 2, tension: .25, order: 1 }
+        ] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          animation: { duration: 350 },
+          plugins: { legend: { display: true, position: "top", labels: { boxWidth: 12, font: { size: 11 }, color: "#6e675c" } }, tooltip: { callbacks: { label: c => c.dataset.label+": "+brl(Number(c.raw)) } } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10 }, color: "#a59c8d", maxRotation: 0, autoSkip: true, maxTicksLimit: 16 } },
+            y: { grid: { color: "#f3eee6" }, ticks: { font: { size: 10 }, color: "#a59c8d" } }
+          }
+        }
+      });
+      return () => { if(inst.current){ inst.current.destroy(); inst.current = null; } };
+    }, [sig]);
+    return html`<div class="chartbox" style=${{ height: (height||260)+"px" }}><canvas ref=${ref}></canvas></div>`;
+  }
+
+  function FilterBar({ store, user, unis, setUnis, stat, setStat, pmode, setPmode, months, setMonths, de, setDe, ate, setAte, page, fProfs, setFProfs, profOpts, fProcs, setFProcs, procOpts }){
+    const toggleM = m => setMonths(s => s.includes(m) ? s.filter(x => x !== m) : s.concat(m));
+    const uniOpts = store.units.map((u,i) => [i, u]);
+    return html`<div class="fbar">
+      <div class="fld"><span>Unidade</span>
+        ${user.isMaster
+          ? html`<${MultiSelect} options=${uniOpts} value=${unis} onChange=${setUnis} placeholder="Todas as unidades" />`
+          : html`<div class="lock"><i class="ti ti-lock"></i>${user.unidade}</div>`}
+      </div>
+      <div class="fld"><span>Status</span>
+        <select class="uni" value=${stat} onChange=${e => setStat(Number(e.target.value))}>
+          ${store.statuses.map((s,i) => html`<option key=${i} value=${i}>${s}</option>`)}
+        </select>
+      </div>
+      <div class="fld"><span>Período</span>
+        <div class="seg">
+          <button class=${pmode==="mes"?"on":""} onClick=${() => setPmode("mes")}>Mês</button>
+          <button class=${pmode==="custom"?"on":""} onClick=${() => setPmode("custom")}>Personalizado</button>
+        </div>
+      </div>
+      ${pmode==="mes"
+        ? html`<div class="fld"><span>Meses</span><div class="months">${store.months.map(m => html`<div key=${m[0]} class=${"mchip"+(months.includes(m[0])?" on":"")} onClick=${() => toggleM(m[0])}>${m[1]}</div>`)}</div></div>`
+        : html`<div class="fld"><span>Intervalo (por dia)</span><div class="daterange"><input class="dt" type="date" min=${store.dmin} max=${store.dmax} value=${de} onChange=${e => setDe(e.target.value)} /><small>até</small><input class="dt" type="date" min=${store.dmin} max=${store.dmax} value=${ate} onChange=${e => setAte(e.target.value)} /></div></div>`}
+      ${page==="proc" ? html`<div class="fld"><span>Profissional</span><${MultiSelect} options=${profOpts} value=${fProfs} onChange=${setFProfs} placeholder="Todos os profissionais" searchable=${true} /></div>` : null}
+      ${page==="prof" ? html`<div class="fld"><span>Procedimento</span><${MultiSelect} options=${procOpts} value=${fProcs} onChange=${setFProcs} placeholder="Todos os procedimentos" searchable=${true} /></div>` : null}
+    </div>`;
+  }
+  function Card({ emoji, label, value }){ return html`<div class="kpi"><div class="ic">${emoji}</div><div><div class="val">${value}</div><div class="lbl">${label}</div></div></div>`; }
+  function Kpis({ kpi, taxa }){
+    if(!kpi) return html`<div class="kpis"><div class="kpi"><div class="ic"><i class="ti ti-loader"></i></div><div><div class="lbl">Carregando KPIs…</div></div></div></div>`;
+    const media = kpi.dias ? kpi.vf/kpi.dias : 0, ticket = kpi.qtd ? kpi.vf/kpi.qtd : 0;
+    return html`<div class="kpis">
+      <${Card} emoji="💰" label="Valor Final" value=${brl0(kpi.vf)} />
+      <${Card} emoji="🧾" label="Ticket Médio" value=${brl0(ticket)} />
+      <${Card} emoji="📋" label="Qtd. Propostas" value=${kpi.qtd.toLocaleString("pt-BR")} />
+      <${Card} emoji="📅" label="Média Diária" value=${brl0(media)} />
+      ${taxa ? html`<${Card} emoji="📈" label=${taxa.label} value=${pct(taxa.pctValue)} />` : null}
+    </div>`;
+  }
+  function Matrix({ title, icon, entities, nameHead }){
+    const grand = entities.reduce((s,e)=>s+e.total,0)||1, max = Math.max(1, ...entities.map(e=>e.total));
+    const maxShare = Math.max(0.0001, ...entities.map(e=>e.total/grand));
+    return html`<div class="visual">
+      <div class="visual-h"><i class=${"ti "+icon}></i>${title}</div>
+      <table>
+        <thead><tr><th>${nameHead}</th><th class="num">Valor Final</th><th class="num">% do Total</th></tr></thead>
+        <tbody>
+          ${entities.map(e => { const a=(e.total/grand/maxShare*0.30).toFixed(3); return html`<tr key=${e.name}>
+            <td>${e.name}</td>
+            <td class="num barcell"><div class="bar" style=${{width:(e.total/max*100)+"%"}}></div><span>${brl(e.total)}</span></td>
+            <td class="num" style=${{backgroundColor:"rgba(232,131,15,"+a+")"}}>${pct(e.total/grand*100)}</td>
+          </tr>`; })}
+          <tr class="total"><td>Total geral</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+  }
+  function TotalTable({ daily }){
+    const max = Math.max(1, ...daily.map(r=>r[1]));
+    const totVf = daily.reduce((a,r)=>a+r[1],0), totProp = daily.reduce((a,r)=>a+r[2],0), totItens = daily.reduce((a,r)=>a+r[3],0);
+    return html`<div class="visual">
+      <div class="visual-h"><i class="ti ti-table"></i>Total por dia <small>· ${daily.length} dia(s) · ${brl0(totVf)}</small></div>
+      <table>
+        <thead><tr><th>Dia</th><th class="num">Valor Final</th><th class="num">Propostas</th><th class="num">Itens</th><th class="num">Ticket médio</th></tr></thead>
+        <tbody>
+          ${daily.map(r => html`<tr key=${r[0]}>
+            <td>${fmtD(r[0])}</td>
+            <td class="num barcell"><div class="bar" style=${{width:(r[1]/max*100)+"%"}}></div><span>${brl(r[1])}</span></td>
+            <td class="num">${r[2]}</td>
+            <td class="num">${r[3]}</td>
+            <td class="num">${brl0(r[2]?r[1]/r[2]:0)}</td>
+          </tr>`)}
+          <tr class="total"><td>Total</td><td class="num">${brl(totVf)}</td><td class="num">${totProp}</td><td class="num">${totItens}</td><td class="num">${brl0(totProp?totVf/totProp:0)}</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+  }
+  // Drill de 3 níveis: profissional -> dia -> procedimento (com chips top-5 ao expandir)
+  function ProfissionaisDetailPage({ entities, dmd, dmp, unis, stat, fProcs, periodOk }){
+    const [open, setOpen] = useState({});
+    const [openDay, setOpenDay] = useState({});
+    const displayEntities = fProcs.length === 0 ? entities : (() => {
+      const profMap = {};
+      Object.entries(dmd).forEach(([key, procs]) => {
+        const [prof, day] = key.split("||");
+        if(!periodOk(day)) return;
+        const filtered = procs.filter(p => fProcs.includes(p.proc) && (unis.length===0||unis.includes(p.un)) && p.st === stat);
+        if(!filtered.length) return;
+        const val = filtered.reduce((s,p)=>s+p.valor, 0);
+        if(!profMap[prof]) profMap[prof] = {};
+        profMap[prof][day] = (profMap[prof][day]||0) + val;
+      });
+      return Object.entries(profMap).map(([name, days]) => ({
+        name,
+        days: Object.entries(days).sort((a,b)=>b[0].localeCompare(a[0])).map(([d,v])=>[d,v]),
+        total: Object.values(days).reduce((s,v)=>s+v,0)
+      })).filter(e=>e.total>0).sort((a,b)=>b.total-a.total);
+    })();
+    const grand = displayEntities.reduce((s,e)=>s+e.total,0)||1, maxEnt = Math.max(1, ...displayEntities.map(e=>e.total));
+    const dmap = {}; displayEntities.forEach(e => e.days.forEach(([d,v]) => { dmap[d]=(dmap[d]||0)+v; }));
+    const daily = Object.keys(dmap).sort().reverse().map(d => [d, dmap[d]]);
+    const maxDay = Math.max(1, ...daily.map(d=>d[1]));
+    const top = displayEntities.slice(0,10);
+    const toggle = n => setOpen(o => ({ ...o, [n]: !o[n] }));
+    const toggleDay = k => setOpenDay(o => ({ ...o, [k]: !o[k] }));
+    return html`<${React.Fragment}>
+      <div class="visual">
+        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking — top ${top.length} profissionais</div>
+        <${Chartjs} horizontal=${true} labels=${top.map(e=>e.name)} data=${top.map(e=>e.total)} height=${Math.max(150, top.length*34)} />
+      </div>
+      <div class="visual">
+        <div class="visual-h"><i class="ti ti-user"></i>Profissionais — detalhe por dia <small>· ${brl0(grand)}</small></div>
+        <div class="subh">Por dia</div>
+        <table>
+          <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
+          <tbody>
+            ${daily.map(d => html`<tr key=${d[0]}>
+              <td>${fmtD(d[0])}</td>
+              <td class="num barcell"><div class="bar" style=${{width:(d[1]/maxDay*100)+"%"}}></div><span>${brl(d[1])}</span></td>
+              <td class="num pct">${pct(d[1]/grand*100)}</td>
+            </tr>`)}
+            <tr class="total"><td>Total</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
+          </tbody>
+        </table>
+        <div class="subh">Por profissional e dia <small>(clique no profissional → clique no dia para ver procedimentos)</small></div>
+        <table>
+          <thead><tr><th>Profissional / Dia / Procedimento</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
+          <tbody>
+            ${displayEntities.map(e => html`<${React.Fragment} key=${e.name}>
+              <tr class="grp" onClick=${() => toggle(e.name)}>
+                <td><i class=${"ti "+(open[e.name]?"ti-chevron-down":"ti-chevron-right")}></i>${e.name}</td>
+                <td class="num barcell"><div class="bar" style=${{width:(e.total/maxEnt*100)+"%"}}></div><span>${brl(e.total)}</span></td>
+                <td class="num pct">${pct(e.total/grand*100)}</td>
+              </tr>
+              ${open[e.name] ? html`<tr key="__chips_${e.name}"><td colspan="3" style=${{padding:"4px 14px 6px 34px",background:"#fdfaf5",borderBottom:"1px solid #f3eee6"}}>${
+                Object.entries(dmp[e.name]||{}).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([p],i) =>
+                  html`<span key=${i} style=${{display:"inline-block",margin:"2px 3px",padding:"2px 9px",background:"#fdf1e3",color:"#9a5a06",borderRadius:"10px",fontSize:"11px",fontWeight:500}}>${p}</span>`
+                )
+              }</td></tr>` : null}
+              ${open[e.name] ? e.days.map(([d,v]) => {
+                const dk = e.name+"||"+d;
+                const procs = (dmd[dk]||[]).filter(p => (unis.length===0||unis.includes(p.un)) && p.st === stat).sort((a,b)=>b.valor-a.valor);
+                return html`<${React.Fragment} key=${d}>
+                  <tr class="day grp" onClick=${() => toggleDay(dk)}>
+                    <td class="ind"><i class=${"ti "+(openDay[dk]?"ti-chevron-down":"ti-chevron-right")} style=${{fontSize:"12px",marginRight:"4px"}}></i>${fmtD(d)}</td>
+                    <td class="num">${brl(v)}</td>
+                    <td class="num">${pct(v/grand*100)}</td>
+                  </tr>
+                  ${openDay[dk] ? procs.map((p,i) => html`<tr key=${i}>
+                    <td style=${{paddingLeft:"52px",color:"#8a8378",fontSize:"12px",height:"26px"}}>${p.proc}</td>
+                    <td class="num" style=${{fontSize:"12px"}}>${brl(p.valor)}</td>
+                    <td class="num" style=${{fontSize:"12px"}}>${pct(p.valor/grand*100)}</td>
+                  </tr>`) : null}
+                </>`;
+              }) : null}
+            </>`)}
+            <tr class="total"><td>Total geral</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </>`;
+  }
+  // Sem filtro de profissional: procedimentos gerais. Com filtro: procedimentos do(s) profissional(is) escolhido(s).
+  function ProcedimentosDetailPage({ entities, dmd, pred, fProfs, topProfs }){
+    const [open, setOpen] = useState({});
+    let procEntities;
+    if(fProfs.length === 0){
+      procEntities = entities;
+    } else {
+      const procMap = {};
+      Object.entries(dmd).forEach(([key, procs]) => {
+        const [prof, day] = key.split("||");
+        if(!fProfs.includes(prof)) return;
+        procs.forEach(p => {
+          if(!pred(p.un, p.st, day)) return;
+          const pm = procMap[p.proc] = procMap[p.proc] || {};
+          pm[day] = (pm[day]||0) + p.valor;
+        });
+      });
+      procEntities = Object.entries(procMap).map(([name, days]) => ({
+        name,
+        days: Object.entries(days).sort((a,b) => b[0].localeCompare(a[0])).map(([d,v]) => [d,v]),
+        total: Object.values(days).reduce((s,v)=>s+v, 0)
+      })).filter(e=>e.total>0).sort((a,b)=>b.total-a.total);
+    }
+    const grand = procEntities.reduce((s,e)=>s+e.total,0)||1, maxEnt = Math.max(1, ...procEntities.map(e=>e.total));
+    const dmap = {}; procEntities.forEach(e => e.days.forEach(([d,v]) => { dmap[d]=(dmap[d]||0)+v; }));
+    const daily = Object.keys(dmap).sort().reverse().map(d => [d, dmap[d]]);
+    const maxDay = Math.max(1, ...daily.map(d=>d[1]));
+    const top = procEntities.slice(0,10);
+    const toggle = n => setOpen(o => ({ ...o, [n]: !o[n] }));
+    const banner = (!fProfs.length && topProfs.length) ? html`<div style=${{padding:"8px 16px 6px",display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap",borderBottom:"1px solid #eee6da",background:"#fcfbf9"}}>
+      <span style=${{fontSize:"11px",color:"#b8ad9c",fontWeight:600,whiteSpace:"nowrap"}}>Profissionais no período:</span>
+      ${topProfs.slice(0,6).map((e,i) => html`<span key=${i} style=${{fontSize:"11px",color:"#6e675c",padding:"2px 8px",background:"#f4f2ef",borderRadius:"10px",border:"1px solid #e3ded7"}}>${e.name}</span>`)}
+      ${topProfs.length>6 ? html`<span style=${{fontSize:"11px",color:"#b8ad9c"}}>+${topProfs.length-6} mais</span>` : null}
+    </div>` : null;
+    return html`<${React.Fragment}>${banner}
+      <div class="visual">
+        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking — top ${top.length} procedimentos</div>
+        <${Chartjs} horizontal=${true} labels=${top.map(e=>e.name)} data=${top.map(e=>e.total)} height=${Math.max(150, top.length*34)} />
+      </div>
+      <div class="visual">
+        <div class="visual-h"><i class="ti ti-clipboard-list"></i>Procedimentos — detalhe por dia <small>· ${brl0(grand)}</small></div>
+        <div class="subh">Por dia</div>
+        <table>
+          <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
+          <tbody>
+            ${daily.map(d => html`<tr key=${d[0]}>
+              <td>${fmtD(d[0])}</td>
+              <td class="num barcell"><div class="bar" style=${{width:(d[1]/maxDay*100)+"%"}}></div><span>${brl(d[1])}</span></td>
+              <td class="num pct">${pct(d[1]/grand*100)}</td>
+            </tr>`)}
+            <tr class="total"><td>Total</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
+          </tbody>
+        </table>
+        <div class="subh">Por procedimento e dia <small>(clique no nome para expandir)</small></div>
+        <table>
+          <thead><tr><th>Procedimento / Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
+          <tbody>
+            ${procEntities.map(e => html`<${React.Fragment} key=${e.name}>
+              <tr class="grp" onClick=${() => toggle(e.name)}>
+                <td><i class=${"ti "+(open[e.name]?"ti-chevron-down":"ti-chevron-right")}></i>${e.name}</td>
+                <td class="num barcell"><div class="bar" style=${{width:(e.total/maxEnt*100)+"%"}}></div><span>${brl(e.total)}</span></td>
+                <td class="num pct">${pct(e.total/grand*100)}</td>
+              </tr>
+              ${open[e.name] ? e.days.map(d => html`<tr class="day" key=${d[0]}>
+                <td class="ind">${fmtD(d[0])}</td><td class="num">${brl(d[1])}</td><td class="num">${pct(d[1]/grand*100)}</td>
+              </tr>`) : null}
+            </>`)}
+            <tr class="total"><td>Total geral</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </>`;
+  }
+  // Pacotes por profissional solicitante · Pacotes por dia · Pacote x Procedimento
+  function PacotesDetailPage({ user, store, unis, pmode, months, de, ate }){
+    const [data, setData] = useState(null);
+    const [fProf, setFProf] = useState("");
+    const [fProc, setFProc] = useState("");
+    const [fPac, setFPac] = useState("");
+    const [open, setOpen] = useState({});
+    useEffect(() => {
+      let cancel = false; setData(null);
+      fetchAll("vw_pacote_solic", ["unidade_nome","status_proposta","dia","profissional_proposta","nome_pacote","nome_procedimento"]).catch(() => []).then(ps => { if(!cancel) setData({ ps }); });
+      return () => { cancel = true; };
+    }, []);
+    if(!data) return html`<div class="visual"><div class="visual-h"><i class="ti ti-package"></i>Pacotes</div><div style=${{padding:"30px 16px",color:"#8a8378"}}>Carregando…</div></div>`;
+    const uniNames = user.isMaster ? unis.map(i => store.units[i]) : [user.unidade];
+    const inP = d => pmode === "mes" ? months.includes(d.slice(0,7)) : (d >= de && d <= ate);
+    const okUni = un => !user.isMaster || uniNames.length === 0 || uniNames.includes(un);
+    const terms = s => s.split(",").map(t => t.trim().toLowerCase()).filter(Boolean);
+    const matchAny = (val, ts) => ts.length === 0 || ts.some(t => (val||"").toLowerCase().includes(t));
+    const tProf = terms(fProf), tProc = terms(fProc), tPac = terms(fPac);
+    const psf = data.ps.filter(r => okUni(r.unidade_nome) && inP(r.dia) && matchAny(r.profissional_proposta,tProf) && matchAny(r.nome_procedimento,tProc) && matchAny(r.nome_pacote,tPac));
+
+    const pacMap = {};
+    psf.forEach(r => { const nome = r.nome_pacote || "(sem pacote)"; const p = pacMap[nome] = pacMap[nome] || { total:0, solic:{} }; const v = Number(r.valor); p.total += v; p.solic[r.profissional_proposta] = (p.solic[r.profissional_proposta]||0) + v; });
+    const pacotes = Object.entries(pacMap).map(([nome,v]) => ({ nome, total:v.total, solic: Object.entries(v.solic).sort((a,b)=>b[1]-a[1]) })).sort((a,b)=>b.total-a.total);
+    const grandPac = pacotes.reduce((s,p)=>s+p.total,0) || 1;
+    const maxPac = Math.max(1, ...pacotes.map(p=>p.total));
+
+    const diaMap = {};
+    psf.forEach(r => { diaMap[r.dia] = (diaMap[r.dia]||0) + Number(r.valor); });
+    const porDia = Object.keys(diaMap).sort().reverse().map(d => [d, diaMap[d]]);
+    const maxDia = Math.max(1, ...porDia.map(d=>d[1]));
+    const totalDia = porDia.reduce((s,d)=>s+d[1],0);
+
+    const ppMap = {};
+    psf.forEach(r => { const nome = r.nome_pacote || "(sem pacote)"; const k = nome+"||"+r.nome_procedimento; const o = ppMap[k] = ppMap[k] || { pacote:nome, proc:r.nome_procedimento, valor:0 }; o.valor += Number(r.valor); });
+    const pacProc = Object.values(ppMap).sort((a,b)=>b.valor-a.valor);
+    const pacProcTot = pacProc.reduce((s,o)=>s+o.valor,0);
+
+    const toggle = n => setOpen(o => ({ ...o, [n]: !o[n] }));
+    const field = (lbl, val, set, ph) => html`<div class="fld"><span>${lbl}</span><input class="mfin" value=${val} onChange=${e => set(e.target.value)} placeholder=${ph} /></div>`;
+    return html`<${React.Fragment}>
+      <div class="visual" style=${{padding:"12px 14px",display:"flex",gap:"16px",flexWrap:"wrap",alignItems:"flex-end"}}>
+        ${field("Profissional (contém)", fProf, setFProf, "ex.: ana, carla")}
+        ${field("Procedimento (contém)", fProc, setFProc, "ex.: laser, toxina")}
+        ${field("Pacote (contém)", fPac, setFPac, "ex.: promo")}
+        <div style=${{fontSize:"11px",color:"#a59c8d",paddingBottom:"7px"}}>separe por vírgula p/ vários termos</div>
+      </div>
+      <div class="visual">
+        <div class="visual-h"><i class="ti ti-package"></i>Pacotes — por profissional solicitante <small>· ${pacotes.length} pacote(s) · ${brl0(grandPac)}</small></div>
+        <table>
+          <thead><tr><th>Pacote / Profissional</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
+          <tbody>
+            ${pacotes.map(p => html`<${React.Fragment} key=${p.nome}>
+              <tr class="grp" onClick=${() => toggle(p.nome)}>
+                <td><i class=${"ti "+(open[p.nome]?"ti-chevron-down":"ti-chevron-right")}></i>${p.nome}</td>
+                <td class="num barcell"><div class="bar" style=${{width:(p.total/maxPac*100)+"%"}}></div><span>${brl(p.total)}</span></td>
+                <td class="num pct">${pct(p.total/grandPac*100)}</td>
+              </tr>
+              ${open[p.nome] ? p.solic.map(([s,val]) => html`<tr class="day" key=${s}><td class="ind">${s}</td><td class="num">${brl(val)}</td><td class="num">${pct(val/grandPac*100)}</td></tr>`) : null}
+            </>`)}
+            <tr class="total"><td>Total geral</td><td class="num">${brl(grandPac)}</td><td class="num">100,0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="visual">
+        <div class="visual-h"><i class="ti ti-calendar"></i>Pacotes — por dia <small>· ${porDia.length} dia(s) · ${brl0(totalDia)}</small></div>
+        <table>
+          <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
+          <tbody>
+            ${porDia.map(d => html`<tr key=${d[0]}>
+              <td>${fmtD(d[0])}</td>
+              <td class="num barcell"><div class="bar" style=${{width:(d[1]/maxDia*100)+"%"}}></div><span>${brl(d[1])}</span></td>
+              <td class="num pct">${pct(d[1]/totalDia*100)}</td>
+            </tr>`)}
+            <tr class="total"><td>Total</td><td class="num">${brl(totalDia)}</td><td class="num">100,0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="visual">
+        <div class="visual-h"><i class="ti ti-package"></i>Pacote × Procedimento <small>· ${pacProc.length} linha(s) · ${brl0(pacProcTot)}</small></div>
+        <table>
+          <thead><tr><th>Pacote</th><th>Procedimento</th><th class="num">Valor</th></tr></thead>
+          <tbody>
+            ${pacProc.slice(0,200).map((o,i) => html`<tr key=${i}><td>${o.pacote}</td><td>${o.proc}</td><td class="num">${brl(o.valor)}</td></tr>`)}
+            <tr class="total"><td>Total</td><td></td><td class="num">${brl(pacProcTot)}</td></tr>
+          </tbody>
+        </table>
+        ${pacProc.length>200 ? html`<div style=${{padding:"6px 14px 12px",fontSize:"11px",color:"#a59c8d"}}>Mostrando 200 de ${pacProc.length} — use os filtros acima pra refinar.</div>` : null}
+      </div>
+    </>`;
+  }
+  function aggDailyProposta(store, pred){
+    const m = {};
+    store.duP.forEach(([u,s,d,vf]) => { if(pred(u,s,d)) m[d]=(m[d]||0)+vf; });
+    return m;
+  }
+  // Propostas por status - ignora o filtro de status (mostra todos ao mesmo tempo),
+  // respeita Unidade/Período. Fonte: store.du (qtd_propostas ja vem 1x por proposta).
+  function propostasPorStatus(store, unis, pmode, months, de, ate){
+    const okUD = (u,d) => (unis.length===0||unis.includes(u)) && (pmode==="mes" ? months.includes(d.slice(0,7)) : (d>=de&&d<=ate));
+    const qtd = {};
+    store.du.forEach(([u,s,d,vf,qp]) => { if(okUD(u,d)) qtd[s] = (qtd[s]||0) + qp; });
+    return store.statuses.map((name,i) => ({ name, qtd: qtd[i]||0 })).filter(x=>x.qtd>0).sort((a,b)=>b.qtd-a.qtd);
+  }
+  // Rótulo da taxa que acompanha o status selecionado no filtro (uma única
+  // KPI que se reforma de acordo com o Status escolhido).
+  const TAXA_LABEL_POR_STATUS = {
+    "Executada": "Taxa de Execução",
+    "Aguardando aprovação": "Taxa de Pendência",
+    "Rejeitada": "Taxa de Rejeição",
+  };
+  // % que a qtd. de propostas do status selecionado representa sobre a
+  // qtd. de propostas geral - reaproveita a mesma base do grafico
+  // "Propostas por status" (ignora o filtro de Status pra pegar o total).
+  function taxaDoStatus(porStatus, statusAtual){
+    const total = porStatus.reduce((s,x) => s+x.qtd, 0) || 1;
+    const qtd = porStatus.find(x => x.name === statusAtual)?.qtd || 0;
+    return { label: TAXA_LABEL_POR_STATUS[statusAtual] || ("Taxa de " + statusAtual), pctValue: qtd / total * 100 };
+  }
+  function ProcCanceladoList({ entities }){
+    return html`<div class="visual">
+      <div class="visual-h"><i class="ti ti-clipboard-list"></i>Por procedimento <small>· cancelados neste status</small></div>
+      <table>
+        <thead><tr><th>Procedimento</th></tr></thead>
+        <tbody>
+          ${entities.map(e => html`<tr key=${e.name}><td>${e.name}</td></tr>`)}
+          ${entities.length===0 ? html`<tr><td style=${{color:"#a59c8d"}}>Nenhum procedimento cancelado no período.</td></tr>` : null}
+        </tbody>
+      </table>
+    </div>`;
+  }
+  // Tabela de comparação de KPIs entre dois meses, com variação % (seta+cor).
+  function KpiCompareTable({ mes1Label, mes2Label, k1, k2 }){
+    const linha = (label, v1, v2, fmt) => {
+      let variacao = null;
+      if(v1 !== 0) variacao = (v2 - v1) / v1 * 100;
+      else if(v2 !== 0) variacao = 100;
+      const up = variacao !== null && variacao >= 0;
+      return html`<tr key=${label}>
+        <td>${label}</td>
+        <td class="num">${fmt(v1)}</td>
+        <td class="num">${fmt(v2)}</td>
+        <td class="num" style=${{color: variacao===null?"#a59c8d":(up?"#2e7d32":"#b3261e"),fontWeight:600}}>
+          ${variacao===null ? "—" : html`<i class=${"ti "+(up?"ti-trending-up":"ti-trending-down")}></i> ${(up?"+":"")}${variacao.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})}%`}
+        </td>
+      </tr>`;
+    };
+    return html`<div class="visual">
+      <div class="visual-h"><i class="ti ti-arrows-diff"></i>Comparação de KPIs</div>
+      <table>
+        <thead><tr><th>Indicador</th><th class="num">${mes1Label}</th><th class="num">${mes2Label}</th><th class="num">Variação</th></tr></thead>
+        <tbody>
+          ${linha("Valor Final", k1.vf, k2.vf, brl0)}
+          ${linha("Ticket Médio", k1.ticket, k2.ticket, brl0)}
+          ${linha("Qtd. Propostas", k1.qtd, k2.qtd, v => v.toLocaleString("pt-BR"))}
+          ${linha("Média Diária", k1.media, k2.media, brl0)}
+        </tbody>
+      </table>
+    </div>`;
+  }
+  // Aba "Comparação" - solta, filtro proprio (Unidade + 2 meses fechados),
+  // sempre status Executada. Reaproveita Matrix/store, sem novas buscas.
+  function Comparacao({ store }){
+    const closedMonths = closedMonthsFrom(store);
+    const [unis, setUnis] = useState([]);
+    const [mesAnt, setMesAnt] = useState(closedMonths.length>1 ? [closedMonths[closedMonths.length-2][0]] : (closedMonths[0] ? [closedMonths[0][0]] : []));
+    const [mesPos, setMesPos] = useState(closedMonths.length>0 ? [closedMonths[closedMonths.length-1][0]] : []);
+    const uniOpts = store.units.map((u,i) => [i, u]);
+    if(closedMonths.length === 0) return html`<div class="visual"><div class="visual-h">Comparação</div><div style=${{padding:"20px 16px",color:"#8a8378"}}>Não há meses fechados suficientes (2025-2026) para comparar ainda.</div></div>`;
+    const filterBar = html`<div class="fbar">
+      <div class="fld"><span>Unidade</span><${MultiSelect} options=${uniOpts} value=${unis} onChange=${setUnis} placeholder="Todas as unidades" /></div>
+      <div class="fld"><span>Mês anterior</span><${MultiSelect} options=${closedMonths} value=${mesAnt} onChange=${setMesAnt} placeholder="Selecione o(s) mês(es)" /></div>
+      <div class="fld"><span>Mês posterior</span><${MultiSelect} options=${closedMonths} value=${mesPos} onChange=${setMesPos} placeholder="Selecione o(s) mês(es)" /></div>
+    </div>`;
+    if(mesAnt.length === 0 || mesPos.length === 0){
+      return html`<${React.Fragment}>${filterBar}<div class="canvas"><div class="visual"><div style=${{padding:"20px 16px",color:"#8a8378"}}>Selecione ao menos um mês em "Mês anterior" e em "Mês posterior" pra comparar.</div></div></div></>`;
+    }
+    if(mesAnt.length !== mesPos.length){
+      return html`<${React.Fragment}>${filterBar}<div class="canvas"><div class="visual"><div style=${{padding:"20px 16px",color:"#b3261e"}}>Selecione a mesma quantidade de meses em "Mês anterior" (${mesAnt.length}) e "Mês posterior" (${mesPos.length}) pra comparar.</div></div></div></>`;
+    }
+    const antLabel = groupLabel(mesAnt), posLabel = groupLabel(mesPos);
+    const k1 = kpiGrupo(store, unis, mesAnt), k2 = kpiGrupo(store, unis, mesPos);
+    const pred1 = predGrupo(store, unis, mesAnt), pred2 = predGrupo(store, unis, mesPos);
+    const nDias = Math.max(...[...mesAnt, ...mesPos].map(ym => { const [y,m]=ym.split("-").map(Number); return new Date(y,m,0).getDate(); }));
+    const baseOk = (u,s) => (unis.length===0||unis.includes(u)) && s===store.statExecutada;
+    const porDia = {};
+    store.du.forEach(([u,s,d,valor]) => { if(baseOk(u,s)) porDia[d] = (porDia[d]||0)+valor; });
+    const sumGrupoPorDia = meses => Array.from({length:nDias}, (_,i) => {
+      const dia = String(i+1).padStart(2,"0");
+      return meses.reduce((s,ym) => s + (porDia[ym+"-"+dia]||0), 0);
+    });
+    const dataAnt = sumGrupoPorDia(mesAnt), dataPos = sumGrupoPorDia(mesPos);
+    const labels = Array.from({length:nDias}, (_,i) => String(i+1).padStart(2,"0"));
+    const prof1 = aggEntity(store.dm, pred1), prof2 = aggEntity(store.dm, pred2);
+    const proc1 = aggEntity(store.dproc, pred1), proc2 = aggEntity(store.dproc, pred2);
+    const pac1 = aggEntity(store.dpac||{}, pred1), pac2 = aggEntity(store.dpac||{}, pred2);
+    return html`<${React.Fragment}>
+      ${filterBar}
+      <div class="canvas">
+        <${KpiCompareTable} mes1Label=${antLabel} mes2Label=${posLabel} k1=${k1} k2=${k2} />
+        <div class="visual">
+          <div class="visual-h"><i class="ti ti-chart-line"></i>Valor por dia — ${antLabel} x ${posLabel}</div>
+          <${ComboChartjs} labels=${labels} dataBar=${dataAnt} dataLine=${dataPos} labelBar=${antLabel} labelLine=${posLabel} height=${260} />
+        </div>
+        <div class="grid2">
+          <${Matrix} title=${"Por profissional — "+antLabel} icon="ti-user" entities=${prof1} nameHead="Profissional" />
+          <${Matrix} title=${"Por profissional — "+posLabel} icon="ti-user" entities=${prof2} nameHead="Profissional" />
+        </div>
+        <div class="grid2">
+          <${Matrix} title=${"Por procedimento — "+antLabel} icon="ti-clipboard-list" entities=${proc1} nameHead="Procedimento" />
+          <${Matrix} title=${"Por procedimento — "+posLabel} icon="ti-clipboard-list" entities=${proc2} nameHead="Procedimento" />
+        </div>
+        <div class="grid2">
+          <${Matrix} title=${"Por pacote — "+antLabel} icon="ti-package" entities=${pac1} nameHead="Pacote" />
+          <${Matrix} title=${"Por pacote — "+posLabel} icon="ti-package" entities=${pac2} nameHead="Pacote" />
+        </div>
+      </div>
+    </>`;
+  }
+  const NOTAS = [
+    { v:"1.6", tag:"Geral", ico:"ti-tag", txt:"Painel renomeado para \"Painel de Propostas\", e este aviso de novidades foi adicionado. Assim fica fácil ver o que mudou sem precisar perguntar." },
+    { v:"1.5", tag:"Velocidade", ico:"ti-bolt", txt:"O painel agora abre bem mais rápido. Antes, tudo era carregado de uma vez, mesmo o que você não ia ver. Agora, cada aba só busca os dados dela na hora que você entra." },
+    { v:"1.4", tag:"Geral", ico:"ti-calendar", txt:"O painel abre direto mostrando o mês atual, em vez do ano inteiro. Menos rolagem, foco no que é mais recente." },
+    { v:"1.3", tag:"Comparação", ico:"ti-chart-line", txt:"Nova aba \"Comparação\": escolha dois meses (ou grupos de meses) e veja lado a lado os KPIs, o gráfico e os rankings de profissional/procedimento/pacote, com a variação percentual entre eles." },
+    { v:"1.2", tag:"Status", ico:"ti-list-check", txt:"Novo gráfico mostrando quantas propostas existem em cada status (Executada, Aguardando aprovação, Aprovada, Rejeitada)." },
+    { v:"1.1", tag:"Status", ico:"ti-filter", txt:"Filtro de Status no topo, pra escolher um status por vez. Quando não for \"Executada\", os valores passam a refletir o valor da proposta inteira (sem contar duas vezes), e a tabela de Pacotes fica escondida (não se aplica a esses status)." },
+    { v:"1.0", tag:"Geral", ico:"ti-layout-dashboard", txt:"Painel criado: Análise Geral, Profissionais/Procedimentos/Pacotes - Detalhado, com dados sincronizados automaticamente todos os dias." },
+  ];
+  function PatchNotes({ onClose }){
+    return html`<div onClick=${onClose} style=${{position:"fixed",inset:0,background:"rgba(20,18,16,.55)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:"20px",backdropFilter:"blur(2px)"}}>
+      <div onClick=${e => e.stopPropagation()} style=${{background:"#fff",borderRadius:"14px",boxShadow:"0 24px 64px rgba(0,0,0,.18)",width:"100%",maxWidth:"480px",maxHeight:"84vh",display:"flex",flexDirection:"column",overflow:"hidden",border:"1px solid #e3ded7"}}>
+        <div style=${{padding:"18px 20px",borderBottom:"1px solid #eee6da",display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:"12px",flexShrink:0}}>
+          <div style=${{display:"flex",alignItems:"center",gap:"12px"}}>
+            <div style=${{width:"42px",height:"42px",borderRadius:"10px",background:"#fdf1e3",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,border:"1px solid #eee6da"}}><i class="ti ti-robot" style=${{fontSize:"20px",color:AC}}></i></div>
+            <div>
+              <div style=${{fontSize:"14.5px",fontWeight:600,color:"#2b2a28",letterSpacing:"-.01em"}}>Registro de Atualizações</div>
+              <div style=${{fontSize:"11.5px",color:"#a59c8d",marginTop:"2px"}}>Aqui estão todas as melhorias do painel</div>
+            </div>
+          </div>
+          <button onClick=${onClose} style=${{background:"none",border:"1px solid #e3ded7",cursor:"pointer",color:"#8a8378",fontSize:"18px",width:"30px",height:"30px",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,lineHeight:1,fontWeight:300,fontFamily:"sans-serif"}}>×</button>
+        </div>
+        <div style=${{overflowY:"auto",flex:1}}>
+          ${NOTAS.map((n,i) => html`<div key=${i} style=${{padding:"14px 20px",borderBottom:"1px solid #f5f1ea",display:"flex",gap:"12px",alignItems:"flex-start"}}>
+            <div style=${{width:"32px",height:"32px",borderRadius:"8px",background:"#fdf1e3",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:"1px",border:"1px solid #eee6da"}}><i class="ti ti-robot" style=${{fontSize:"16px",color:AC}}></i></div>
+            <div style=${{flex:1,minWidth:0}}>
+              <div style=${{display:"flex",alignItems:"center",gap:"8px",marginBottom:"5px"}}>
+                <code style=${{fontSize:"10.5px",fontWeight:700,color:"#E8830F",background:"#fdf1e3",padding:"2px 7px",borderRadius:"5px",fontFamily:"monospace",letterSpacing:".02em"}}>v${n.v}</code>
+                <span style=${{fontSize:"10.5px",fontWeight:600,color:"#a59c8d",textTransform:"uppercase",letterSpacing:".06em"}}>${n.tag}</span>
+              </div>
+              <div style=${{fontSize:"13px",color:"#4a443c",lineHeight:"1.6"}}>${n.txt}</div>
+            </div>
+          </div>`)}
+        </div>
+        <div style=${{padding:"11px 20px",borderTop:"1px solid #eee6da",flexShrink:0,background:"#fcfbf9",display:"flex",alignItems:"center",justifyContent:"center",gap:"7px"}}>
+          <i class="ti ti-sun" style=${{fontSize:"14px",color:"#E8830F"}}></i>
+          <span style=${{fontSize:"12px",color:"#8a8378"}}>Dados atualizados automaticamente todos os dias às 8h</span>
+        </div>
+      </div>
+    </div>`;
+  }
+  function Dashboard({ user, store, ensureProfProc, ensurePropostaMetrics, onLogout }){
+    const [page, setPage] = useState("geral");
+    const [showNotes, setShowNotes] = useState(false);
+    const [unis, setUnis] = useState([]);
+    const [stat, setStat] = useState(store.statExecutada >= 0 ? store.statExecutada : 0);
+    const [fProfs, setFProfs] = useState([]);
+    const [fProcs, setFProcs] = useState([]);
+    const [pmode, setPmode] = useState("mes");
+    const [months, setMonths] = useState(() => {
+      const today = new Date();
+      const ymAtual = today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0");
+      return store.months.some(m => m[0]===ymAtual) ? [ymAtual] : store.months.map(m => m[0]);
+    });
+    const [de, setDe] = useState(store.dmin);
+    const [ate, setAte] = useState(store.dmax);
+    const [kpi, setKpi] = useState(null);
+    const statusAtual = store.statuses[stat];
+    const isExecutada = statusAtual === "Executada";
+    // Dados sob demanda: so' busca quando realmente preciso (aba de
+    // drill-down aberta, ou status != Executada selecionado).
+    useEffect(() => { if(page==="prof" || page==="proc") ensureProfProc(); }, [page]);
+    useEffect(() => { if(!isExecutada) ensurePropostaMetrics(); }, [isExecutada]);
+    const propMetricsLoading = !isExecutada && store.duP === null;
+    const profProcLoading = (page==="prof" || page==="proc") && store.dmd === null;
+    const pred = buildPred(unis, stat, pmode, months, de, ate);
+    const dailyItem = aggDaily(store, pred);
+    const daily = isExecutada ? dailyItem : (() => {
+      const propMap = aggDailyProposta({ duP: store.duP||[] }, pred);
+      return dailyItem.map(([d,vf,qp,qi]) => [d, propMap[d]||0, qp, qi]);
+    })();
+    const prof = aggEntity(isExecutada ? store.dm : (store.dmProp||{}), pred);
+    const proc = aggEntity(store.dproc, pred);
+    const procSemValor = proc;
+    const pac = aggEntity(store.dpac || {}, pred);
+    const statusChart = propostasPorStatus(store, unis, pmode, months, de, ate);
+    const profOpts = [...new Set(Object.keys(store.dmd||{}).map(k => k.split("||")[0]))].sort().map(m => [m, m]);
+    const procOpts = Object.keys(store.dproc||{}).sort().map(p => [p, p]);
+    const periodOk = d => pmode === "mes" ? months.includes(d.slice(0,7)) : (d >= de && d <= ate);
+    useEffect(() => {
+      let cancel = false; setKpi(null);
+      const dias = periodDays(pmode, months, de, ate, store.calMin, store.calMax);
+      const p_unidade = user.isMaster ? (unis.length === 1 ? store.units[unis[0]] : null) : user.unidade;
+      const p_status = store.statuses[stat];
+      const diasSet = new Set(dias);
+      const kpiRows = DEMO_EVENTS.filter(r => (!p_unidade || r.unidade === p_unidade) && r.status === p_status && diasSet.has(r.dia));
+      setTimeout(() => {
+        if(cancel) return;
+        const vf = kpiRows.reduce((a,r) => a + r.valor, 0);
+        setKpi({ vf, qtd: kpiRows.length, itens: kpiRows.length, dias: dias.length });
+      }, 120);
+      return () => { cancel = true; };
+    }, [unis.join(","), stat, pmode, months.join(","), de, ate]);
+    const dchart = daily.slice().reverse();
+    const ini = (user.isMaster ? "D" : (user.unidade||"U")).replace("Unidade ","").charAt(0).toUpperCase();
+    return html`<div>
+      ${showNotes ? html`<${PatchNotes} onClose=${() => setShowNotes(false)} />` : null}
+      <div class="hdr">
+        <div class="hdr-l"><img class="logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23E8830F'/%3E%3Ctext x='32' y='41' font-size='26' font-family='Segoe UI, sans-serif' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E" alt="Painel demo" /><b>Painel de Propostas</b></div>
+        <div class="hdr-r"><button class=${"lo"+(showNotes?"":" lo-pulse")} onClick=${() => setShowNotes(true)} aria-label="Novidades" title="Ver novidades"><span class="inbox-ico"></span></button><span class="chip"><span class="av">${ini}</span>${user.isMaster ? "diretoria" : user.login}</span><button class="lo" onClick=${onLogout} aria-label="Sair"><i class="ti ti-logout"></i></button></div>
+      </div>
+      <div class="body">
+        <div class="side">
+          <div class="side-t">Páginas</div>
+          <div class=${"nav"+(page==="geral"?" active":"")} onClick=${() => setPage("geral")}><i class="ti ti-layout-dashboard"></i>Análise Geral</div>
+          <div class=${"nav"+(page==="prof"?" active":"")} onClick=${() => setPage("prof")}><i class="ti ti-user"></i>Profissionais - Detalhado</div>
+          <div class=${"nav"+(page==="proc"?" active":"")} onClick=${() => setPage("proc")}><i class="ti ti-clipboard-list"></i>Procedimentos - Detalhado</div>
+          <div class=${"nav"+(page==="pac"?" active":"")} onClick=${() => setPage("pac")}><i class="ti ti-package"></i>Pacotes - Detalhado</div>
+          <div class=${"nav"+(page==="comp"?" active":"")} onClick=${() => setPage("comp")}><i class="ti ti-chart-line"></i>Comparação</div>
+        </div>
+        <div class="main">
+          ${page==="comp" ? html`<${Comparacao} store=${store} />` : html`<${React.Fragment}>
+          <${FilterBar} store=${store} user=${user} unis=${unis} setUnis=${setUnis} stat=${stat} setStat=${setStat} pmode=${pmode} setPmode=${setPmode} months=${months} setMonths=${setMonths} de=${de} setDe=${setDe} ate=${ate} setAte=${setAte} page=${page} fProfs=${fProfs} setFProfs=${setFProfs} profOpts=${profOpts} fProcs=${fProcs} setFProcs=${setFProcs} procOpts=${procOpts} />
+          <div class="canvas">
+        ${page==="geral" ? html`<${React.Fragment}>
+          ${propMetricsLoading ? html`<div class="visual" style=${{padding:"10px 16px",color:"#8a8378",fontSize:"12.5px"}}><i class="ti ti-loader"></i> Carregando dados desse status pela primeira vez…</div>` : null}
+          <${Kpis} kpi=${kpi} taxa=${taxaDoStatus(statusChart, statusAtual)} />
+          <div class="visual">
+            <div class="visual-h"><i class="ti ti-chart-bar"></i>Valor por dia (Propostas)</div>
+            <${Chartjs} labels=${dchart.map(r=>ddmm(r[0]))} data=${dchart.map(r=>r[1])} height=${230} />
+          </div>
+          <div class="visual">
+            <div class="visual-h"><i class="ti ti-list-check"></i>Propostas por status <small>· quantidade de propostas</small></div>
+            <${Chartjs} horizontal=${true} valueType="count" labels=${statusChart.map(s=>s.name)} data=${statusChart.map(s=>s.qtd)} height=${Math.max(120, statusChart.length*40)} />
+          </div>
+          <div class="grid2">
+            <${Matrix} title="Por profissional (solicitante)" icon="ti-user" entities=${prof} nameHead="Profissional" />
+            ${isExecutada ? html`<${Matrix} title="Por procedimento" icon="ti-clipboard-list" entities=${proc} nameHead="Procedimento" />` : html`<${ProcCanceladoList} entities=${procSemValor} />`}
+          </div>
+          ${isExecutada ? html`<${Matrix} title="Por pacote" icon="ti-package" entities=${pac} nameHead="Pacote" />` : null}
+          <${TotalTable} daily=${daily} />
+        </>` : null}
+        ${page==="prof" ? (profProcLoading ? html`<div class="visual"><div style=${{padding:"30px 16px",color:"#8a8378"}}><i class="ti ti-loader"></i> Carregando detalhes de profissionais…</div></div>` : html`<${ProfissionaisDetailPage} entities=${prof} dmd=${store.dmd} dmp=${store.dmp} unis=${unis} stat=${stat} fProcs=${fProcs} periodOk=${periodOk} />`) : null}
+        ${page==="proc" ? (profProcLoading ? html`<div class="visual"><div style=${{padding:"30px 16px",color:"#8a8378"}}><i class="ti ti-loader"></i> Carregando detalhes de procedimentos…</div></div>` : html`<${ProcedimentosDetailPage} entities=${proc} dmd=${store.dmd} pred=${pred} fProfs=${fProfs} topProfs=${prof} />`) : null}
+        ${page==="pac" ? html`<${PacotesDetailPage} user=${user} store=${store} unis=${unis} pmode=${pmode} months=${months} de=${de} ate=${ate} />` : null}
+          </div>
+        </>`}
+        </div>
+      </div>
+    </div>`;
+  }
+  function Login({ onLogin, err, busy }){
+    const [u, setU] = useState(""); const [p, setP] = useState("");
+    const go = () => { if(!busy && u.trim() && p) onLogin(u, p); };
+    return html`<div class="gate"><div class="gate-card">
+      <img class="logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23E8830F'/%3E%3Ctext x='32' y='41' font-size='26' font-family='Segoe UI, sans-serif' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E" alt="Painel demo" />
+      <p class="gate-sub">Painel de Propostas</p>
+      <label>Login</label>
+      <input type="text" value=${u} onChange=${e => setU(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="ex.: morumbi" />
+      <label>Senha</label>
+      <input type="password" value=${p} onChange=${e => setP(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="••••••" />
+      <button class="btn" onClick=${go} disabled=${busy}>${busy ? "Entrando..." : "Entrar"}</button>
+      <div class="err">${err}</div>
+      <div class="hint">Ambiente de demonstração — qualquer login e senha funcionam</div>
+    </div></div>`;
+  }
+  function App(){
+    const [user, setUser] = useState(null);
+    const [store, setStore] = useState(null);
+    const [err, setErr] = useState("");
+    const [busy, setBusy] = useState(false);
+    const inFlight = React.useRef({}); // evita disparar o mesmo fetch sob-demanda 2x
+    async function onLogin(login, pwd){
+      setBusy(true); setErr("");
+      try {
+        const lg = (login || "demo").trim().toLowerCase();
+        await new Promise(res => setTimeout(res, 400));
+        const u = { login: lg, unidade: DEMO_UNIDADES[0], isMaster: true };
+        const s = await loadCore(u);
+        setUser(u); setStore(s);
+      } catch(e){ setErr(e.message || "Falha ao entrar."); }
+      finally { setBusy(false); }
+    }
+    function logout(){ setUser(null); setStore(null); setErr(""); }
+    // ensureX: so busca se ainda nao foi buscado (campo null) e nao ha um fetch em andamento
+    const ensureProfProc = () => {
+      if(!store || store.dmd !== null || inFlight.current.profProc) return;
+      inFlight.current.profProc = true;
+      loadProfProc(user, store).then(extra => {
+        inFlight.current.profProc = false;
+        setStore(s => ({ ...s, ...extra }));
+      });
+    };
+    const ensurePropostaMetrics = () => {
+      if(!store || store.duP !== null || inFlight.current.propMetrics) return;
+      inFlight.current.propMetrics = true;
+      loadPropostaMetrics(user, store).then(extra => {
+        inFlight.current.propMetrics = false;
+        setStore(s => ({ ...s, ...extra }));
+      });
+    };
+    if(user && store) return html`<${Dashboard} user=${user} store=${store} ensureProfProc=${ensureProfProc} ensurePropostaMetrics=${ensurePropostaMetrics} onLogout=${logout} />`;
+    if(user && !store) return html`<div style=${{padding:"40px",textAlign:"center",color:"#8a8378"}}>Carregando…</div>`;
+    return html`<${Login} onLogin=${onLogin} err=${err} busy=${busy} />`;
+  }
+  ReactDOM.createRoot(document.getElementById("pbx-root")).render(html`<${App} />`);
+</script>
+</body>
+</html>
