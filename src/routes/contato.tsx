@@ -94,12 +94,6 @@ function ContactPage() {
         })}
       </div>
 
-      <div className="mt-12 glass-card rounded-2xl p-6 text-center sm:p-10">
-        <p className="font-display text-lg text-muted-foreground">
-          "A melhor decisao nasce de um bom dado."
-        </p>
-        <p className="mt-2 font-mono text-xs text-primary">- {profile.name}</p>
-      </div>
     </div>
   );
 }
