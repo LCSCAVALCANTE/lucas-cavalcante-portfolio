@@ -2912,7 +2912,7 @@ var demoTypingMsg = document.createElement('div');
       if (demoTypingMsg.parentNode) {
         demoTypingMsg.parentNode.removeChild(demoTypingMsg);
       }
-      addChatMessage('bot', 'Essa pergunta, no projeto real, e' respondida por uma IA com acesso total aos dados filtrados. Nesta previa publica, apenas as perguntas do menu (com respostas locais) estao habilitadas.', horaAtual());
+      addChatMessage('bot', 'Essa pergunta, no projeto real, seria respondida por uma IA com acesso total aos dados filtrados. Nesta previa publica, apenas as perguntas do menu (com respostas locais) estao habilitadas.', horaAtual());
       qBtns.forEach(function(b) { b.disabled = false; });
       setTimeout(showCategories, 600);
     }, WEBHOOK_MIN_DELAY_MS);
