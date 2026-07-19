@@ -6,199 +6,273 @@
 <title>Dashboard de Ocupação de Agenda</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
 <style>
-/* MODO DEMO: preview publico do portfolio. Nenhuma chamada de rede real
-   acontece aqui - os dados abaixo sao gerados no navegador so para esta
-   demonstracao. A paleta de cores abaixo e a mesma do dashboard real
-   (mesmas variaveis --bg/--surface/--blue/--green/--orange etc.), so a
-   fonte dos dados muda. */
+/* MODO DEMO: preview publico do portfolio, com dados 100% ficticios
+   gerados no navegador. Layout e paleta reproduzem o dashboard real
+   (referencia: prints do proprio dashboard). */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:       #0c1525;
-  --surface:  #111d30;
-  --surface2: #0c1a2e;
-  --border:   #1a2436;
-  --blue:     #3b82f6;
-  --blue2:    #1d4ed8;
-  --green:    #22c55e;
-  --orange:   #f97316;
-  --red:      #ef4444;
-  --amber:    #f59e0b;
-  --cyan:     #06b6d4;
-  --purple:   #8b5cf6;
-  --text1:    #f1f5f9;
-  --text2:    #cbd5e1;
-  --text3:    #94a3b8;
+  --bg: #0c1525; --surface: #111d30; --surface2: #0c1a2e; --border: #1a2436;
+  --blue: #3b82f6; --green: #22c55e; --orange: #f97316; --red: #ef4444;
+  --purple: #8b5cf6; --cyan: #22d3ee; --text1: #f1f5f9; --text2: #94a3b8;
 }
-html, body { height: 100%; }
-body {
-  background: var(--bg);
-  color: var(--text1);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
-  font-size: 13px;
-}
-.wrap { display: flex; min-height: 100vh; }
-.side {
-  width: 230px; flex-shrink: 0; background: var(--surface2);
-  border-right: 1px solid var(--border); padding: 16px 10px;
-}
-.side h1 { font-size: 14px; font-weight: 600; padding: 6px 10px 16px; display: flex; align-items: center; gap: 8px; }
-.side h1 i { color: var(--blue); font-size: 18px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
-  font-size: 12.5px; color: var(--text3); cursor: pointer; margin-bottom: 2px;
-}
-.nav-item i { font-size: 16px; }
-.nav-item:hover { background: rgba(59,130,246,.08); color: var(--text1); }
-.nav-item.active { background: rgba(59,130,246,.15); color: var(--blue); font-weight: 600; }
-.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.topbar {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 14px 22px; border-bottom: 1px solid var(--border); flex-wrap: wrap;
-}
-.topbar b { font-size: 15px; font-weight: 600; }
-.badge {
-  display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(34,197,94,.35);
-  background: rgba(34,197,94,.12); color: var(--green); font-size: 11px; font-weight: 600;
-  padding: 4px 11px; border-radius: 999px;
-}
-.content { padding: 20px 22px; overflow-x: auto; }
-.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 12px; margin-bottom: 18px; }
-.kpi {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
-}
-.kpi .lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
-.kpi .val { font-size: 24px; font-weight: 700; }
-.kpi .hint { font-size: 11px; color: var(--cyan); margin-top: 4px; }
-.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 18px; overflow: hidden; }
-.panel-h { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12.5px; font-weight: 600; }
-.panel-h i { color: var(--blue); font-size: 15px; }
+body { background: var(--bg); color: var(--text1); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; padding: 18px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.topbar-l { display: flex; align-items: center; gap: 10px; }
+.topbar-l .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--blue); display: flex; align-items: center; justify-content: center; }
+.topbar-l .ic i { color: #fff; font-size: 19px; }
+.topbar-l b { font-size: 16px; font-weight: 700; display: block; }
+.topbar-l small { color: var(--text2); font-size: 11px; }
+.topbar-r { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pill-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 12px; color: var(--text1); }
+.pill-btn i { font-size: 14px; color: var(--blue); }
+.dt { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 12px; color: var(--text1); }
+.dt span { color: var(--text2); margin-right: 6px; }
+.btn-apply { background: var(--blue); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 12px; margin-bottom: 14px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; position: relative; }
+.kpi .top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.kpi .top i { font-size: 15px; }
+.kpi .top span.lbl { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; color: var(--text2); text-transform: uppercase; }
+.kpi .val { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.kpi .sub { font-size: 10.5px; color: var(--text2); line-height: 1.4; margin-bottom: 8px; min-height: 26px; }
+.kpi .bar { height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; position: relative; }
+.kpi .bar i.fill { display: block; height: 100%; }
+.kpi .pct { position: absolute; right: 14px; bottom: 14px; font-size: 10.5px; font-weight: 600; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+.panel-h { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.panel-h .bar4 { width: 4px; height: 18px; border-radius: 2px; background: var(--blue); }
+.panel-h i { font-size: 16px; color: var(--blue); }
+.panel-h b { font-size: 13.5px; font-weight: 700; }
+.occ-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.occ-big { font-size: 26px; font-weight: 700; color: var(--blue); }
+.occ-track { height: 10px; border-radius: 5px; background: var(--border); overflow: hidden; margin-bottom: 6px; }
+.occ-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, #1d4ed8, var(--blue)); }
+.occ-labels { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text2); }
+.filters { display: flex; gap: 8px; margin-bottom: 12px; }
+.filters .sel { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 12px; color: var(--text2); }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
-thead th { text-align: left; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .03em; font-weight: 600; padding: 9px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+thead th { text-align: left; font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .03em; font-weight: 700; padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 thead th.num { text-align: right; }
-tbody td { padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,.03); white-space: nowrap; }
-tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
-tbody tr:hover td { background: rgba(255,255,255,.02); }
-.occ-bar { display: inline-flex; align-items: center; gap: 8px; }
-.occ-bar .track { width: 60px; height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; }
-.occ-bar .fill { height: 100%; background: var(--blue); }
-.demo-tag {
-  border: 1px solid rgba(6,182,212,.35); background: rgba(6,182,212,.1); color: var(--cyan);
-  font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
-}
-.chat-fab {
-  position: fixed; right: 20px; bottom: 20px; width: 46px; height: 46px; border-radius: 50%;
-  background: var(--blue); display: flex; align-items: center; justify-content: center; cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.35); z-index: 20;
-}
+tbody td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,.03); white-space: nowrap; }
+tbody td.num { text-align: right; font-weight: 600; tabular-nums: auto; }
+.who { display: flex; align-items: center; gap: 8px; }
+.avatar { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.mini-bar { display: inline-flex; align-items: center; gap: 8px; }
+.mini-bar .track { width: 60px; height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.mini-bar .fill { height: 100%; }
+.period-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; }
+.period-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.period-card .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.period-card .top .ic { width: 34px; height: 34px; border-radius: 9px; background: rgba(59,130,246,.15); display: flex; align-items: center; justify-content: center; }
+.period-card .top .ic i { color: var(--blue); font-size: 16px; }
+.period-card .top .pctv { font-size: 20px; font-weight: 700; color: var(--blue); }
+.period-card .name { font-weight: 700; font-size: 13px; margin-bottom: 8px; }
+.badge-normal { display: inline-block; background: rgba(59,130,246,.15); color: var(--blue); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+.period-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); padding: 4px 0; }
+.period-row b { color: var(--text1); font-weight: 600; }
+.period-bar { height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; margin-top: 8px; }
+.period-bar .fill { height: 100%; background: var(--blue); }
+.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+.demo-tag { display: inline-flex; border: 1px solid rgba(34,211,238,.35); background: rgba(34,211,238,.1); color: var(--cyan); font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 14px; }
+.chat-fab { position: fixed; right: 20px; bottom: 20px; width: 46px; height: 46px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.4); z-index: 20; }
 .chat-fab i { font-size: 20px; color: #fff; }
-.chat-panel {
-  position: fixed; right: 20px; bottom: 76px; width: 280px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.4);
-  z-index: 20; display: none; overflow: hidden;
-}
+.chat-panel { position: fixed; right: 20px; bottom: 76px; width: 270px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.4); z-index: 20; display: none; overflow: hidden; }
 .chat-panel.open { display: block; }
-.chat-h { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; }
-.chat-h span.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.chat-h { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; }
+.chat-h span.d { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
 .chat-body { padding: 12px; font-size: 12px; color: var(--text2); line-height: 1.6; }
-.chat-input { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--border); }
-.chat-input input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; color: var(--text1); font-size: 12px; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <aside class="side">
-    <h1><i class="ti ti-calendar-stats"></i>Ocupação de Agenda</h1>
-    <div id="nav"></div>
-  </aside>
-  <div class="main">
-    <div class="topbar">
-      <b>Dashboard de Ocupação de Agenda</b>
-      <span class="badge"><i class="ti ti-refresh"></i>Atualização automática</span>
-    </div>
-    <div class="content" id="content"></div>
+<div class="topbar">
+  <div class="topbar-l">
+    <div class="ic"><i class="ti ti-layout-dashboard"></i></div>
+    <div><b>Dashboard de Ocupação de Agenda</b><small>Atualização automática</small></div>
+  </div>
+  <div class="topbar-r">
+    <span class="pill-btn"><i class="ti ti-arrows-exchange"></i>Comparar período anterior</span>
+    <span class="dt"><span>DE:</span>02/06/2026</span>
+    <span class="dt"><span>ATÉ:</span>21/07/2026</span>
+    <button class="btn-apply">Aplicar Filtro</button>
   </div>
 </div>
+
+<span class="demo-tag"><i class="ti ti-flask" style="margin-right:6px"></i>prévia com dados fictícios</span>
+
+<div class="kpi-grid" id="kpiRow1"></div>
+<div class="kpi-grid" id="kpiRow2"></div>
+
+<div class="panel">
+  <div class="occ-head">
+    <div class="panel-h" style="margin-bottom:0"><i class="ti ti-chart-bar"></i><b>Taxa de Ocupação Geral</b></div>
+    <div class="occ-big" id="occBig">--%</div>
+  </div>
+  <div class="occ-track"><div class="occ-fill" id="occFill" style="width:0%"></div></div>
+  <div class="occ-labels"><span>0%</span><span id="occMid">MÉDIA DO PERÍODO: --%</span><span>100%</span></div>
+</div>
+
+<div class="panel">
+  <div class="panel-h"><div class="bar4"></div><i class="ti ti-user"></i><b>Por Profissional</b></div>
+  <div class="filters">
+    <span class="sel">Todos os profissionais ▾</span>
+    <span class="sel">Todas as unidades ▾</span>
+  </div>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th>Profissional</th><th>Unidade</th><th class="num">Capacidade</th><th class="num">Agend. totais</th>
+      <th class="num">Agend. marcados</th><th class="num">Pacientes</th><th class="num">Repres.</th>
+      <th class="num">Livres</th><th class="num">Bloqueios</th><th class="num">Encaixes</th><th class="num">Faltas</th><th class="num">Ocupação</th>
+    </tr></thead>
+    <tbody id="profBody"></tbody>
+  </table>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-h"><i class="ti ti-hourglass"></i><b>Por Período</b></div>
+  <div class="period-grid" id="periodGrid"></div>
+</div>
+
+<div class="panel">
+  <div class="panel-h"><i class="ti ti-calendar-event"></i><b>Por Dia da Semana</b></div>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th>Dia</th><th class="num">Capacidade</th><th class="num">Agend. total</th><th class="num">Agend. marcados</th>
+      <th class="num">Pacientes</th><th class="num">Repres.</th><th class="num">Livres</th><th class="num">Bloqueios</th>
+      <th class="num">Faltas</th><th class="num">Taxa de ocupação</th>
+    </tr></thead>
+    <tbody id="diaBody"></tbody>
+  </table>
+  </div>
+</div>
+
 <div class="chat-fab" id="chatFab"><i class="ti ti-message-chatbot"></i></div>
 <div class="chat-panel" id="chatPanel">
-  <div class="chat-h"><span class="dot"></span>Assistente de IA · demonstração</div>
-  <div class="chat-body">Olá! Este é um assistente de exemplo. Em produção, ele responde perguntas sobre os dados filtrados no dashboard.</div>
-  <div class="chat-input"><input placeholder="Pergunte algo... (demo)" disabled /></div>
+  <div class="chat-h"><span class="d"></span>Assistente de IA · demonstração</div>
+  <div class="chat-body">Assistente de exemplo. Em produção, responde perguntas sobre os dados filtrados no dashboard.</div>
 </div>
+
 <script>
-const NAV = [
-  { id: "geral", icon: "ti-layout-dashboard", label: "Visão geral" },
-  { id: "ocup", icon: "ti-chart-donut", label: "Ocupação geral" },
-  { id: "prof", icon: "ti-user", label: "Por profissional" },
-  { id: "unidade", icon: "ti-building", label: "Por unidade" },
-  { id: "unidadeSemana", icon: "ti-calendar-week", label: "Por unidade semanal" },
-  { id: "periodo", icon: "ti-hourglass", label: "Por período" },
-  { id: "diaSemana", icon: "ti-calendar-event", label: "Por dia da semana" },
-  { id: "registros", icon: "ti-list-search", label: "Registros detalhados" },
-];
-const UNIDADES = ["Unidade Centro", "Unidade Sul", "Unidade Norte"];
-const PROFISSIONAIS = ["Ana Souza", "Bruno Lima", "Camila Rocha", "Diego Alves", "Elaine Prado"];
-const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-
 function seeded(seed){ let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
-const rnd = seeded(7);
-function fakeRow(base){
-  const cap = 20 + Math.floor(rnd()*30);
-  const marcados = Math.floor(cap * (0.55 + rnd()*0.4));
-  const faltas = Math.floor(marcados * rnd()*0.12);
-  const bloqueios = Math.floor(cap * rnd()*0.1);
-  const ocupacao = Math.round((marcados / cap) * 100);
-  return Object.assign({ cap, marcados, faltas, bloqueios, ocupacao }, base);
-}
-const profRows = PROFISSIONAIS.map(p => fakeRow({ nome: p, unidade: UNIDADES[Math.floor(rnd()*UNIDADES.length)] }));
-const diaRows = DIAS_SEMANA.map(d => fakeRow({ nome: d }));
-const ocupGeral = Math.round(profRows.reduce((a,r) => a + r.ocupacao, 0) / profRows.length);
+const rnd = seeded(11);
+const NOMES = ["Ana Souza","Bruno Lima","Camila Rocha","Diego Alves","Elaine Prado","Fábio Nunes"];
+const UNIDADES = ["Unidade Centro","Unidade Sul","Unidade Norte"];
+const AV_COLORS = ["#3b82f6","#f97316","#8b5cf6","#22c55e","#22d3ee","#ef4444"];
+const DIAS = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 
-function occCell(v){
-  return '<div class="occ-bar"><div class="track"><div class="fill" style="width:' + v + '%"></div></div><span>' + v + '%</span></div>';
-}
-function tableHtml(title, icon, cols, rows, rowFn){
-  return '<div class="panel"><div class="panel-h"><i class="ti ' + icon + '"></i>' + title + '</div>' +
-    '<table><thead><tr>' + cols.map(c => '<th class="' + (c.num?'num':'') + '">' + c.label + '</th>').join('') + '</tr></thead>' +
-    '<tbody>' + rows.map(rowFn).join('') + '</tbody></table></div>';
+function initials(n){ const p = n.split(" "); return (p[0][0] + (p[1]?p[1][0]:"")).toUpperCase(); }
+
+function kpiCard(icon, iconColor, label, value, valueColor, sub, pct, barColor){
+  return '<div class="kpi"><div class="top"><i class="ti ' + icon + '" style="color:' + iconColor + '"></i><span class="lbl">' + label + '</span></div>' +
+    '<div class="val" style="color:' + valueColor + '">' + value + '</div>' +
+    '<div class="sub">' + sub + '</div>' +
+    (pct != null ? '<div class="bar"><i class="fill" style="width:' + pct + '%;background:' + barColor + '"></i></div><div class="pct" style="color:' + barColor + '">' + pct + '%</div>' : '') +
+    '</div>';
 }
 
-function pageGeral(){
-  return '<div class="kpi-row">' +
-    '<div class="kpi"><div class="lbl">Taxa de ocupação geral</div><div class="val">' + ocupGeral + '%</div><div class="hint">+4pp vs. mês anterior</div></div>' +
-    '<div class="kpi"><div class="lbl">Capacidade total</div><div class="val">' + profRows.reduce((a,r)=>a+r.cap,0) + '</div><div class="hint">horários no período</div></div>' +
-    '<div class="kpi"><div class="lbl">Agendamentos marcados</div><div class="val">' + profRows.reduce((a,r)=>a+r.marcados,0) + '</div><div class="hint">no período filtrado</div></div>' +
-    '<div class="kpi"><div class="lbl">Faltas</div><div class="val">' + profRows.reduce((a,r)=>a+r.faltas,0) + '</div><div class="hint">no período filtrado</div></div>' +
-    '</div>' +
-    tableHtml("Por profissional", "ti-user", [
-      { label: "Profissional" }, { label: "Unidade" }, { label: "Marcados", num:true }, { label: "Faltas", num:true }, { label: "Ocupação", num:true }
-    ], profRows, r => '<tr><td>' + r.nome + '</td><td>' + r.unidade + '</td><td class="num">' + r.marcados + '/' + r.cap + '</td><td class="num">' + r.faltas + '</td><td class="num">' + occCell(r.ocupacao) + '</td></tr>');
-}
-function pageDiaSemana(){
-  return tableHtml("Por dia da semana", "ti-calendar-event", [
-    { label: "Dia" }, { label: "Capacidade", num:true }, { label: "Marcados", num:true }, { label: "Faltas", num:true }, { label: "Ocupação", num:true }
-  ], diaRows, r => '<tr><td>' + r.nome + '</td><td class="num">' + r.cap + '</td><td class="num">' + r.marcados + '</td><td class="num">' + r.faltas + '</td><td class="num">' + occCell(r.ocupacao) + '</td></tr>');
-}
-function pagePlaceholder(label){
-  return '<div class="panel"><div class="panel-h"><i class="ti ti-info-circle"></i>' + label + '</div>' +
-    '<div style="padding:24px 16px;color:var(--text3);font-size:12.5px;">Mesma estrutura de filtros e tabelas da versão em produção — omitido nesta prévia para manter o foco nos dados fictícios acima.</div></div>';
-}
+const capTotal = 9800 + Math.floor(rnd()*3000);
+const agTotais = Math.floor(capTotal * (0.68 + rnd()*0.15));
+const agMarcados = Math.floor(agTotais * (0.7 + rnd()*0.15));
+const faltas = Math.floor(agMarcados * (0.06 + rnd()*0.05));
+const desmarcados = Math.floor(agTotais * (0.1 + rnd()*0.08));
+const bloqueios = Math.floor(capTotal * (0.25 + rnd()*0.1));
+const encaixes = Math.floor(agTotais * (0.1 + rnd()*0.06));
+const livres = Math.floor(capTotal * (0.06 + rnd()*0.05));
+const totalPacientes = Math.floor(agMarcados * (0.82 + rnd()*0.1));
+const representantes = 60 + Math.floor(rnd()*100);
+const ocupGeral = Math.round((agMarcados / capTotal) * 100);
 
-const PAGES = {
-  geral: pageGeral, ocup: pageGeral, prof: pageGeral, diaSemana: pageDiaSemana,
-  unidade: () => pagePlaceholder("Por unidade"), unidadeSemana: () => pagePlaceholder("Por unidade semanal"),
-  periodo: () => pagePlaceholder("Por período"), registros: () => pagePlaceholder("Registros detalhados"),
-};
+document.getElementById("kpiRow1").innerHTML =
+  kpiCard("ti-calendar-stats", "#93c5fd", "Capacidade Total", capTotal.toLocaleString("pt-BR"), "#f1f5f9", "Capacidade total de agendamentos por \"slot\"") +
+  kpiCard("ti-clipboard-list", "#3b82f6", "Agendamentos Totais", agTotais.toLocaleString("pt-BR"), "#3b82f6", "Todos os agendamentos totais no período", Math.round(agTotais/capTotal*100), "#3b82f6") +
+  kpiCard("ti-checkbox", "#3b82f6", "Agendamentos Marcados", agMarcados.toLocaleString("pt-BR"), "#3b82f6", "Status: confirmado e não confirmado por \"slot\"") +
+  kpiCard("ti-user-x", "#ef4444", "Faltas", faltas.toLocaleString("pt-BR"), "#ef4444", "Pacientes que não compareceram", Math.round(faltas/agMarcados*100), "#ef4444") +
+  kpiCard("ti-calendar-x", "#f97316", "Desmarcados", desmarcados.toLocaleString("pt-BR"), "#f97316", "Pacientes desmarcados");
 
-let current = "geral";
-function render(){
-  document.getElementById("nav").innerHTML = NAV.map(n =>
-    '<div class="nav-item' + (n.id===current?' active':'') + '" data-id="' + n.id + '"><i class="ti ' + n.icon + '"></i>' + n.label + '</div>'
-  ).join('');
-  document.getElementById("content").innerHTML = '<div style="margin-bottom:14px"><span class="demo-tag">dados fictícios</span></div>' + PAGES[current]();
-  document.querySelectorAll(".nav-item").forEach(el => el.addEventListener("click", () => { current = el.dataset.id; render(); }));
+document.getElementById("kpiRow2").innerHTML =
+  kpiCard("ti-lock", "#cbd5e1", "Bloqueios", bloqueios.toLocaleString("pt-BR"), "#f1f5f9", "Horários bloqueados", Math.round(bloqueios/capTotal*100), "#94a3b8") +
+  kpiCard("ti-plus", "#8b5cf6", "Encaixes", encaixes.toLocaleString("pt-BR"), "#8b5cf6", "Pacientes agendados como encaixe por \"slot\"") +
+  kpiCard("ti-circle-check", "#22c55e", "Livres", livres.toLocaleString("pt-BR"), "#22c55e", "Horários livres", Math.round(livres/capTotal*100), "#22c55e") +
+  kpiCard("ti-users", "#22d3ee", "Total de Pacientes no Período", totalPacientes.toLocaleString("pt-BR"), "#22d3ee", "Total da coluna Agendamentos no período filtrado") +
+  kpiCard("ti-id-badge-2", "#8b5cf6", "Representantes", representantes.toLocaleString("pt-BR"), "#8b5cf6", "Atendimentos realizados por representante");
+
+document.getElementById("occBig").textContent = ocupGeral + "%";
+document.getElementById("occFill").style.width = ocupGeral + "%";
+document.getElementById("occMid").textContent = "MÉDIA DO PERÍODO: " + ocupGeral + "%";
+
+document.getElementById("profBody").innerHTML = NOMES.map((nome, i) => {
+  const cap = 150 + Math.floor(rnd()*650);
+  const totais = Math.floor(cap * (0.85 + rnd()*0.1));
+  const marcados = Math.floor(totais * (0.55 + rnd()*0.25));
+  const pac = Math.floor(marcados * (0.8 + rnd()*0.15));
+  const repres = Math.floor(rnd()*60);
+  const livresP = Math.floor(cap*(0.03+rnd()*0.08));
+  const bloq = Math.floor(cap*(0.05+rnd()*0.2));
+  const enc = Math.floor(totais*(0.08+rnd()*0.15));
+  const flt = Math.floor(marcados*(0.05+rnd()*0.15));
+  const ocup = Math.round((marcados/cap)*100);
+  const color = AV_COLORS[i % AV_COLORS.length];
+  return '<tr><td><div class="who"><span class="avatar" style="background:' + color + '">' + initials(nome) + '</span>' + nome + '</div></td>' +
+    '<td style="color:var(--text2)">' + UNIDADES[i % UNIDADES.length] + '</td>' +
+    '<td class="num">' + cap + '</td><td class="num" style="color:var(--orange)">' + totais + '</td>' +
+    '<td class="num" style="color:var(--blue)">' + marcados + '</td><td class="num" style="color:var(--purple)">' + pac + '</td>' +
+    '<td class="num" style="color:var(--cyan)">' + repres + '</td><td class="num" style="color:var(--green)">' + livresP + '</td>' +
+    '<td class="num" style="color:var(--orange)">' + bloq + '</td><td class="num" style="color:var(--purple)">' + enc + '</td>' +
+    '<td class="num" style="color:var(--red)">' + flt + '</td>' +
+    '<td class="num"><div class="mini-bar"><div class="track"><div class="fill" style="width:' + ocup + '%;background:var(--blue)"></div></div>' + ocup + '%</div></td></tr>';
+}).join("");
+
+function periodCard(label, icon){
+  const cap = 5000 + Math.floor(rnd()*1500);
+  const totais = Math.floor(cap*(0.68+rnd()*0.15));
+  const confirmados = Math.floor(totais*(0.65+rnd()*0.15));
+  const pac = Math.floor(confirmados*(0.85+rnd()*0.1));
+  const repres = 10+Math.floor(rnd()*100);
+  const livresP = Math.floor(cap*(0.05+rnd()*0.08));
+  const bloq = Math.floor(cap*(0.2+rnd()*0.15));
+  const flt = Math.floor(confirmados*(0.08+rnd()*0.08));
+  const ocup = (100*confirmados/cap).toFixed(1);
+  return '<div class="period-card"><div class="top"><div class="ic"><i class="ti ' + icon + '"></i></div><div class="pctv">' + ocup + '%</div></div>' +
+    '<div class="name">' + label + '</div><span class="badge-normal">Normal</span>' +
+    '<div class="period-row"><span>Capacidade</span><b>' + cap.toLocaleString("pt-BR") + '</b></div>' +
+    '<div class="period-row"><span>Agendamentos total</span><b>' + totais.toLocaleString("pt-BR") + '</b></div>' +
+    '<div class="period-row"><span>Agendamentos confirmados</span><b>' + confirmados.toLocaleString("pt-BR") + '</b></div>' +
+    '<div class="period-row"><span>Total de Pacientes</span><b>' + pac.toLocaleString("pt-BR") + '</b></div>' +
+    '<div class="period-row"><span>Representantes</span><b>' + repres + '</b></div>' +
+    '<div class="period-row"><span>Livres</span><b>' + livresP + '</b></div>' +
+    '<div class="period-row"><span>Bloqueios</span><b>' + bloq + '</b></div>' +
+    '<div class="period-row"><span>Faltas</span><b>' + flt + '</b></div>' +
+    '<div class="period-row"><span>Taxa de ocupação</span><b>' + ocup + '%</b></div>' +
+    '<div class="period-bar"><div class="fill" style="width:' + ocup + '%"></div></div></div>';
 }
-render();
+document.getElementById("periodGrid").innerHTML = periodCard("Manhã", "ti-sun") + periodCard("Tarde", "ti-sun-high");
+
+const diaData = DIAS.map(d => {
+  const cap = 1800 + Math.floor(rnd()*900);
+  const totais = Math.floor(cap*(0.6+rnd()*0.25));
+  const marcados = Math.floor(totais*(0.65+rnd()*0.2));
+  const pac = Math.floor(marcados*(0.8+rnd()*0.15));
+  const repres = Math.floor(rnd()*60);
+  const livresP = Math.floor(cap*(0.03+rnd()*0.15));
+  const bloq = Math.floor(cap*(0.15+rnd()*0.3));
+  const flt = Math.floor(marcados*(0.08+rnd()*0.1));
+  const ocup = Math.round((marcados/cap)*100);
+  return { d, cap, totais, marcados, pac, repres, livresP, bloq, flt, ocup };
+});
+const maxOcup = Math.max(...diaData.map(r => r.ocup));
+document.getElementById("diaBody").innerHTML = diaData.map(r => {
+  const isBest = r.ocup === maxOcup;
+  const barColor = isBest ? "var(--green)" : "var(--blue)";
+  return '<tr><td><span class="dot" style="background:' + barColor + '"></span>' + r.d + '</td>' +
+    '<td class="num">' + r.cap.toLocaleString("pt-BR") + '</td><td class="num" style="color:var(--orange)">' + r.totais.toLocaleString("pt-BR") + '</td>' +
+    '<td class="num" style="color:var(--blue)">' + r.marcados.toLocaleString("pt-BR") + '</td><td class="num" style="color:var(--purple)">' + r.pac.toLocaleString("pt-BR") + '</td>' +
+    '<td class="num" style="color:var(--cyan)">' + r.repres + '</td><td class="num" style="color:var(--green)">' + r.livresP + '</td>' +
+    '<td class="num" style="color:var(--orange)">' + r.bloq + '</td><td class="num" style="color:var(--red)">' + r.flt + '</td>' +
+    '<td class="num"><div class="mini-bar"><div class="track"><div class="fill" style="width:' + r.ocup + '%;background:' + barColor + '"></div></div>' + r.ocup + '%</div></td></tr>';
+}).join("");
+
 document.getElementById("chatFab").addEventListener("click", () => document.getElementById("chatPanel").classList.toggle("open"));
 </script>
 </body>
