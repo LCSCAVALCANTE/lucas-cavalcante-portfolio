@@ -21,7 +21,7 @@ export const skills = [
     "category": "Dados"
   },
   {
-    "name": "Excel Avancado",
+    "name": "Excel Avançado",
     "category": "Dados"
   },
   {
@@ -29,8 +29,8 @@ export const skills = [
     "category": "Desenvolvimento"
   },
   {
-    "name": "Automacao de Processos",
-    "category": "Automacao"
+    "name": "Automação de Processos",
+    "category": "Automação"
   },
   {
     "name": "Dashboards",
@@ -42,10 +42,10 @@ export const skills = [
   },
   {
     "name": "APIs",
-    "category": "Integracao"
+    "category": "Integração"
   },
   {
-    "name": "Analise de Dados",
+    "name": "Análise de Dados",
     "category": "Dados"
   },
   {
@@ -58,7 +58,7 @@ export const skills = [
   },
   {
     "name": "n8n",
-    "category": "Automacao"
+    "category": "Automação"
   }
 ];
 
@@ -67,36 +67,36 @@ export const experiences = [
     "period": "2023 - Presente",
     "role": "Analista de Dados",
     "company": "Empresa Atual",
-    "description": "Desenvolvimento de dashboards estrategicos em Power BI, automacoes em Python e n8n, e integracoes via API para otimizacao de processos operacionais."
+    "description": "Desenvolvimento de dashboards estratégicos em Power BI, automações em Python e n8n, e integrações via API para otimização de processos operacionais."
   },
   {
     "period": "2021 - 2023",
     "role": "Analista de BI",
     "company": "Empresa Anterior",
-    "description": "Modelagem de dados em SQL, criacao de relatorios executivos e desenvolvimento de paineis analiticos."
+    "description": "Modelagem de dados em SQL, criação de relatórios executivos e desenvolvimento de painéis analíticos."
   },
   {
     "period": "2019 - 2021",
     "role": "Assistente de Dados",
-    "company": "Primeira Experiencia",
-    "description": "Consolidacao de bases, analises exploratorias e suporte a tomada de decisao com Excel Avancado."
+    "company": "Primeira Experiência",
+    "description": "Consolidação de bases, análises exploratórias e suporte à tomada de decisão com Excel Avançado."
   }
 ];
 
 export const education = [
   {
     "period": "2020 - 2024",
-    "course": "Bacharelado em Sistemas de Informacao",
+    "course": "Bacharelado em Sistemas de Informação",
     "institution": "Universidade XYZ"
   },
   {
     "period": "2023",
-    "course": "Especializacao em Power BI e Analise de Dados",
+    "course": "Especialização em Power BI e Análise de Dados",
     "institution": "Curso Online"
   },
   {
     "period": "2022",
-    "course": "Automacao com Python e n8n",
+    "course": "Automação com Python e n8n",
     "institution": "Curso Online"
   }
 ];
