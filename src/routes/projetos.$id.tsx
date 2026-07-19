@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Github, ExternalLink, Target, TrendingUp, Wrench } from "lucide-react";
+import { ArrowLeft, Eye, Target, TrendingUp, Wrench } from "lucide-react";
 import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
 import { projectPreviews } from "@/components/previews";
@@ -65,28 +65,16 @@ function ProjectDetail() {
         <p className="mt-4 text-lg text-muted-foreground">
           {project.fullDescription}
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          {project.github && (
+        {projectPreviews[project.id] && (
+          <div className="mt-6 flex flex-wrap gap-3">
             <a
-              href={project.github}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-4 py-2 text-sm font-semibold transition-colors hover:bg-accent"
-            >
-              <Github className="h-4 w-4" /> GitHub
-            </a>
-          )}
-          {project.demo && (
-            <a
-              href={project.demo}
-              target="_blank"
-              rel="noreferrer"
+              href="#previa"
               className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
-              <ExternalLink className="h-4 w-4" /> Ver demonstracao
+              <Eye className="h-4 w-4" /> Ver demonstracao
             </a>
-          )}
-        </div>
+          </div>
+        )}
       </header>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -115,7 +103,7 @@ function ProjectDetail() {
         </div>
       </section>
 
-      <section className="mt-10">
+      <section id="previa" className="mt-10 scroll-mt-24">
         <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Previa
         </div>

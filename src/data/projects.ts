@@ -9,8 +9,6 @@ export interface Project {
   results: string;
   technologies: string[];
   status: ProjectStatus;
-  github?: string;
-  demo?: string;
   images?: string[];
 }
 
@@ -28,7 +26,6 @@ export const projects: Project[] = [
       "Aumento de 22% na ocupacao media das agendas e reducao de tempo gasto em relatorios manuais em 80%.",
     technologies: ["Power BI", "SQL", "DAX", "Power Query"],
     status: "Concluido",
-    github: "https://github.com/lucascavalcante",
   },
   {
     id: "painel-propostas-executadas",
@@ -57,7 +54,6 @@ export const projects: Project[] = [
       "Economia de mais de 15 horas de trabalho por semana e eliminacao de erros de envio.",
     technologies: ["n8n", "Python", "APIs", "SMTP"],
     status: "Em andamento",
-    github: "https://github.com/lucascavalcante",
   },
   {
     id: "consolidador-esocial",
@@ -72,7 +68,6 @@ export const projects: Project[] = [
       "Consolidacao de mais de 5.000 arquivos em minutos, com relatorios prontos para auditoria.",
     technologies: ["Python", "Pandas", "XML", "Power BI"],
     status: "Concluido",
-    github: "https://github.com/lucascavalcante",
   },
   {
     id: "controle-estoque-clinico",
@@ -87,6 +82,5 @@ export const projects: Project[] = [
       "Reducao de 35% em perdas por vencimento e visibilidade em tempo real do estoque.",
     technologies: ["React", "Node.js", "PostgreSQL", "Tailwind"],
     status: "Prototipo",
-    demo: "#",
   },
 ];

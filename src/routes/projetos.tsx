@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Github, ExternalLink } from "lucide-react";
+import { ArrowRight, Eye } from "lucide-react";
 import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
+import { projectPreviews } from "@/components/previews";
 
 export const Route = createFileRoute("/projetos")({
   head: () => ({
@@ -77,30 +78,18 @@ function ProjectsPage() {
                 Ver detalhes
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </Link>
-              <div className="flex items-center gap-1">
-                {p.github && (
-                  <a
-                    href={p.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                    aria-label="GitHub"
-                  >
-                    <Github className="h-4 w-4" />
-                  </a>
-                )}
-                {p.demo && (
-                  <a
-                    href={p.demo}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                    aria-label="Demo"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-              </div>
+              {projectPreviews[p.id] && (
+                <Link
+                  to="/projetos/$id"
+                  params={{ id: p.id }}
+                  hash="previa"
+                  className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  aria-label="Ver previa"
+                  title="Ver previa"
+                >
+                  <Eye className="h-4 w-4" />
+                </Link>
+              )}
             </div>
           </article>
         ))}
