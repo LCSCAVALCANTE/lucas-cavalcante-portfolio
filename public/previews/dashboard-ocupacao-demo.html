@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard de Ocupação de Agenda</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<style>
+/* MODO DEMO: preview publico do portfolio. Nenhuma chamada de rede real
+   acontece aqui - os dados abaixo sao gerados no navegador so para esta
+   demonstracao. A paleta de cores abaixo e a mesma do dashboard real
+   (mesmas variaveis --bg/--surface/--blue/--green/--orange etc.), so a
+   fonte dos dados muda. */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #0c1525;
+  --surface:  #111d30;
+  --surface2: #0c1a2e;
+  --border:   #1a2436;
+  --blue:     #3b82f6;
+  --blue2:    #1d4ed8;
+  --green:    #22c55e;
+  --orange:   #f97316;
+  --red:      #ef4444;
+  --amber:    #f59e0b;
+  --cyan:     #06b6d4;
+  --purple:   #8b5cf6;
+  --text1:    #f1f5f9;
+  --text2:    #cbd5e1;
+  --text3:    #94a3b8;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text1);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  font-size: 13px;
+}
+.wrap { display: flex; min-height: 100vh; }
+.side {
+  width: 230px; flex-shrink: 0; background: var(--surface2);
+  border-right: 1px solid var(--border); padding: 16px 10px;
+}
+.side h1 { font-size: 14px; font-weight: 600; padding: 6px 10px 16px; display: flex; align-items: center; gap: 8px; }
+.side h1 i { color: var(--blue); font-size: 18px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
+  font-size: 12.5px; color: var(--text3); cursor: pointer; margin-bottom: 2px;
+}
+.nav-item i { font-size: 16px; }
+.nav-item:hover { background: rgba(59,130,246,.08); color: var(--text1); }
+.nav-item.active { background: rgba(59,130,246,.15); color: var(--blue); font-weight: 600; }
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 22px; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.topbar b { font-size: 15px; font-weight: 600; }
+.badge {
+  display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(34,197,94,.35);
+  background: rgba(34,197,94,.12); color: var(--green); font-size: 11px; font-weight: 600;
+  padding: 4px 11px; border-radius: 999px;
+}
+.content { padding: 20px 22px; overflow-x: auto; }
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 12px; margin-bottom: 18px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
+}
+.kpi .lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+.kpi .val { font-size: 24px; font-weight: 700; }
+.kpi .hint { font-size: 11px; color: var(--cyan); margin-top: 4px; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 18px; overflow: hidden; }
+.panel-h { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12.5px; font-weight: 600; }
+.panel-h i { color: var(--blue); font-size: 15px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th { text-align: left; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .03em; font-weight: 600; padding: 9px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+thead th.num { text-align: right; }
+tbody td { padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,.03); white-space: nowrap; }
+tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr:hover td { background: rgba(255,255,255,.02); }
+.occ-bar { display: inline-flex; align-items: center; gap: 8px; }
+.occ-bar .track { width: 60px; height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.occ-bar .fill { height: 100%; background: var(--blue); }
+.demo-tag {
+  border: 1px solid rgba(6,182,212,.35); background: rgba(6,182,212,.1); color: var(--cyan);
+  font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+}
+.chat-fab {
+  position: fixed; right: 20px; bottom: 20px; width: 46px; height: 46px; border-radius: 50%;
+  background: var(--blue); display: flex; align-items: center; justify-content: center; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35); z-index: 20;
+}
+.chat-fab i { font-size: 20px; color: #fff; }
+.chat-panel {
+  position: fixed; right: 20px; bottom: 76px; width: 280px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.4);
+  z-index: 20; display: none; overflow: hidden;
+}
+.chat-panel.open { display: block; }
+.chat-h { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; }
+.chat-h span.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.chat-body { padding: 12px; font-size: 12px; color: var(--text2); line-height: 1.6; }
+.chat-input { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--border); }
+.chat-input input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; color: var(--text1); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="side">
+    <h1><i class="ti ti-calendar-stats"></i>Ocupação de Agenda</h1>
+    <div id="nav"></div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <b>Dashboard de Ocupação de Agenda</b>
+      <span class="badge"><i class="ti ti-refresh"></i>Atualização automática</span>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+<div class="chat-fab" id="chatFab"><i class="ti ti-message-chatbot"></i></div>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-h"><span class="dot"></span>Assistente de IA · demonstração</div>
+  <div class="chat-body">Olá! Este é um assistente de exemplo. Em produção, ele responde perguntas sobre os dados filtrados no dashboard.</div>
+  <div class="chat-input"><input placeholder="Pergunte algo... (demo)" disabled /></div>
+</div>
+<script>
+const NAV = [
+  { id: "geral", icon: "ti-layout-dashboard", label: "Visão geral" },
+  { id: "ocup", icon: "ti-chart-donut", label: "Ocupação geral" },
+  { id: "prof", icon: "ti-user", label: "Por profissional" },
+  { id: "unidade", icon: "ti-building", label: "Por unidade" },
+  { id: "unidadeSemana", icon: "ti-calendar-week", label: "Por unidade semanal" },
+  { id: "periodo", icon: "ti-hourglass", label: "Por período" },
+  { id: "diaSemana", icon: "ti-calendar-event", label: "Por dia da semana" },
+  { id: "registros", icon: "ti-list-search", label: "Registros detalhados" },
+];
+const UNIDADES = ["Unidade Centro", "Unidade Sul", "Unidade Norte"];
+const PROFISSIONAIS = ["Ana Souza", "Bruno Lima", "Camila Rocha", "Diego Alves", "Elaine Prado"];
+const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+function seeded(seed){ let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+const rnd = seeded(7);
+function fakeRow(base){
+  const cap = 20 + Math.floor(rnd()*30);
+  const marcados = Math.floor(cap * (0.55 + rnd()*0.4));
+  const faltas = Math.floor(marcados * rnd()*0.12);
+  const bloqueios = Math.floor(cap * rnd()*0.1);
+  const ocupacao = Math.round((marcados / cap) * 100);
+  return Object.assign({ cap, marcados, faltas, bloqueios, ocupacao }, base);
+}
+const profRows = PROFISSIONAIS.map(p => fakeRow({ nome: p, unidade: UNIDADES[Math.floor(rnd()*UNIDADES.length)] }));
+const diaRows = DIAS_SEMANA.map(d => fakeRow({ nome: d }));
+const ocupGeral = Math.round(profRows.reduce((a,r) => a + r.ocupacao, 0) / profRows.length);
+
+function occCell(v){
+  return '<div class="occ-bar"><div class="track"><div class="fill" style="width:' + v + '%"></div></div><span>' + v + '%</span></div>';
+}
+function tableHtml(title, icon, cols, rows, rowFn){
+  return '<div class="panel"><div class="panel-h"><i class="ti ' + icon + '"></i>' + title + '</div>' +
+    '<table><thead><tr>' + cols.map(c => '<th class="' + (c.num?'num':'') + '">' + c.label + '</th>').join('') + '</tr></thead>' +
+    '<tbody>' + rows.map(rowFn).join('') + '</tbody></table></div>';
+}
+
+function pageGeral(){
+  return '<div class="kpi-row">' +
+    '<div class="kpi"><div class="lbl">Taxa de ocupação geral</div><div class="val">' + ocupGeral + '%</div><div class="hint">+4pp vs. mês anterior</div></div>' +
+    '<div class="kpi"><div class="lbl">Capacidade total</div><div class="val">' + profRows.reduce((a,r)=>a+r.cap,0) + '</div><div class="hint">horários no período</div></div>' +
+    '<div class="kpi"><div class="lbl">Agendamentos marcados</div><div class="val">' + profRows.reduce((a,r)=>a+r.marcados,0) + '</div><div class="hint">no período filtrado</div></div>' +
+    '<div class="kpi"><div class="lbl">Faltas</div><div class="val">' + profRows.reduce((a,r)=>a+r.faltas,0) + '</div><div class="hint">no período filtrado</div></div>' +
+    '</div>' +
+    tableHtml("Por profissional", "ti-user", [
+      { label: "Profissional" }, { label: "Unidade" }, { label: "Marcados", num:true }, { label: "Faltas", num:true }, { label: "Ocupação", num:true }
+    ], profRows, r => '<tr><td>' + r.nome + '</td><td>' + r.unidade + '</td><td class="num">' + r.marcados + '/' + r.cap + '</td><td class="num">' + r.faltas + '</td><td class="num">' + occCell(r.ocupacao) + '</td></tr>');
+}
+function pageDiaSemana(){
+  return tableHtml("Por dia da semana", "ti-calendar-event", [
+    { label: "Dia" }, { label: "Capacidade", num:true }, { label: "Marcados", num:true }, { label: "Faltas", num:true }, { label: "Ocupação", num:true }
+  ], diaRows, r => '<tr><td>' + r.nome + '</td><td class="num">' + r.cap + '</td><td class="num">' + r.marcados + '</td><td class="num">' + r.faltas + '</td><td class="num">' + occCell(r.ocupacao) + '</td></tr>');
+}
+function pagePlaceholder(label){
+  return '<div class="panel"><div class="panel-h"><i class="ti ti-info-circle"></i>' + label + '</div>' +
+    '<div style="padding:24px 16px;color:var(--text3);font-size:12.5px;">Mesma estrutura de filtros e tabelas da versão em produção — omitido nesta prévia para manter o foco nos dados fictícios acima.</div></div>';
+}
+
+const PAGES = {
+  geral: pageGeral, ocup: pageGeral, prof: pageGeral, diaSemana: pageDiaSemana,
+  unidade: () => pagePlaceholder("Por unidade"), unidadeSemana: () => pagePlaceholder("Por unidade semanal"),
+  periodo: () => pagePlaceholder("Por período"), registros: () => pagePlaceholder("Registros detalhados"),
+};
+
+let current = "geral";
+function render(){
+  document.getElementById("nav").innerHTML = NAV.map(n =>
+    '<div class="nav-item' + (n.id===current?' active':'') + '" data-id="' + n.id + '"><i class="ti ' + n.icon + '"></i>' + n.label + '</div>'
+  ).join('');
+  document.getElementById("content").innerHTML = '<div style="margin-bottom:14px"><span class="demo-tag">dados fictícios</span></div>' + PAGES[current]();
+  document.querySelectorAll(".nav-item").forEach(el => el.addEventListener("click", () => { current = el.dataset.id; render(); }));
+}
+render();
+document.getElementById("chatFab").addEventListener("click", () => document.getElementById("chatPanel").classList.toggle("open"));
+</script>
+</body>
+</html>
