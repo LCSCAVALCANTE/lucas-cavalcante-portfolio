@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Github, ExternalLink, Target, TrendingUp, Wrench } from "lucide-react";
 import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
+import { projectPreviews } from "@/components/previews";
 
 export const Route = createFileRoute("/projetos/$id")({
   head: ({ params }) => {
@@ -118,9 +119,21 @@ function ProjectDetail() {
         <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Previa
         </div>
-        <div className="glass-card grid aspect-video place-items-center rounded-2xl border-dashed text-sm text-muted-foreground">
-          Prints e imagens do projeto aparecerao aqui.
-        </div>
+        {(() => {
+          const Preview = projectPreviews[project.id];
+          if (Preview) {
+            return (
+              <div className="glass-card rounded-2xl p-2 sm:p-3">
+                <Preview />
+              </div>
+            );
+          }
+          return (
+            <div className="glass-card grid aspect-video place-items-center rounded-2xl border-dashed text-sm text-muted-foreground">
+              Prints e imagens do projeto aparecerao aqui.
+            </div>
+          );
+        })()}
       </section>
     </article>
   );
