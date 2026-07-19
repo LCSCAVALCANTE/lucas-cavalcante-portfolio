@@ -89,4 +89,20 @@ export const projects: Project[] = [
     status: "Prototipo",
     demo: "#",
   },
+  {
+    id: "teste-novo-projeto",
+    name: "[TESTE] Novo Projeto de Exemplo",
+    shortDescription:
+      "Projeto de exemplo criado para testar o fluxo de adicao de novos projetos ao portfolio.",
+    fullDescription:
+      "Este e um projeto placeholder usado apenas para validar que o processo de adicionar novos projetos (editar src/data/projects.ts) funciona corretamente, aparecendo tanto na listagem quanto na pagina de detalhes.",
+    problem:
+      "Precisava de uma forma simples e confiavel de adicionar novos projetos ao portfolio sem mexer em codigo de layout.",
+    results:
+      "Fluxo validado: basta adicionar um objeto ao array de projetos e ele aparece automaticamente no site.",
+    technologies: ["React", "TypeScript", "TanStack Router"],
+    status: "Prototipo",
+    github: "#",
+    demo: "#",
+  },
 ];
