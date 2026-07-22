@@ -64,22 +64,28 @@ export const skills = [
 
 export const experiences = [
   {
-    "period": "2023 - Presente",
-    "role": "Analista de Dados",
-    "company": "Empresa Atual",
-    "description": "Desenvolvimento de dashboards estratégicos em Power BI, automações em Python e n8n, e integrações via API para otimização de processos operacionais."
+    "period": "Jul 2026 - Presente",
+    "role": "Analista de Tecnologia Jr",
+    "company": "Skinlaser",
+    "description": "Desenvolvimento de automações em Python para otimizar fluxos de trabalho e reduzir tarefas repetitivas, criação de dashboards e integrações e gerenciamento de banco de dados."
   },
   {
-    "period": "2021 - 2023",
-    "role": "Analista de BI",
-    "company": "Empresa Anterior",
-    "description": "Modelagem de dados em SQL, criação de relatórios executivos e desenvolvimento de painéis analíticos."
+    "period": "Dez 2024 - Jun 2026",
+    "role": "Assistente I Tecnologia",
+    "company": "Skinlaser",
+    "description": "Automação de processos em Python, suporte técnico a sites, impressoras e máquinas de cartão (TEF), gestão administrativa via SAP e elaboração de relatórios gerenciais."
   },
   {
-    "period": "2019 - 2021",
-    "role": "Assistente de Dados",
-    "company": "Primeira Experiência",
-    "description": "Consolidação de bases, análises exploratórias e suporte à tomada de decisão com Excel Avançado."
+    "period": "Ago 2023 - Dez 2024",
+    "role": "Estagiário de TI",
+    "company": "Skinlaser",
+    "description": "Criação de automações em Python para otimizar fluxos de trabalho, suporte técnico a sites e impressoras, gestão administrativa via SAP e disparos automatizados e relatórios gerenciais para clientes."
+  },
+  {
+    "period": "Mar 2023 - Ago 2023",
+    "role": "Técnico de Helpdesk de TI",
+    "company": "Colégio Rio Branco",
+    "description": "Manutenção e configuração de redes, servidores, switches, Mikrotik e CFTV, suporte a computadores e impressoras, atendimento de chamados via e-mail e AnyDesk, e suporte a Chromebooks e notebooks."
   }
 ];
 
