@@ -55,4 +55,18 @@ export const projects: Project[] = [
     technologies: ["SQL", "POSTGRES", "CSS", "HTML", "JAVASCRIPT", "DOCKER", "NGINX", "GIT", "VPS"],
     status: "Concluido",
   },
+  {
+    id: "esocial-analytics",
+    name: "eSocial Analytics",
+    shortDescription:
+      "Pipeline em Python que consolida milhares de XMLs do eSocial em uma base unica, com Excel analitico e dashboard.",
+    fullDescription:
+      "Solucao que varre acervos de XMLs do eSocial, identifica o tipo de cada evento e constroi bases relacionaveis de empresas, trabalhadores, vinculos, rubricas, lotacoes, remuneracoes, pagamentos, exclusoes e totalizadores, aplicando cruzamentos e controles de qualidade.",
+    problem:
+      "Acervos com milhares de XMLs distribuidos entre eventos, trabalhadores e competencias tornavam a analise manual lenta, sem visao de cobertura temporal e sem cruzamentos automaticos entre remuneracao, pagamento e totalizadores.",
+    results:
+      "Base consolidada e pesquisavel com 19 parsers de evento, cruzamentos automatizados por chaves de negocio, cobertura mensal e anual explicita, alertas classificados por severidade e um Excel de 16 areas acompanhado de dashboard analitica.",
+    technologies: ["PYTHON", "PANDAS", "OPENPYXL", "STREAMLIT", "PLOTLY", "HTML", "CSS", "JAVASCRIPT"],
+    status: "Em andamento",
+  },
 ];
