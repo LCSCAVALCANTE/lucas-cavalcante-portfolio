@@ -91,4 +91,34 @@ export const projects: Project[] = [
       "Relatorio de qualidade e lista de lacunas com acao recomendada por competencia.",
     ],
   },
+  {
+    id: "insertvalue-feegow",
+    name: "InsertValue on F-CLINIC",
+    shortDescription:
+      "Extensao Chrome que automatiza atualizacao em massa de valores de procedimentos e planos direto na tela do Feegow.",
+    fullDescription:
+      "Extensao de navegador (Manifest V3) que leva automacoes de atualizacao em massa para dentro da propria tela operacional do Feegow. Em vez de exigir uma aplicacao separada, importacoes ou troca de ambiente, ela atua sobre os componentes ja exibidos na aba ativa e pode injetar um painel flutuante na propria pagina.",
+    problem:
+      "Telas de configuracao em massa no Feegow reunem muitos procedimentos, planos e colunas de valores. Repetir a mesma alteracao em varias linhas de forma manual e lento e suscetivel a inconsistencias: localizar o procedimento e o plano certos em tabelas extensas, editar celula por celula, zerar uma coluna inteira ou selecionar centenas de planos em uma lista longa.",
+    results:
+      "Tres automacoes disponiveis a partir de um popup simples: atualizacao em massa por procedimento e plano, zeragem parametrizada de coluna e um painel de selecao de planos em lotes de 50. O trabalho que antes exigia editar linha por linha passou a ser feito com poucos cliques, direto na tela ativa do sistema.",
+    technologies: ["JAVASCRIPT", "HTML", "CSS", "CHROME EXTENSION", "MANIFEST V3", "GIT"],
+    status: "Concluido",
+    pipeline: [
+      "Usuario acessa a tela de valores em massa no Feegow.",
+      "Abre a extensao pelo icone do navegador (popup de 320px).",
+      "Escolhe uma das tres funcoes: atualizar por plano, zerar coluna ou selecionar em lotes.",
+      "Informa os parametros necessarios (procedimento, plano, valor ou numero da coluna).",
+      "A extensao injeta o script na aba ativa, que localiza blocos, tabelas e campos compativeis via seletores CSS/XPath.",
+      "Usuario confere o resultado na propria pagina e conclui o fluxo no sistema.",
+    ],
+    deliverables: [
+      "Atualizacao por plano: localiza procedimento e plano e preenche o novo valor nas linhas correspondentes.",
+      "Zeragem de coluna: define como zero todas as celulas de uma coluna parametrizavel (padrao coluna 13).",
+      "Selecao por lotes: painel flutuante injetado na pagina para navegar e selecionar planos em grupos de 50.",
+      "Permissoes enxutas (activeTab e scripting) e nenhuma dependencia externa: apenas HTML, CSS e JavaScript nativos.",
+      "Progresso de navegacao mantido no localStorage da propria pagina durante a sessao.",
+      "Mensagens de validacao no popup e no painel para campos ausentes, coluna invalida e execucao iniciada.",
+    ],
+  },
 ];

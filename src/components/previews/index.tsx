@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { IframePreview } from "./IframePreview";
+import { ImagePreview } from "./ImagePreview";
 
 // Mapa: id do projeto (src/data/projects.ts) -> componente de preview
 // exibido na secao "Previa" da pagina de detalhes. Projetos sem entrada
@@ -22,5 +23,12 @@ export const projectPreviews: Record<string, ComponentType> = {
   ),
   "painel-comercial": () => (
     <IframePreview src="/previews/painel-comercial-demo.html" label="Painel Comercial (demo)" />
+  ),
+  "insertvalue-feegow": () => (
+    <ImagePreview
+      src="/previews/insertvalue-feegow-illustration.svg"
+      label="InsertValue on F-CLINIC (ilustracao)"
+      caption="A extensao atua sobre a tela ativa do Feegow (sistema de terceiros) - nao ha um HTML standalone para clonar com fidelidade. Esta e' uma ilustracao de portfolio com dados ficticios, fiel ao layout real do popup e do painel injetado."
+    />
   ),
 };
