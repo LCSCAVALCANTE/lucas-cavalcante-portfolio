@@ -140,7 +140,7 @@ function ProjectDetail() {
         </section>
       )}
 
-      {!projectPreviews[project.id] && (
+      {!projectPreviews[project.id] && !project.hidePreview && (
         <section id="previa" className="mt-10 scroll-mt-24">
           <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
             Previa

@@ -12,6 +12,7 @@ export interface Project {
   images?: string[];
   pipeline?: string[];
   deliverables?: string[];
+  hidePreview?: boolean;
 }
 
 export const projects: Project[] = [
@@ -60,6 +61,7 @@ export const projects: Project[] = [
   {
     id: "esocial-analytics",
     name: "eSocial Analytics",
+    hidePreview: true,
     shortDescription:
       "Pipeline em Python que consolida milhares de XMLs do eSocial em uma base unica, com Excel analitico e dashboard.",
     fullDescription:
