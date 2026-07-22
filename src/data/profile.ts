@@ -85,18 +85,23 @@ export const experiences = [
 
 export const education = [
   {
-    "period": "2020 - 2024",
-    "course": "Bacharelado em Sistemas de Informação",
-    "institution": "Universidade XYZ"
+    "period": "2022 - 2026",
+    "course": "Ciências da Computação",
+    "institution": "UNICID - Universidade Cidade de São Paulo"
   },
   {
-    "period": "2023",
-    "course": "Especialização em Power BI e Análise de Dados",
-    "institution": "Curso Online"
+    "period": "2024",
+    "course": "Excel Avançado",
+    "institution": "Xperiun"
   },
   {
-    "period": "2022",
+    "period": "2025",
     "course": "Automação com Python e n8n",
-    "institution": "Curso Online"
+    "institution": "Xperiun"
+  },
+  {
+    "period": "2025",
+    "course": "SQL Intermediário",
+    "institution": "Xperiun"
   }
 ];
