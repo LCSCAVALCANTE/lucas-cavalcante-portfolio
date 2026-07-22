@@ -10,6 +10,8 @@ export interface Project {
   technologies: string[];
   status: ProjectStatus;
   images?: string[];
+  pipeline?: string[];
+  deliverables?: string[];
 }
 
 export const projects: Project[] = [
@@ -61,12 +63,32 @@ export const projects: Project[] = [
     shortDescription:
       "Pipeline em Python que consolida milhares de XMLs do eSocial em uma base unica, com Excel analitico e dashboard.",
     fullDescription:
-      "Solucao que varre acervos de XMLs do eSocial, identifica o tipo de cada evento e constroi bases relacionaveis de empresas, trabalhadores, vinculos, rubricas, lotacoes, remuneracoes, pagamentos, exclusoes e totalizadores, aplicando cruzamentos e controles de qualidade.",
+      "Solucao completa de consolidacao e auditoria do eSocial: varre acervos de XMLs, identifica o tipo de cada evento e constroi bases relacionaveis de empresas, trabalhadores, vinculos, rubricas, lotacoes, remuneracoes, pagamentos, exclusoes e totalizadores. Depois cruza essas bases por chaves de negocio, aplica controles de qualidade e gera uma planilha Excel consolidada acompanhada de uma dashboard HTML navegavel e offline.",
     problem:
-      "Acervos com milhares de XMLs distribuidos entre eventos, trabalhadores e competencias tornavam a analise manual lenta, sem visao de cobertura temporal e sem cruzamentos automaticos entre remuneracao, pagamento e totalizadores.",
+      "Acervos com milhares de XMLs distribuidos entre eventos, trabalhadores e competencias tornavam a analise manual lenta, sem visao de cobertura temporal e sem cruzamentos automaticos entre remuneracao, pagamento e totalizadores. Encontrar lacunas e priorizar o que precisa de investigacao exigia conferencia manual arquivo por arquivo.",
     results:
-      "Base consolidada e pesquisavel com 19 parsers de evento, cruzamentos automatizados por chaves de negocio, cobertura mensal e anual explicita, alertas classificados por severidade e um Excel de 16 areas acompanhado de dashboard analitica.",
+      "Base consolidada e pesquisavel com 19 parsers de evento, cruzamentos automatizados por chaves de negocio, cobertura mensal e anual explicita, alertas classificados por severidade e um Excel de 16 areas acompanhado de dashboard analitica. O polimento conservador completa campos vazios apenas quando ha uma unica resposta segura, com trilha de auditoria completa.",
     technologies: ["PYTHON", "PANDAS", "OPENPYXL", "STREAMLIT", "PLOTLY", "HTML", "CSS", "JAVASCRIPT"],
-    status: "Em andamento",
+    status: "Concluido",
+    pipeline: [
+      "Varredura recursiva do acervo de XMLs e inventario de cada evento encontrado, com registro de arquivo, recibo, CPF e competencia.",
+      "Extracao das tabelas de apoio: rubricas (S-1010), lotacoes (S-1020), cargos e horarios (S-1030/S-1050).",
+      "Consolidacao de trabalhadores e historico de vinculos (S-2200, S-2205, S-2206, S-2230, S-2299, S-2300).",
+      "Extracao de remuneracoes (S-1200) e pagamentos (S-1210).",
+      "Identificacao de exclusoes (S-3000) e invalidacao de eventos excluidos ou retificados.",
+      "Consolidacao dos totalizadores do trabalhador (S-5001/5002/5003) e da empresa (S-5011/5012/5013).",
+      "Cruzamento das bases por chaves de negocio e geracao de alertas de inconsistencia.",
+      "Analise de cobertura mensal e anual, com identificacao objetiva de lacunas por competencia.",
+      "Exportacao do Excel consolidado com 16 areas e geracao da dashboard HTML navegavel.",
+      "Polimento conservador: preenchimento de campos vazios apenas quando ha resposta unica e segura, com auditoria completa das alteracoes em CSV.",
+    ],
+    deliverables: [
+      "Planilha Excel consolidada com 16 areas (empresas, trabalhadores, rubricas, lotacoes, remuneracoes, pagamentos, totalizadores, exclusoes, inconsistencias, cobertura).",
+      "Versao polida: mesma base com enriquecimento conservador e trilha de auditoria em CSV.",
+      "Dashboard HTML autonoma e offline, com visao executiva, cobertura, inconsistencias filtraveis, conciliacao estrutural e qualidade cadastral.",
+      "Ocultacao visual de CPF e CNPJ na dashboard, com opcao de revelar sob demanda.",
+      "Exportacao de tabelas em CSV e impressao/PDF da dashboard.",
+      "Relatorio de qualidade e lista de lacunas com acao recomendada por competencia.",
+    ],
   },
 ];

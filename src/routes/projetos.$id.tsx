@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Eye, Target, TrendingUp, Wrench } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Eye, ListOrdered, Target, TrendingUp, Wrench } from "lucide-react";
 import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
 import { projectPreviews } from "@/components/previews";
@@ -103,6 +103,42 @@ function ProjectDetail() {
           ))}
         </div>
       </section>
+
+      {project.pipeline && project.pipeline.length > 0 && (
+        <section className="mt-10 glass-card rounded-2xl p-6">
+          <div className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-cyan">
+            <ListOrdered className="h-4 w-4" />
+            Como funciona
+          </div>
+          <ol className="space-y-3">
+            {project.pipeline.map((step: string, i: number) => (
+              <li key={i} className="flex gap-3 text-sm text-muted-foreground">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-purple font-mono text-xs font-bold text-primary-foreground">
+                  {i + 1}
+                </span>
+                <span className="pt-0.5">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {project.deliverables && project.deliverables.length > 0 && (
+        <section className="mt-10 glass-card rounded-2xl p-6">
+          <div className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-emerald-300">
+            <CheckCircle2 className="h-4 w-4" />
+            Entregaveis
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {project.deliverables.map((d: string, i: number) => (
+              <li key={i} className="flex gap-2 text-sm text-muted-foreground">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+                <span>{d}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {!projectPreviews[project.id] && (
         <section id="previa" className="mt-10 scroll-mt-24">
