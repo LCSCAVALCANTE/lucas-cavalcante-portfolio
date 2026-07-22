@@ -23,7 +23,4 @@ export const projectPreviews: Record<string, ComponentType> = {
   "painel-comercial": () => (
     <IframePreview src="/previews/painel-comercial-demo.html" label="Painel Comercial (demo)" />
   ),
-  "esocial-analytics": () => (
-    <IframePreview src="/previews/esocial-analytics-demo.html" label="eSocial Analytics (demo)" />
-  ),
 };
