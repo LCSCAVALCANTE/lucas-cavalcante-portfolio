@@ -20,4 +20,7 @@ export const projectPreviews: Record<string, ComponentType> = {
   "dashboard-ocupacao-agenda": () => (
     <IframePreview src="/previews/dashboard-ocupacao-demo.html" label="Dashboard de Ocupação de Agenda (demo)" />
   ),
+  "painel-comercial": () => (
+    <IframePreview src="/previews/painel-comercial-demo.html" label="Painel Comercial (demo)" />
+  ),
 };

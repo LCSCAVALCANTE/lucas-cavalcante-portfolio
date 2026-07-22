@@ -41,4 +41,18 @@ export const projects: Project[] = [
     technologies: ["DAX", "SQL", "POSTGRES", "CSS", "HTML", "REACT", "GIT", "VPS"],
     status: "Concluido",
   },
+  {
+    id: "painel-comercial",
+    name: "Painel Comercial",
+    shortDescription:
+      "Relatorio mensal comercial com agendamentos e propostas por medico, dia e unidade.",
+    fullDescription:
+      "Painel comercial multi-unidade que consolida agendamentos, comparecimento, indicacoes e propostas executadas, com filtros por unidade, periodo e medico.",
+    problem:
+      "Cada unidade acompanhava agendamentos e propostas de forma isolada, sem uma visao consolidada por medico e por periodo entre as unidades.",
+    results:
+      "Visao unica de agendamentos, comparecimento e propostas por unidade, medico e dia, com atualizacao automatica a partir da base operacional.",
+    technologies: ["SQL", "POSTGRES", "CSS", "HTML", "JAVASCRIPT", "DOCKER", "NGINX", "GIT", "VPS"],
+    status: "Concluido",
+  },
 ];
