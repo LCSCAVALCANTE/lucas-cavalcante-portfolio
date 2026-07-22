@@ -43,6 +43,7 @@ function ProjectDetail() {
   const { project } = Route.useLoaderData();
 
   return (
+    <>
     <article className="mx-auto max-w-4xl px-6 py-16 sm:py-24">
       <Link
         to="/projetos"
@@ -103,27 +104,34 @@ function ProjectDetail() {
         </div>
       </section>
 
-      <section id="previa" className="mt-10 scroll-mt-24">
-        <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
-          Previa
-        </div>
-        {(() => {
-          const Preview = projectPreviews[project.id];
-          if (Preview) {
-            return (
-              <div className="glass-card rounded-2xl p-2 sm:p-3">
-                <Preview />
-              </div>
-            );
-          }
-          return (
-            <div className="glass-card grid aspect-video place-items-center rounded-2xl border-dashed text-sm text-muted-foreground">
-              Prints e imagens do projeto aparecerao aqui.
-            </div>
-          );
-        })()}
-      </section>
+      {!projectPreviews[project.id] && (
+        <section id="previa" className="mt-10 scroll-mt-24">
+          <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
+            Previa
+          </div>
+          <div className="glass-card grid aspect-video place-items-center rounded-2xl border-dashed text-sm text-muted-foreground">
+            Prints e imagens do projeto aparecerao aqui.
+          </div>
+        </section>
+      )}
     </article>
+    <ProjectPreviewSection projectId={project.id} />
+    </>
+  );
+}
+
+function ProjectPreviewSection({ projectId }: { projectId: string }) {
+  const Preview = projectPreviews[projectId];
+  if (!Preview) return null;
+  return (
+    <section id="previa" className="mx-auto max-w-[1600px] px-6 pb-24 scroll-mt-24">
+      <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
+        Previa
+      </div>
+      <div className="glass-card rounded-2xl p-3 sm:p-4">
+        <Preview />
+      </div>
+    </section>
   );
 }
 
