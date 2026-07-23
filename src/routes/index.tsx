@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download, Mail, Sparkles, Briefcase, GraduationCap } from "lucide-react";
+import { ArrowRight, Mail, Sparkles, Briefcase, GraduationCap } from "lucide-react";
 import { profile, skills, experiences, education } from "@/data/profile";
 
 export const Route = createFileRoute("/")({
@@ -12,10 +12,6 @@ function Home() {
       <section className="relative pt-16 pb-24 sm:pt-24 sm:pb-32">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
         <div className="animate-fade-up">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/50 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-            Disponível para novos projetos
-          </div>
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
             Olá, sou <span className="gradient-text">{profile.name}</span>
           </h1>
@@ -118,16 +114,6 @@ function Home() {
                 </li>
               ))}
             </ol>
-            <div className="mt-16 sm:mt-24">
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
-                aria-label="Baixar currículo"
-              >
-                <Download className="h-4 w-4" />
-                Baixar currículo (PDF)
-              </a>
-            </div>
           </div>
         </div>
       </Section>
