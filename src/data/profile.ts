@@ -73,7 +73,7 @@ export const experiences = [
     "period": "Dez 2024 - Jun 2026",
     "role": "Assistente I Tecnologia",
     "company": "Skinlaser",
-    "description": "Automação de processos em Python, suporte técnico a sites, impressoras e máquinas de cartão (TEF), gestão administrativa via SAP e elaboração de relatórios gerenciais."
+    "description": "Desenvolvedor de Soluções Automatizadas: criação de automações em Python para otimizar fluxos de trabalho, reduzindo tarefas repetitivas e demoradas; envio de comunicados e disparos automatizados para clientes; elaboração e fornecimento de relatórios gerenciais; e gerenciamento de sites, incluindo administração de perfis, manutenção de sistemas e correção de bugs."
   },
   {
     "period": "Ago 2023 - Dez 2024",
