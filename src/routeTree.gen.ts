@@ -9,20 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProjetosRouteImport } from './routes/projetos'
-import { Route as ContatoRouteImport } from './routes/contato'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProjetosIdRouteImport } from './routes/projetos.$id'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as ProjetosRouteImport } from './routes/projetos'
+import { Route as ProjetosIdRouteImport } from './routes/projetos_.$id'
 
-const ProjetosRoute = ProjetosRouteImport.update({
-  id: '/projetos',
-  path: '/projetos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContatoRoute = ContatoRouteImport.update({
-  id: '/contato',
-  path: '/contato',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -30,29 +25,34 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjetosRoute = ProjetosRouteImport.update({
+  id: '/projetos',
+  path: '/projetos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjetosIdRoute = ProjetosIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ProjetosRoute,
+  id: '/projetos_/$id',
+  path: '/projetos/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
-  '/projetos': typeof ProjetosRouteWithChildren
+  '/projetos': typeof ProjetosRoute
   '/projetos/$id': typeof ProjetosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
-  '/projetos': typeof ProjetosRouteWithChildren
+  '/projetos': typeof ProjetosRoute
   '/projetos/$id': typeof ProjetosIdRoute
 }
 export interface FileRoutesById {
@@ -60,38 +60,32 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
-  '/projetos': typeof ProjetosRouteWithChildren
-  '/projetos/$id': typeof ProjetosIdRoute
+  '/projetos': typeof ProjetosRoute
+  '/projetos_/$id': typeof ProjetosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/admin' | '/contato' | '/projetos' | '/projetos/$id'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/admin' | '/contato' | '/projetos' | '/projetos/$id'
-  id: '__root__' | '/' | '/admin' | '/contato' | '/projetos' | '/projetos/$id'
+  id: '__root__' | '/' | '/admin' | '/contato' | '/projetos' | '/projetos_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   ContatoRoute: typeof ContatoRoute
-  ProjetosRoute: typeof ProjetosRouteWithChildren
+  ProjetosRoute: typeof ProjetosRoute
+  ProjetosIdRoute: typeof ProjetosIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/projetos': {
-      id: '/projetos'
-      path: '/projetos'
-      fullPath: '/projetos'
-      preLoaderRoute: typeof ProjetosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contato': {
-      id: '/contato'
-      path: '/contato'
-      fullPath: '/contato'
-      preLoaderRoute: typeof ContatoRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -101,40 +95,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projetos/$id': {
-      id: '/projetos/$id'
-      path: '/$id'
+    '/projetos': {
+      id: '/projetos'
+      path: '/projetos'
+      fullPath: '/projetos'
+      preLoaderRoute: typeof ProjetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projetos_/$id': {
+      id: '/projetos_/$id'
+      path: '/projetos/$id'
       fullPath: '/projetos/$id'
       preLoaderRoute: typeof ProjetosIdRouteImport
-      parentRoute: typeof ProjetosRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface ProjetosRouteChildren {
-  ProjetosIdRoute: typeof ProjetosIdRoute
-}
-
-const ProjetosRouteChildren: ProjetosRouteChildren = {
-  ProjetosIdRoute: ProjetosIdRoute,
-}
-
-const ProjetosRouteWithChildren = ProjetosRoute._addFileChildren(
-  ProjetosRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ContatoRoute: ContatoRoute,
-  ProjetosRoute: ProjetosRouteWithChildren,
+  ProjetosRoute: ProjetosRoute,
+  ProjetosIdRoute: ProjetosIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

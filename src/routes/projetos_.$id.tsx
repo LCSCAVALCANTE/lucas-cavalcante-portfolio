@@ -4,7 +4,7 @@ import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
 import { projectPreviews } from "@/components/previews";
 
-export const Route = createFileRoute("/projetos/$id")({
+export const Route = createFileRoute("/projetos_/$id")({
   head: ({ params }) => {
     const p = projects.find((x) => x.id === params.id);
     const title = p ? `${p.name} - Lucas Cavalcante` : "Projeto nao encontrado";
