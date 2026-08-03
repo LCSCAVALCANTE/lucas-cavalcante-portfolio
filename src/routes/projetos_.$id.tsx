@@ -7,8 +7,8 @@ import { projectPreviews } from "@/components/previews";
 export const Route = createFileRoute("/projetos_/$id")({
   head: ({ params }) => {
     const p = projects.find((x) => x.id === params.id);
-    const title = p ? `${p.name} - Lucas Cavalcante` : "Projeto nao encontrado";
-    const description = p?.shortDescription ?? "Projeto do portfolio de Lucas Cavalcante.";
+    const title = p ? `${p.name} - Lucas Cavalcante` : "Projeto não encontrado";
+    const description = p?.shortDescription ?? "Projeto do portfólio de Lucas Cavalcante.";
     return {
       meta: [
         { title },
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/projetos_/$id")({
 function ProjectNotFound() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-24 text-center">
-      <h1 className="font-display text-3xl font-bold">Projeto nao encontrado</h1>
+      <h1 className="font-display text-3xl font-bold">Projeto não encontrado</h1>
       <p className="mt-2 text-muted-foreground">Este projeto pode ter sido removido ou movido.</p>
       <Link to="/projetos" className="mt-6 inline-flex items-center gap-2 text-primary hover:text-cyan">
         <ArrowLeft className="h-4 w-4" /> Voltar aos projetos
@@ -72,7 +72,7 @@ function ProjectDetail() {
               href="#previa"
               className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
-              <Eye className="h-4 w-4" /> Ver demonstracao
+              <Eye className="h-4 w-4" /> Ver demonstração
             </a>
           </div>
         )}
@@ -127,7 +127,7 @@ function ProjectDetail() {
         <section className="mt-10 glass-card rounded-2xl p-6">
           <div className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-emerald-300">
             <CheckCircle2 className="h-4 w-4" />
-            Entregaveis
+            Entregáveis
           </div>
           <ul className="grid gap-3 sm:grid-cols-2">
             {project.deliverables.map((d: string, i: number) => (
@@ -143,10 +143,10 @@ function ProjectDetail() {
       {!projectPreviews[project.id] && !project.hidePreview && (
         <section id="previa" className="mt-10 scroll-mt-24">
           <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
-            Previa
+            Prévia
           </div>
           <div className="glass-card grid aspect-video place-items-center rounded-2xl border-dashed text-sm text-muted-foreground">
-            Prints e imagens do projeto aparecerao aqui.
+            Prints e imagens do projeto aparecerão aqui.
           </div>
         </section>
       )}
@@ -162,7 +162,7 @@ function ProjectPreviewSection({ projectId }: { projectId: string }) {
   return (
     <section id="previa" className="mx-auto max-w-[1600px] px-6 pb-24 scroll-mt-24">
       <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
-        Previa
+        Prévia
       </div>
       <div className="glass-card rounded-2xl p-3 sm:p-4">
         <Preview />

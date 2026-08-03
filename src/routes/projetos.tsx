@@ -11,12 +11,12 @@ export const Route = createFileRoute("/projetos")({
       {
         name: "description",
         content:
-          "Uma selecao de solucoes, dashboards, automacoes e sistemas que desenvolvi para transformar dados em decisoes e otimizar processos.",
+          "Uma seleção de soluções, dashboards, automações e sistemas que desenvolvi para transformar dados em decisões e otimizar processos.",
       },
       { property: "og:title", content: "Projetos - Lucas Cavalcante" },
       {
         property: "og:description",
-        content: "Portfolio de projetos em dados, automacao e desenvolvimento.",
+        content: "Portfólio de projetos em dados, automação e desenvolvimento.",
       },
     ],
   }),
@@ -28,13 +28,13 @@ function ProjectsPage() {
     <div className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
       <div className="animate-fade-up">
         <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
-          Portfolio
+          Portfólio
         </div>
         <h1 className="font-display text-4xl font-bold sm:text-5xl lg:text-6xl">
           Meus <span className="gradient-text">Projetos</span>
         </h1>
         <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-          Uma selecao de solucoes, dashboards, automacoes e sistemas que desenvolvi para transformar dados em decisoes e otimizar processos.
+          Uma seleção de soluções, dashboards, automações e sistemas que desenvolvi para transformar dados em decisões e otimizar processos.
         </p>
       </div>
 
@@ -84,8 +84,8 @@ function ProjectsPage() {
                   params={{ id: p.id }}
                   hash="previa"
                   className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                  aria-label="Ver previa"
-                  title="Ver previa"
+                  aria-label="Ver prévia"
+                  title="Ver prévia"
                 >
                   <Eye className="h-4 w-4" />
                 </Link>
