@@ -22,12 +22,12 @@ export const projects: Project[] = [
     shortDescription:
       "Painel em Power BI que monitora ocupação de agendas em tempo real, com filtros por profissional e unidade.",
     fullDescription:
-      "Solução completa de BI para acompanhamento diário da ocupação de agendas de atendimento, com integração direta ao banco de dados operacional e atualização automática.",
+      "Solução completa de BI para acompanhamento diário da ocupação de agendas de atendimento, com integração direta ao banco de dados operacional e atualização automática.\n\nBônus: o painel conta com a Nexa, uma inteligência artificial integrada que lê os dados da dashboard e responde às perguntas do usuário em linguagem natural, funcionando como um agente de suporte — explicando indicadores, apontando horários ociosos e ajudando na leitura dos números sem precisar navegar por filtros.",
     problem:
       "A gestão não tinha visibilidade em tempo real sobre horários ociosos e capacidade utilizada, dificultando decisões operacionais.",
     results:
       "Aumento de 22% na ocupação média das agendas e redução de tempo gasto em relatórios manuais em 80%.",
-    technologies: ["DAX", "SQL", "API", "N8N", "SHEETS", "POSTGRES", "JAVASCRIPT", "CSS", "HTML", "REACT", "VPS"],
+    technologies: ["DAX", "SQL", "API", "N8N", "SHEETS", "POSTGRES", "JAVASCRIPT", "CSS", "HTML", "REACT", "VPS", "MCP", "IA"],
     status: "Concluído",
   },
   {
