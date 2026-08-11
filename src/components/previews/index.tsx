@@ -26,8 +26,8 @@ export const projectPreviews: Record<string, ComponentType> = {
   ),
   "cerebro-financeiro": () => (
     <IframePreview
-      src="https://id-preview--f893ed13-d816-4dde-98a9-de13cbf86a1b.lovable.app"
-      label="Cérebro Financeiro (protótipo com dados demonstrativos)"
+      src="/previews/cerebro-financeiro-demo.html"
+      label="Cérebro Financeiro (demo com dados fictícios)"
     />
   ),
   "insertvalue-feegow": () => (
