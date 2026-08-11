@@ -19,7 +19,7 @@ export function Navbar() {
             LC
           </span>
           <span className="font-display text-base font-semibold tracking-tight">
-            Lucas<span className="text-muted-foreground">.dev</span>
+            Lucas <span className="text-muted-foreground">Cavalcante</span>
           </span>
         </Link>
 
