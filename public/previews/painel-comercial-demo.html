@@ -1,25 +1,330 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Painel Comercial — Demo</title>
-<style>
-:root{--bg:#f3f0eb;--surface:#fff;--soft:#faf8f5;--border:#e8e0d6;--text:#211f1c;--muted:#8b8177;--accent:#ef8100;--accent2:#8a4a2f;--green:#2f7a3d;--red:#b3402c;--blue:#2a78d6;--radius:14px;--shadow:0 5px 18px rgba(58,42,25,.07)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}.demo-note{background:#211f1c;color:#fff;padding:7px 12px;text-align:center;font-size:12px;letter-spacing:.02em}.app{margin:5px;border:1px solid var(--border);border-radius:16px 16px 0 0;overflow:hidden;background:#fff;box-shadow:var(--shadow);min-height:calc(100vh - 10px)}
-.top{height:72px;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--border)}.logo{display:flex;align-items:center;gap:10px;min-width:230px}.mark{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:3px solid var(--accent);color:var(--accent);font-weight:900;font-size:12px}.brand strong{display:block;font-size:17px}.brand span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.tabs{height:100%;display:flex;gap:2px}.tab{border:0;background:transparent;padding:0 20px;font-size:15px;color:#625951;position:relative;cursor:pointer}.tab.active{color:var(--accent);font-weight:800}.tab.active:after{content:"";position:absolute;height:3px;left:16px;right:16px;bottom:0;background:var(--accent);border-radius:3px 3px 0 0}.spacer{flex:1}.user{border:1px solid var(--border);background:var(--soft);border-radius:999px;padding:7px 11px;font-size:12px;color:#514941}.workspace{display:grid;grid-template-columns:178px 1fr;min-height:720px}.side{border-right:1px solid var(--border);padding:14px 8px;background:#fff}.side small{display:block;padding:0 12px 9px;color:#a1968c;font-weight:800;letter-spacing:.08em;font-size:10px}.unit{width:100%;text-align:left;border:0;background:transparent;padding:11px 12px;border-radius:10px;font-size:14px;cursor:pointer;color:#302a25}.unit.active{background:linear-gradient(90deg,#fff2e2,#fff);color:var(--accent);font-weight:800;box-shadow:inset 3px 0 0 var(--accent)}.content{background:var(--bg);min-width:0}.filters{display:flex;gap:10px;align-items:end;padding:11px 12px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap}.field{display:grid;gap:5px}.field label{font-size:10px;font-weight:800;color:var(--muted)}select,.ghost{height:36px;border:1px solid #ded5ca;background:#fff;border-radius:8px;padding:0 11px;color:#4a423c}.ghost{display:flex;align-items:center;font-size:12px}.compare{margin-left:auto;color:#b75d00;border-color:#f0b66f;background:#fff7ed}.body{padding:14px}.heading{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:14px}.heading h1{margin:0;font-size:22px}.heading p{margin:4px 0 0;color:var(--muted);font-size:12px}.context{background:#fff;border:1px solid var(--border);padding:7px 10px;border-radius:999px;font-size:11px;color:#645a52}.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}.pillar{padding-left:10px;border-left:4px solid #cbb896}.pillar:nth-child(2){border-color:var(--accent)}.pillar:nth-child(3){border-color:var(--accent2)}.pillar-label{text-transform:uppercase;color:var(--muted);font-size:10px;font-weight:900;letter-spacing:.06em;margin-bottom:7px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:11px;box-shadow:0 3px 10px rgba(54,42,28,.04)}.kpi label{display:block;color:var(--muted);font-weight:800;text-transform:uppercase;font-size:9px;letter-spacing:.04em}.kpi strong{display:block;font-size:20px;margin-top:4px}.delta{font-size:10px;margin-top:4px;color:var(--green);font-weight:800}.delta.down{color:var(--red)}.grid{display:grid;grid-template-columns:2fr 1fr;gap:14px}.card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(54,42,28,.05);position:relative}.card:before{content:"";height:3px;position:absolute;inset:0 0 auto;background:linear-gradient(90deg,var(--accent),#fff2e2)}.card-head{padding:13px 14px;border-bottom:1px solid #eee7df}.card-head h2{font-size:14px;margin:0}.card-head p{font-size:10px;color:var(--muted);margin:3px 0 0}.funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;padding:15px}.stage label{display:block;font-size:9px;text-transform:uppercase;color:var(--muted);font-weight:800}.stage strong{display:block;font-size:23px;margin-top:4px}.track{height:7px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:7px}.fill{height:100%;background:var(--accent);border-radius:99px}.rate{font-size:10px;color:#b75d00;font-weight:800;margin-top:6px}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:9px 10px;border-bottom:1px solid #f0ebe5;font-size:11px}.table th{background:var(--soft);font-size:9px;text-transform:uppercase;color:#746a61;text-align:left}.num{text-align:right!important;font-variant-numeric:tabular-nums}.bar{height:18px;background:#fff3e4;border-radius:5px;position:relative;overflow:hidden}.bar i{position:absolute;inset:0 auto 0 0;background:#ffdcae;border-right:2px solid var(--accent)}.bar b{position:relative;display:block;text-align:right;padding:2px 5px;font-size:10px}.quality{padding:15px;display:grid;gap:18px}.q label{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:800}.qtrack{height:12px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:7px}.qfill{height:100%;background:linear-gradient(90deg,#ffe7c8,var(--accent))}.qfill.blue{background:linear-gradient(90deg,#dce7f7,var(--blue))}.q strong{display:block;font-size:12px;margin-top:6px}.subgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-top:14px}.hidden{display:none!important}.table-wrap{overflow:auto;max-height:340px}.total td{background:#fff2e2;color:#7a3d00;font-weight:900;border-top:2px solid var(--accent)}@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{display:none}.pillars,.grid,.subgrid{grid-template-columns:1fr}.top{overflow:auto}.logo{min-width:190px}.tabs{min-width:max-content}.funnel{grid-template-columns:1fr 1fr}}
-</style>
-</head><body>
-<div class="demo-note">DEMONSTRAÇÃO DE PORTFÓLIO · dados, nomes e valores totalmente fictícios</div>
-<div class="app"><div class="top"><div class="logo"><div class="mark">SL</div><div class="brand"><strong>SkinLaser</strong><span>Painel Comercial</span></div></div><div class="tabs"><button class="tab active" data-view="dashboard">Dashboard</button><button class="tab" data-view="agendamentos">Agendamentos</button><button class="tab" data-view="propostas">Propostas</button></div><div class="spacer"></div><div class="user">Demo · Portfólio</div></div>
-<div class="workspace"><aside class="side"><small>UNIDADES</small><button class="unit active">Rede</button><button class="unit">Higienópolis</button><button class="unit">Anália Franco</button><button class="unit">Moema</button><button class="unit">Morumbi</button><button class="unit">Skaminsky</button></aside><main class="content">
-<div class="filters"><div class="field"><label>PERÍODO</label><select><option>Agosto/2026</option></select></div><div class="field"><label>MÉDICO</label><select><option>Todos os profissionais</option></select></div><div class="ghost">Jul · Ago · Set</div><div class="ghost compare">Comparar meses</div></div>
-<div class="body view" id="dashboard"><div class="heading"><div><h1>Dashboard Comercial</h1><p>Resumo executivo da rede · desempenho, conversão e receita</p></div><div class="context">Rede · Agosto/2026</div></div>
-<div class="pillars"><section class="pillar"><div class="pillar-label">Atendimento</div><div class="pair"><div class="kpi"><label>Agendamentos</label><strong>1.284</strong><div class="delta">▲ 8,4%</div></div><div class="kpi"><label>Atendidos</label><strong>947</strong><div class="delta">▲ 6,1%</div></div></div></section><section class="pillar"><div class="pillar-label">Conversão</div><div class="pair"><div class="kpi"><label>Indicados</label><strong>412</strong><div class="delta">▲ 11,2%</div></div><div class="kpi"><label>Taxa indicação</label><strong>43,5%</strong><div class="delta">▲ 2,0 p.p.</div></div></div></section><section class="pillar"><div class="pillar-label">Receita</div><div class="pair"><div class="kpi"><label>Contratos de ato</label><strong>268</strong><div class="delta">▲ 7,8%</div></div><div class="kpi"><label>Faturado</label><strong>R$ 486 mil</strong><div class="delta down">▼ 1,4%</div></div></div></section></div>
-<div class="grid"><section class="card"><div class="card-head"><h2>Funil comercial</h2><p>Da agenda ao contrato executado</p></div><div class="funnel"><div class="stage"><label>Agendados</label><strong>1.284</strong><div class="track"><div class="fill" style="width:100%"></div></div><div class="rate">100%</div></div><div class="stage"><label>Atendidos</label><strong>947</strong><div class="track"><div class="fill" style="width:74%"></div></div><div class="rate">73,8%</div></div><div class="stage"><label>Indicados</label><strong>412</strong><div class="track"><div class="fill" style="width:44%"></div></div><div class="rate">43,5%</div></div><div class="stage"><label>Contratos</label><strong>268</strong><div class="track"><div class="fill" style="width:28%"></div></div><div class="rate">65,0% dos indicados</div></div></div></section><section class="card"><div class="card-head"><h2>Qualidade da receita</h2><p>Condição comercial da venda</p></div><div class="quality"><div class="q"><label>À vista</label><div class="qtrack"><div class="qfill" style="width:62%"></div></div><strong>62% · R$ 301 mil</strong></div><div class="q"><label>Desconto médio</label><div class="qtrack"><div class="qfill blue" style="width:18%"></div></div><strong>8,7% · dentro da meta</strong></div></div></section></div>
-<div class="subgrid"><section class="card"><div class="card-head"><h2>Ranking por faturamento</h2><p>Profissionais com maior resultado no período</p></div><table class="table"><thead><tr><th>Profissional</th><th class="num">Contratos</th><th class="num">Faturado</th><th>Participação</th></tr></thead><tbody><tr><td>Dra. Marina Alves</td><td class="num">42</td><td class="num">R$ 82.400</td><td><div class="bar"><i style="width:92%"></i><b>16,9%</b></div></td></tr><tr><td>Dr. Rafael Nunes</td><td class="num">37</td><td class="num">R$ 71.900</td><td><div class="bar"><i style="width:80%"></i><b>14,8%</b></div></td></tr><tr><td>Dra. Camila Rocha</td><td class="num">34</td><td class="num">R$ 65.600</td><td><div class="bar"><i style="width:73%"></i><b>13,5%</b></div></td></tr><tr><td>Dr. Bruno Lima</td><td class="num">29</td><td class="num">R$ 54.300</td><td><div class="bar"><i style="width:61%"></i><b>11,2%</b></div></td></tr></tbody></table></section><section class="card"><div class="card-head"><h2>Rede por unidade</h2><p>Visão agregada das unidades</p></div><table class="table"><thead><tr><th>Unidade</th><th class="num">Atendidos</th><th class="num">Faturado</th></tr></thead><tbody><tr><td>Higienópolis</td><td class="num">238</td><td class="num">R$ 128 mil</td></tr><tr><td>Moema</td><td class="num">201</td><td class="num">R$ 104 mil</td></tr><tr><td>Morumbi</td><td class="num">189</td><td class="num">R$ 96 mil</td></tr><tr><td>Anália Franco</td><td class="num">173</td><td class="num">R$ 85 mil</td></tr><tr><td>Skaminsky</td><td class="num">146</td><td class="num">R$ 73 mil</td></tr></tbody></table></section></div></div>
-<div class="body view hidden" id="agendamentos"><div class="heading"><div><h1>Agendamentos</h1><p>Consultas, comparecimento e indicações por profissional</p></div><div class="context">Rede · Agosto/2026</div></div><section class="card"><div class="card-head"><h2>Médicos × Unidade</h2><p>Indicadores fictícios para demonstração</p></div><div class="table-wrap"><table class="table"><thead><tr><th>Profissional</th><th>Unidade</th><th class="num">Agendamentos</th><th class="num">Atendidos</th><th class="num">Indicados</th><th class="num">Taxa indicação</th></tr></thead><tbody><tr><td>Dra. Marina Alves</td><td>Higienópolis</td><td class="num">98</td><td class="num">76</td><td class="num">39</td><td class="num">51,3%</td></tr><tr><td>Dr. Rafael Nunes</td><td>Moema</td><td class="num">91</td><td class="num">70</td><td class="num">31</td><td class="num">44,3%</td></tr><tr><td>Dra. Camila Rocha</td><td>Morumbi</td><td class="num">84</td><td class="num">62</td><td class="num">27</td><td class="num">43,5%</td></tr><tr><td>Dr. Bruno Lima</td><td>Anália Franco</td><td class="num">79</td><td class="num">58</td><td class="num">23</td><td class="num">39,7%</td></tr><tr class="total"><td colspan="2">TOTAL REDE</td><td class="num">1.284</td><td class="num">947</td><td class="num">412</td><td class="num">43,5%</td></tr></tbody></table></div></section></div>
-<div class="body view hidden" id="propostas"><div class="heading"><div><h1>Propostas</h1><p>Contratos de ato, faturamento, ticket, à vista e desconto</p></div><div class="context">Rede · Agosto/2026</div></div><section class="card"><div class="card-head"><h2>Resultado por profissional</h2><p>Valores fictícios para demonstração</p></div><div class="table-wrap"><table class="table"><thead><tr><th>Profissional</th><th class="num">Contratos</th><th class="num">Propostas totais</th><th class="num">Faturado</th><th class="num">Ticket médio</th><th class="num">À vista</th><th class="num">Desconto</th></tr></thead><tbody><tr><td>Dra. Marina Alves</td><td class="num">42</td><td class="num">61</td><td class="num">R$ 82.400</td><td class="num">R$ 1.962</td><td class="num">64%</td><td class="num">7,8%</td></tr><tr><td>Dr. Rafael Nunes</td><td class="num">37</td><td class="num">56</td><td class="num">R$ 71.900</td><td class="num">R$ 1.943</td><td class="num">59%</td><td class="num">8,4%</td></tr><tr><td>Dra. Camila Rocha</td><td class="num">34</td><td class="num">49</td><td class="num">R$ 65.600</td><td class="num">R$ 1.929</td><td class="num">61%</td><td class="num">9,1%</td></tr><tr class="total"><td>TOTAL REDE</td><td class="num">268</td><td class="num">401</td><td class="num">R$ 486.000</td><td class="num">R$ 1.813</td><td class="num">62%</td><td class="num">8,7%</td></tr></tbody></table></div></section></div>
-</main></div></div>
-<script>document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));document.getElementById(b.dataset.view).classList.remove('hidden')}));document.querySelectorAll('.unit').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.unit').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));</script>
-</body></html>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório Mensal Comercial — Demonstração</title>
+  <style>
+    :root {
+      --bg: #f3f0eb;
+      --surface: #ffffff;
+      --surface-soft: #faf8f5;
+      --border: #e8e0d6;
+      --text: #211f1c;
+      --muted: #8b8177;
+      --accent: #ef8100;
+      --accent-soft: #fff2e2;
+      --shadow: 0 5px 18px rgba(58, 42, 25, 0.07);
+      --radius: 14px;
+      --header-height: 74px;
+      --sidebar-width: 176px;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: Inter, Arial, Helvetica, sans-serif; }
+    button, select, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell { width: calc(100% - 8px); min-height: calc(100vh - 8px); margin: 4px auto; overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: 16px 16px 0 0; box-shadow: var(--shadow); }
+    .topbar { height: var(--header-height); display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,.98); }
+    .brand { display: flex; align-items: center; gap: 14px; min-width: 150px; }
+    .brand-logo { height: 42px; min-width: 96px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; letter-spacing: -.6px; color: #ef8100; }
+    .brand-logo span { color: #35302b; }
+    .brand-title { font-size: 15px; font-weight: 700; white-space: nowrap; color: #3b352f; padding-left: 14px; border-left: 1px solid var(--border); }
+    .main-tabs { display: flex; align-items: stretch; height: 100%; gap: 6px; }
+    .main-tab { position: relative; border: 0; background: transparent; padding: 0 22px; color: #5f5750; font-size: 16px; }
+    .main-tab:hover { color: var(--accent); }
+    .main-tab.active { color: var(--accent); font-weight: 700; }
+    .main-tab.active::after { content: ""; position: absolute; left: 18px; right: 18px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--accent); }
+    .topbar-spacer { flex: 1; }
+    .user-pill { display: flex; align-items: center; gap: 8px; padding: 7px 12px 7px 8px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-soft); color: #4e463f; font-size: 13px; }
+    .avatar { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: white; font-weight: 800; font-size: 12px; }
+
+    .workspace { min-height: calc(100vh - 104px); display: grid; grid-template-columns: var(--sidebar-width) 1fr; }
+    .sidebar { padding: 14px 8px; border-right: 1px solid var(--border); background: #fff; }
+    .sidebar-label { padding: 0 12px 10px; color: #a1968c; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .unit-list { display: grid; gap: 5px; }
+    .unit-tab { width: 100%; border: 0; border-radius: 10px; background: transparent; padding: 11px 12px; text-align: left; color: #28231f; font-size: 15px; transition: .18s ease; }
+    .unit-tab:hover { background: var(--surface-soft); }
+    .unit-tab.active { background: linear-gradient(90deg,var(--accent-soft),#fff); color: var(--accent); font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); }
+
+    .content { min-width: 0; background: var(--bg); }
+    .filters { display: flex; align-items: end; gap: 10px; padding: 12px 10px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .field { display: grid; gap: 6px; }
+    .field label { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .field select,.field input { min-width: 190px; height: 38px; padding: 0 12px; border: 1px solid #ded5ca; border-radius: 9px; outline: none; background: white; color: #3b352f; }
+    .period-switch { display: flex; height: 38px; overflow: hidden; border: 1px solid #ded5ca; border-radius: 9px; }
+    .period-option { border: 0; background: white; padding: 0 18px; color: #695f56; }
+    .period-option.active { background: var(--accent); color: white; font-weight: 700; }
+    .month-list { display: flex; align-items: center; gap: 7px; overflow-x: auto; padding-bottom: 1px; }
+    .month-chip { flex: 0 0 auto; height: 35px; padding: 0 14px; border: 1px solid #ddd3c8; border-radius: 999px; background: white; color: #6d635b; }
+    .month-chip.active { border-color: var(--accent); background: var(--accent-soft); color: #b75d00; font-weight: 700; }
+    .compare-toggle-btn { height: 38px; padding: 0 16px; border: 1px solid #ded5ca; border-radius: 9px; background: white; color: #695f56; font-weight: 600; font-size: 13px; white-space: nowrap; }
+    .compare-toggle-btn:hover,.compare-toggle-btn.active { border-color: var(--accent); background: var(--accent-soft); color: #b75d00; }
+    .compare-drawer { display:none; padding:12px 10px 20px; background:var(--bg); border-bottom:1px solid var(--border); }
+    .compare-drawer.open { display:block; }
+    .compare-groups { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:14px; }
+    .compare-group-label { display:block; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px; }
+    .compare-run-btn { height:38px; padding:0 20px; border:0; border-radius:9px; background:var(--accent); color:white; font-weight:700; }
+    .compare-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 14px 14px; }
+
+    .page-body { padding: 12px 10px 24px; }
+    .page-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:16px; }
+    .page-heading h1 { margin:0; font-size:21px; }
+    .page-heading p { margin:6px 0 0; color:var(--muted); font-size:13px; }
+    .context-tag { padding:8px 12px; border:1px solid var(--border); border-radius:999px; background:var(--surface); color:#645a52; font-size:12px; white-space:nowrap; }
+    .content-grid { display:grid; gap:16px; }
+    .exec-header { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; padding:10px 4px; margin-bottom:14px; border-bottom:1px solid var(--border); }
+    .exec-header-title { font-size:14px; font-weight:800; color:#2b241d; }
+    .exec-header-sub { font-size:12.5px; color:var(--muted); }
+    .exec-header-compare-field { margin-left:auto; display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; color:var(--muted); text-transform:uppercase; }
+    .exec-header-compare-field select { height:30px; padding:0 10px; border:1px solid #ded5ca; border-radius:7px; background:white; color:#3b352f; font-weight:600; font-size:12.5px; text-transform:none; }
+
+    .pillar-groups { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:16px; }
+    .pillar-group { position:relative; padding-left:12px; border-left:4px solid var(--border); border-radius:2px; }
+    .pillar-atendimento { border-left-color:#cbb896; }
+    .pillar-conversao { border-left-color:var(--accent); }
+    .pillar-receita { border-left-color:#8a4a2f; }
+    .pillar-label { color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
+    .pillar-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .kpi-card { padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:0 3px 10px rgba(54,42,28,.05); }
+    .kpi-card-label { color:var(--muted); font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin-bottom:6px; line-height:1.25; }
+    .kpi-card-value { font-size:22px; font-weight:800; color:#2b241d; font-variant-numeric:tabular-nums; line-height:1.1; }
+    .kpi-card-delta { margin-top:4px; font-size:12px; font-weight:700; color:#2f7a3d; }
+    .kpi-card-delta.down { color:#b3402c; }
+    .kpi-card-context { margin-top:6px; font-size:11.5px; color:var(--muted); }
+
+    .card { position:relative; min-width:0; overflow:hidden; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:0 4px 14px rgba(54,42,28,.06); transition:box-shadow .2s ease; }
+    .card::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-soft)); }
+    .card:hover { box-shadow:0 8px 20px rgba(54,42,28,.09); }
+    .card-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 14px 12px; border-bottom:1px solid #eee7df; }
+    .card-title { margin:0; font-size:15.5px; font-weight:700; color:#2b241d; letter-spacing:.01em; }
+    .card-subtitle { margin-top:4px; color:var(--muted); font-size:12px; }
+    .table-wrap { width:100%; overflow-x:hidden; max-height:460px; overflow-y:auto; }
+    table { width:100%; min-width:0; border-collapse:collapse; }
+    th,td { padding:9px 8px; border-bottom:1px solid #f0ebe5; text-align:left; white-space:nowrap; font-size:12px; }
+    th { position:sticky; top:0; z-index:1; background:var(--surface-soft); color:#746a61; font-size:10px; font-weight:800; line-height:1.18; letter-spacing:.015em; text-transform:uppercase; white-space:normal; overflow-wrap:anywhere; box-shadow:inset 0 -1px 0 #eee1d2; }
+    tbody tr:nth-child(even) { background:rgba(239,129,0,.02); }
+    tbody tr:hover { background:var(--accent-soft); }
+    td.number,th.number { text-align:right; font-variant-numeric:tabular-nums; }
+    .total-row { position:sticky; bottom:0; z-index:2; }
+    .total-row td { background:var(--accent-soft); color:#7a3d00; font-weight:800; border-top:2px solid var(--accent); border-bottom:0; }
+    .appointments-table { table-layout:fixed; }
+    .appointments-table th:first-child,.appointments-table td:first-child { width:32%; }
+    .appointments-table th:not(:first-child),.appointments-table td:not(:first-child) { width:13.6%; }
+    .proposals-table { table-layout:fixed; }
+    .proposals-table th { font-size:9px; text-align:center; }
+    .proposals-table td { font-size:10.5px; text-align:center; }
+    .proposals-table th:first-child,.proposals-table td:first-child { width:17%; white-space:normal; }
+
+    .funnel-card { margin-bottom:16px; }
+    .funnel-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; padding:16px; }
+    .funnel-stage-label { color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin-bottom:6px; }
+    .funnel-stage-value { font-size:26px; font-weight:800; color:#2b241d; }
+    .funnel-stage-bar-track { margin-top:8px; height:8px; border-radius:5px; background:var(--surface-soft); overflow:hidden; }
+    .funnel-stage-bar-fill { height:100%; border-radius:5px; background:var(--accent); }
+    .funnel-stage-rate { margin-top:8px; font-size:12px; font-weight:700; color:#b75d00; }
+    .ranking-table th,.ranking-table td { padding:8px 12px; font-size:12.5px; }
+    .ranking-table th { font-size:10.5px; }
+    .bar-cell { position:relative; height:22px; min-width:90px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; border-radius:5px; overflow:hidden; background:var(--surface-soft); }
+    .bar-cell-fill { position:absolute; inset:0 auto 0 0; background:var(--accent-soft); border-right:2px solid var(--accent); }
+    .bar-cell-text { position:relative; z-index:1; font-weight:700; font-size:12px; }
+    .quality-bars { display:grid; gap:22px; padding:20px 20px 24px; }
+    .quality-bar-label { color:var(--muted); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin-bottom:8px; }
+    .quality-bar-track { height:14px; border-radius:7px; background:var(--surface-soft); overflow:hidden; }
+    .quality-bar-fill { height:100%; border-radius:7px; background:linear-gradient(90deg,var(--accent-soft),var(--accent)); }
+    .quality-bar-fill.blue { background:linear-gradient(90deg,#dce7f7,#2a78d6); }
+    .quality-bar-figures { margin-top:8px; font-size:13px; font-weight:700; color:#2b241d; }
+    .page-section { display:none; }
+    .page-section.active { display:block; }
+
+    .demo-tag { position:fixed; right:12px; bottom:12px; z-index:20; padding:7px 10px; border-radius:999px; background:#211f1c; color:#fff; font-size:10px; opacity:.86; pointer-events:none; }
+
+    @media(max-width:980px){ .app-shell{width:100%;margin:0;border-radius:0}.workspace{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--border)}.unit-list{display:flex;overflow-x:auto}.unit-tab{width:auto;flex:0 0 auto}.filters{align-items:stretch;flex-wrap:wrap}.month-list{width:100%}.pillar-groups{grid-template-columns:1fr}.funnel-row{grid-template-columns:1fr 1fr}.brand-title{display:none} }
+    @media(max-width:560px){ .pillar-cards{grid-template-columns:1fr}.funnel-row{grid-template-columns:1fr}.page-heading{align-items:start;flex-direction:column} }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">SKIN<span>LASER</span></div>
+        <div class="brand-title">Relatório Mensal Comercial</div>
+      </div>
+
+      <nav class="main-tabs">
+        <button class="main-tab active" data-page="agendamentos">Agendamentos</button>
+        <button class="main-tab" data-page="propostas">Propostas</button>
+        <button class="main-tab" data-page="dashboard">Dashboard</button>
+      </nav>
+
+      <div class="topbar-spacer"></div>
+      <div class="user-pill"><span class="avatar">D</span><span>diretoria</span></div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <div class="sidebar-label">Unidades</div>
+        <nav class="unit-list">
+          <button class="unit-tab" data-unit="Rede">Rede</button>
+          <button class="unit-tab active" data-unit="Higienópolis">Higienópolis</button>
+          <button class="unit-tab" data-unit="Anália Franco">Anália Franco</button>
+          <button class="unit-tab" data-unit="Moema">Moema</button>
+          <button class="unit-tab" data-unit="Morumbi">Morumbi</button>
+          <button class="unit-tab" data-unit="Skaminsky">Skaminsky</button>
+        </nav>
+      </aside>
+
+      <section class="content">
+        <div class="filters">
+          <div class="field">
+            <label>Período</label>
+            <div class="period-switch">
+              <button class="period-option active">Mês</button>
+              <button class="period-option">Personalizado</button>
+            </div>
+          </div>
+          <div class="field" style="min-width:0;flex:1">
+            <label>Meses</label>
+            <div class="month-list">
+              <button class="month-chip">jan/26</button><button class="month-chip">fev/26</button><button class="month-chip">mar/26</button><button class="month-chip">abr/26</button><button class="month-chip">mai/26</button><button class="month-chip">jun/26</button><button class="month-chip active">jul/26</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Médico</label>
+            <select id="medicoFilter"><option>Todos os médicos</option><option>Dra. Marina Duarte</option><option>Dr. Rafael Moreira</option><option>Dra. Camila Torres</option></select>
+          </div>
+          <div class="field" style="justify-content:flex-end"><label>&nbsp;</label><button id="compareToggle" class="compare-toggle-btn">Comparar meses</button></div>
+        </div>
+
+        <div class="compare-drawer" id="compareDrawer">
+          <article class="card">
+            <header class="card-header"><div><h2 class="card-title">Comparar meses</h2><div class="card-subtitle">Soma os meses selecionados em cada grupo e compara os totais da unidade/médico ativos nos filtros.</div></div></header>
+            <div class="compare-groups">
+              <div><label class="compare-group-label">Meses A</label><div class="month-list"><button class="month-chip active">mai/26</button><button class="month-chip active">jun/26</button></div></div>
+              <div><label class="compare-group-label">Meses B</label><div class="month-list"><button class="month-chip active">jul/26</button></div></div>
+            </div>
+            <div class="compare-footer"><span style="font-size:12px;color:var(--muted)">Unidade: <strong data-current-unit>Higienópolis</strong></span><button class="compare-run-btn">Comparar</button></div>
+          </article>
+        </div>
+
+        <div class="page-body">
+          <section id="agendamentos" class="page-section active">
+            <div class="page-heading"><div><h1>Agendamentos</h1><p>Visão mensal da unidade selecionada, com consolidação por médico e por dia.</p></div><div class="context-tag">Unidade: <strong data-current-unit>Higienópolis</strong></div></div>
+            <div class="content-grid">
+              <article class="card">
+                <header class="card-header"><div><h2 class="card-title">Agendamentos por médico</h2><div class="card-subtitle">Dados do mês selecionado, sempre filtrados pela unidade ativa na barra lateral.</div></div></header>
+                <div class="table-wrap"><table class="appointments-table"><thead><tr><th>Médico</th><th class="number">Agendamentos</th><th class="number">Atendidos</th><th class="number">% Comparecimento</th><th class="number">Indicados</th><th class="number">Taxa de indicação</th></tr></thead><tbody>
+                  <tr><td>Dra. Marina Duarte</td><td class="number">68</td><td class="number">54</td><td class="number">79%</td><td class="number">23</td><td class="number">43%</td></tr>
+                  <tr><td>Dr. Rafael Moreira</td><td class="number">61</td><td class="number">47</td><td class="number">77%</td><td class="number">19</td><td class="number">40%</td></tr>
+                  <tr><td>Dra. Camila Torres</td><td class="number">55</td><td class="number">44</td><td class="number">80%</td><td class="number">21</td><td class="number">48%</td></tr>
+                  <tr><td>Dr. Bruno Almeida</td><td class="number">47</td><td class="number">36</td><td class="number">77%</td><td class="number">14</td><td class="number">39%</td></tr>
+                  <tr class="total-row"><td>Total</td><td class="number">231</td><td class="number">181</td><td class="number">78%</td><td class="number">77</td><td class="number">43%</td></tr>
+                </tbody></table></div>
+              </article>
+
+              <article class="card">
+                <header class="card-header"><div><h2 class="card-title">Agendamentos por dia</h2><div class="card-subtitle">Acompanhamento diário dentro do mês selecionado, para a unidade ativa.</div></div></header>
+                <div class="table-wrap"><table class="appointments-table"><thead><tr><th>Data</th><th class="number">Agendamentos</th><th class="number">Atendidos</th><th class="number">% Comparecimento</th><th class="number">Indicados</th><th class="number">Taxa de indicação</th></tr></thead><tbody>
+                  <tr><td>01/07/2026</td><td class="number">16</td><td class="number">13</td><td class="number">81%</td><td class="number">5</td><td class="number">38%</td></tr>
+                  <tr><td>02/07/2026</td><td class="number">19</td><td class="number">15</td><td class="number">79%</td><td class="number">7</td><td class="number">47%</td></tr>
+                  <tr><td>03/07/2026</td><td class="number">15</td><td class="number">12</td><td class="number">80%</td><td class="number">6</td><td class="number">50%</td></tr>
+                  <tr><td>04/07/2026</td><td class="number">11</td><td class="number">8</td><td class="number">73%</td><td class="number">3</td><td class="number">38%</td></tr>
+                  <tr><td>06/07/2026</td><td class="number">18</td><td class="number">14</td><td class="number">78%</td><td class="number">6</td><td class="number">43%</td></tr>
+                </tbody></table></div>
+              </article>
+            </div>
+          </section>
+
+          <section id="propostas" class="page-section">
+            <div class="page-heading"><div><h1>Propostas</h1><p>Visão comercial mensal da unidade selecionada, consolidada por médico e por dia.</p></div><div class="context-tag">Unidade: <strong data-current-unit>Higienópolis</strong></div></div>
+            <div class="content-grid">
+              <article class="card">
+                <header class="card-header"><div><h2 class="card-title">Propostas por médico</h2><div class="card-subtitle">Cada médico é apresentado somente dentro da unidade e do mês selecionados.</div></div></header>
+                <div class="table-wrap"><table class="proposals-table"><thead><tr><th>Médico</th><th>Contratos de Ato</th><th>Contratos de Ato<br>(R$)</th><th>Contratos de Ato<br>(%)</th><th>Propostas totais</th><th>Faturado</th><th>Ticket médio</th><th>À vista<br>(R$)</th><th>À vista<br>(%)</th><th>Desconto<br>(R$)</th><th>Desconto<br>(%)</th></tr></thead><tbody>
+                  <tr><td>Dra. Marina Duarte</td><td>18</td><td>R$ 42.800</td><td>64%</td><td>28</td><td>R$ 58.900</td><td>R$ 2.104</td><td>R$ 31.200</td><td>53%</td><td>R$ 4.100</td><td>7%</td></tr>
+                  <tr><td>Dr. Rafael Moreira</td><td>15</td><td>R$ 35.600</td><td>58%</td><td>26</td><td>R$ 49.700</td><td>R$ 1.912</td><td>R$ 26.500</td><td>53%</td><td>R$ 3.900</td><td>8%</td></tr>
+                  <tr><td>Dra. Camila Torres</td><td>16</td><td>R$ 38.200</td><td>62%</td><td>26</td><td>R$ 51.300</td><td>R$ 1.973</td><td>R$ 29.400</td><td>57%</td><td>R$ 3.400</td><td>7%</td></tr>
+                  <tr class="total-row"><td>Total</td><td>49</td><td>R$ 116.600</td><td>61%</td><td>80</td><td>R$ 159.900</td><td>R$ 1.999</td><td>R$ 87.100</td><td>54%</td><td>R$ 11.400</td><td>7%</td></tr>
+                </tbody></table></div>
+              </article>
+
+              <article class="card">
+                <header class="card-header"><div><h2 class="card-title">Propostas por dia</h2><div class="card-subtitle">Evolução diária das propostas da unidade selecionada.</div></div></header>
+                <div class="table-wrap"><table class="proposals-table"><thead><tr><th>Data</th><th>Contratos de Ato</th><th>Contratos de Ato<br>(R$)</th><th>Propostas totais</th><th>Faturado</th><th>Ticket médio</th><th>À vista<br>(R$)</th><th>À vista<br>(%)</th><th>Desconto<br>(R$)</th><th>Desconto<br>(%)</th></tr></thead><tbody>
+                  <tr><td>01/07/2026</td><td>4</td><td>R$ 9.800</td><td>7</td><td>R$ 13.200</td><td>R$ 1.886</td><td>R$ 7.900</td><td>60%</td><td>R$ 900</td><td>7%</td></tr>
+                  <tr><td>02/07/2026</td><td>6</td><td>R$ 14.200</td><td>9</td><td>R$ 18.100</td><td>R$ 2.011</td><td>R$ 10.600</td><td>59%</td><td>R$ 1.300</td><td>7%</td></tr>
+                  <tr><td>03/07/2026</td><td>5</td><td>R$ 11.600</td><td>8</td><td>R$ 15.800</td><td>R$ 1.975</td><td>R$ 8.400</td><td>53%</td><td>R$ 1.100</td><td>7%</td></tr>
+                </tbody></table></div>
+              </article>
+            </div>
+          </section>
+
+          <section id="dashboard" class="page-section">
+            <div class="page-heading"><div><h1>Dashboard</h1><p>Visão consolidada do período selecionado, para a unidade e médico ativos nos filtros.</p></div><div class="context-tag">Unidade: <strong data-current-unit>Higienópolis</strong></div></div>
+            <div class="exec-header"><div class="exec-header-title">Resultado comercial — Skinlaser</div><div class="exec-header-sub">jul/26 · dados fictícios</div><label class="exec-header-compare-field">Comparar com <select><option>Nenhum período</option><option>jun/26</option></select></label></div>
+
+            <div class="pillar-groups">
+              <div class="pillar-group pillar-atendimento"><div class="pillar-label">Atendimento</div><div class="pillar-cards"><div class="kpi-card"><div class="kpi-card-label">Atendidos</div><div class="kpi-card-value">181</div><div class="kpi-card-delta">+7,1%</div><div class="kpi-card-context">231 agendamentos</div></div><div class="kpi-card"><div class="kpi-card-label">Comparecimento</div><div class="kpi-card-value">78%</div><div class="kpi-card-delta">+2,3 p.p.</div><div class="kpi-card-context">período selecionado</div></div></div></div>
+              <div class="pillar-group pillar-conversao"><div class="pillar-label">Conversão</div><div class="pillar-cards"><div class="kpi-card"><div class="kpi-card-label">Propostas executadas elegíveis</div><div class="kpi-card-value">49</div><div class="kpi-card-delta">+9,0%</div><div class="kpi-card-context">R$ 116,6 mil</div></div><div class="kpi-card"><div class="kpi-card-label">Conversão atendido → execução</div><div class="kpi-card-value">27%</div><div class="kpi-card-delta">+0,8 p.p.</div><div class="kpi-card-context">49 de 181 atendidos</div></div></div></div>
+              <div class="pillar-group pillar-receita"><div class="pillar-label">Receita</div><div class="pillar-cards"><div class="kpi-card"><div class="kpi-card-label">Faturamento geral</div><div class="kpi-card-value">R$ 159,9 mil</div><div class="kpi-card-delta">+5,4%</div><div class="kpi-card-context">80 propostas</div></div><div class="kpi-card"><div class="kpi-card-label">Ticket médio</div><div class="kpi-card-value">R$ 1.999</div><div class="kpi-card-delta down">-1,2%</div><div class="kpi-card-context">por proposta</div></div></div></div>
+            </div>
+
+            <article class="card funnel-card"><header class="card-header"><div><h2 class="card-title">Funil comercial do período</h2><div class="card-subtitle">Agendamentos → Atendidos → Indicados → Propostas executadas elegíveis</div></div></header><div class="funnel-row">
+              <div><div class="funnel-stage-label">Agendamentos</div><div class="funnel-stage-value">231</div><div class="funnel-stage-bar-track"><div class="funnel-stage-bar-fill" style="width:100%"></div></div><div class="funnel-stage-rate">100%</div></div>
+              <div><div class="funnel-stage-label">Atendidos</div><div class="funnel-stage-value">181</div><div class="funnel-stage-bar-track"><div class="funnel-stage-bar-fill" style="width:78%"></div></div><div class="funnel-stage-rate">78%</div></div>
+              <div><div class="funnel-stage-label">Indicados</div><div class="funnel-stage-value">77</div><div class="funnel-stage-bar-track"><div class="funnel-stage-bar-fill" style="width:43%"></div></div><div class="funnel-stage-rate">43% dos atendidos</div></div>
+              <div><div class="funnel-stage-label">Execuções elegíveis</div><div class="funnel-stage-value">49</div><div class="funnel-stage-bar-track"><div class="funnel-stage-bar-fill" style="width:27%"></div></div><div class="funnel-stage-rate">27% dos atendidos</div></div>
+            </div></article>
+
+            <div class="content-grid" style="grid-template-columns:1.4fr 1fr">
+              <article class="card"><header class="card-header"><div><h2 class="card-title">Conversão por médico</h2><div class="card-subtitle">Atendidos, conversão e valor executado, ordenado pelo valor.</div></div></header><div class="table-wrap"><table class="ranking-table"><thead><tr><th>Médico</th><th class="number">Atendidos</th><th class="number">Conversão</th><th class="number">Valor executado</th></tr></thead><tbody>
+                <tr><td>Dra. Marina Duarte</td><td class="number">54</td><td class="number"><div class="bar-cell"><div class="bar-cell-fill" style="width:33%"></div><span class="bar-cell-text">33%</span></div></td><td class="number">R$ 42.800</td></tr>
+                <tr><td>Dra. Camila Torres</td><td class="number">44</td><td class="number"><div class="bar-cell"><div class="bar-cell-fill" style="width:36%"></div><span class="bar-cell-text">36%</span></div></td><td class="number">R$ 38.200</td></tr>
+                <tr><td>Dr. Rafael Moreira</td><td class="number">47</td><td class="number"><div class="bar-cell"><div class="bar-cell-fill" style="width:32%"></div><span class="bar-cell-text">32%</span></div></td><td class="number">R$ 35.600</td></tr>
+              </tbody></table></div></article>
+              <article class="card"><header class="card-header"><div><h2 class="card-title">Qualidade da receita</h2><div class="card-subtitle">À vista e Desconto aparecem como barras independentes.</div></div></header><div class="quality-bars"><div><div class="quality-bar-label">Pagamento à vista</div><div class="quality-bar-track"><div class="quality-bar-fill" style="width:54%"></div></div><div class="quality-bar-figures">R$ 87,1 mil · 54%</div></div><div><div class="quality-bar-label">Desconto concedido</div><div class="quality-bar-track"><div class="quality-bar-fill blue" style="width:7%"></div></div><div class="quality-bar-figures">R$ 11,4 mil · 7%</div></div></div></article>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="demo-tag">Demonstração · dados fictícios</div>
+
+  <script>
+    const tabs = [...document.querySelectorAll('.main-tab')];
+    const pages = [...document.querySelectorAll('.page-section')];
+    const units = [...document.querySelectorAll('.unit-tab')];
+    const currentUnitEls = [...document.querySelectorAll('[data-current-unit]')];
+
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.toggle('active', t === tab));
+      pages.forEach(p => p.classList.toggle('active', p.id === tab.dataset.page));
+    }));
+
+    units.forEach(unit => unit.addEventListener('click', () => {
+      units.forEach(u => u.classList.toggle('active', u === unit));
+      currentUnitEls.forEach(el => el.textContent = unit.dataset.unit);
+    }));
+
+    document.querySelectorAll('.month-chip').forEach(chip => chip.addEventListener('click', () => {
+      const parent = chip.parentElement;
+      if (parent.closest('.filters')) parent.querySelectorAll('.month-chip').forEach(c => c.classList.toggle('active', c === chip));
+      else chip.classList.toggle('active');
+    }));
+
+    document.querySelectorAll('.period-option').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('.period-option').forEach(b => b.classList.toggle('active', b === btn));
+    }));
+
+    const compareToggle = document.getElementById('compareToggle');
+    const compareDrawer = document.getElementById('compareDrawer');
+    compareToggle.addEventListener('click', () => {
+      compareDrawer.classList.toggle('open');
+      compareToggle.classList.toggle('active', compareDrawer.classList.contains('open'));
+    });
+  </script>
+</body>
+</html>
