@@ -94,6 +94,41 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "cerebro-financeiro",
+    name: "Cérebro Financeiro",
+    shortDescription:
+      "Dashboard financeiro multi-marketplace para acompanhar vendas, receita líquida, custos, repasses e estoque de Mercado Livre e Shopee em uma única visão.",
+    fullDescription:
+      "Protótipo de uma plataforma de gestão financeira para e-commerce que consolida Mercado Livre e Shopee em uma única interface. A solução foi estruturada para responder rapidamente quanto foi vendido, quanto já foi recebido, quais custos impactaram o resultado e quanto ainda há a receber. A arquitetura separa a camada visual da camada de domínio e de dados, deixando o front-end preparado para receber conectores reais posteriormente sem precisar reescrever as telas.\n\nObservação: trata-se de um protótipo com dados demonstrativos, com arquitetura preparada para integrações futuras.",
+    problem:
+      "Vendedores que operam em mais de um marketplace precisam cruzar manualmente vendas, taxas, fretes, descontos, repasses e estoque entre plataformas diferentes, o que dificulta enxergar o resultado líquido real e identificar rapidamente problemas de caixa ou produtos críticos.",
+    results:
+      "Protótipo funcional e responsivo com visão consolidada por marketplace, KPIs financeiros, evolução diária de vendas, comparação entre canais, ranking de produtos, situação do caixa, alertas operacionais e estados de carregamento, ausência de dados e primeiro uso. A camada de domínio foi criada de forma independente da interface para permitir futura integração com APIs sem alterar as telas.",
+    technologies: ["REACT", "TYPESCRIPT", "TANSTACK START", "TAILWIND CSS", "SHADCN/UI", "RECHARTS", "LUCIDE", "GIT"],
+    status: "Protótipo",
+    pipeline: [
+      "Dados de pedidos, pagamentos, envios, descontos e estoque entram por uma camada de repositório normalizada.",
+      "A camada de domínio calcula faturamento bruto, taxas, fretes, descontos, receita líquida estimada, valores recebidos e valores a receber.",
+      "O provider central entrega consultas tipadas para visão geral, vendas, financeiro, produtos, contas conectadas e alertas.",
+      "A interface apresenta os indicadores de forma consolidada ou separada por Mercado Livre e Shopee.",
+      "Estados de dados completos, parciais, sincronizando ou indisponíveis são tratados na própria experiência do usuário.",
+      "A arquitetura já prevê conectores reais no back-end por OAuth, sincronização periódica/webhooks e normalização dos payloads externos.",
+    ],
+    deliverables: [
+      "Dashboard executivo com faturamento bruto, receita líquida estimada, pedidos pagos, ticket médio, valor a receber e taxas/fretes.",
+      "Gráfico de vendas por dia com alternância entre faturamento bruto e receita líquida.",
+      "Comparativo Mercado Livre x Shopee com participação de cada canal.",
+      "Ranking de produtos com unidades vendidas, faturamento e resultado líquido.",
+      "Área Prioridades de hoje com alertas de estoque crítico, repasse pendente e queda de vendas.",
+      "Página de vendas com detalhamento de pedidos.",
+      "Área financeira e visão de situação do caixa.",
+      "Página de produtos e estoque com ajuste de estoque mínimo.",
+      "Área de contas conectadas e configurações.",
+      "Estados de onboarding, carregamento, vazio e dados parciais.",
+      "Camada de domínio desacoplada da interface e preparada para integração futura com APIs do Mercado Livre e Shopee.",
+    ],
+  },
+  {
     id: "insertvalue-feegow",
     name: "InsertValue on F-CLINIC",
     shortDescription:
