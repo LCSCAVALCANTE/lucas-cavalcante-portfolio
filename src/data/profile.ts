@@ -59,6 +59,14 @@ export const skills = [
   {
     "name": "n8n",
     "category": "Automação"
+  },
+  {
+    "name": "MCP",
+    "category": "IA"
+  },
+  {
+    "name": "IA",
+    "category": "IA"
   }
 ];
 
