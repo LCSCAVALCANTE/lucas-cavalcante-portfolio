@@ -31,7 +31,7 @@ function ProjectsPage() {
           Portfólio
         </div>
         <h1 className="font-display text-4xl font-bold sm:text-5xl lg:text-6xl">
-          Meus <span className="gradient-text">Projetos</span>
+          Meus principais <span className="gradient-text">Projetos</span>
         </h1>
         <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
           Uma seleção de soluções, dashboards, automações e sistemas que desenvolvi para transformar dados em decisões e otimizar processos.

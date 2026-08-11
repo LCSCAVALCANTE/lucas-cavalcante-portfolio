@@ -24,6 +24,12 @@ export const projectPreviews: Record<string, ComponentType> = {
   "painel-comercial": () => (
     <IframePreview src="/previews/painel-comercial-demo.html" label="Painel Comercial (demo)" />
   ),
+  "cerebro-financeiro": () => (
+    <IframePreview
+      src="https://id-preview--f893ed13-d816-4dde-98a9-de13cbf86a1b.lovable.app"
+      label="Cérebro Financeiro (protótipo com dados demonstrativos)"
+    />
+  ),
   "insertvalue-feegow": () => (
     <ImagePreview
       src="/previews/insertvalue-feegow-illustration.svg"
