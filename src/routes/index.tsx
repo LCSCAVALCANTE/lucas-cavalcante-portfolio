@@ -169,6 +169,9 @@ function Home() {
                     <div className="font-mono text-xs text-purple">{e.period}</div>
                     <div className="mt-1 font-display font-semibold">{e.course}</div>
                     <div className="text-sm text-muted-foreground">{e.institution}</div>
+                    {"duration" in e && e.duration && (
+                      <div className="mt-1 text-xs text-muted-foreground">{e.duration}</div>
+                    )}
                   </div>
                 </li>
               ))}
