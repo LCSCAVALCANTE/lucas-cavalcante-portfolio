@@ -26,7 +26,7 @@ function Home() {
     const y = event.clientY || rect.top + rect.height / 2;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setBurst({ x, y, key: Date.now() });
-    timerRef.current = window.setTimeout(() => navigate({ to: "/projetos" }), reduceMotion ? 60 : 520);
+    timerRef.current = window.setTimeout(() => navigate({ to: "/projetos" }), reduceMotion ? 0 : 60);
   }
 
   return (
@@ -66,17 +66,17 @@ function Home() {
             <Link
               to="/projetos"
               onClick={openProjects}
-              className="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+              className="neon-button group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
             >
-              Ver Projetos
+              <span>Ver Projetos</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/contato"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-accent"
+              className="neon-button inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-accent"
             >
               <Mail className="h-4 w-4" />
-              Entrar em contato
+              <span>Entrar em contato</span>
             </Link>
           </div>
         </div>
