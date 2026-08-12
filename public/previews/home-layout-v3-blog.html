@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lucas Cavalcante — Preview Blog</title>
+<style>
+:root{--outer:#070b12;--paper:#0d131e;--paper2:#101827;--text:#f4f7fb;--muted:#98a3b3;--line:rgba(255,255,255,.10);--accent:#73b6ff;--cyan:#68d8ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(900px circle at 50% -10%,rgba(73,128,220,.14),transparent 52%),var(--outer);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:44px 18px 90px}a{color:inherit;text-decoration:none}
+.page{width:min(940px,100%);margin:0 auto;background:linear-gradient(180deg,var(--paper2),var(--paper));border:1px solid rgba(255,255,255,.11);border-radius:22px;overflow:hidden;box-shadow:0 36px 100px rgba(0,0,0,.42)}
+.inner{padding-left:clamp(28px,6vw,72px);padding-right:clamp(28px,6vw,72px)}
+header{height:78px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{font-size:15px;font-weight:760;letter-spacing:-.02em}.nav{display:flex;gap:24px;color:var(--muted);font-size:12px}.nav a:hover{color:white}
+.hero{padding-top:90px;padding-bottom:92px}.eyebrow{font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.15em;color:var(--cyan);margin-bottom:26px}.hero h1{margin:0;font-size:clamp(48px,8vw,84px);line-height:.98;letter-spacing:-.06em;max-width:760px}.hero h1 span{display:block;color:#aacaff}.lead{max-width:690px;margin:30px 0 0;font-size:clamp(18px,2vw,23px);line-height:1.55;color:#c5cedb;letter-spacing:-.02em}.actions{display:flex;gap:18px;margin-top:34px;flex-wrap:wrap}.primary{font-size:13px;font-weight:700;padding-bottom:5px;border-bottom:1px solid var(--text)}.secondary{font-size:13px;color:var(--muted);padding-bottom:5px;border-bottom:1px solid transparent}.secondary:hover{border-color:var(--muted)}
+.rule{height:1px;background:var(--line)}
+.section{padding-top:68px;padding-bottom:68px}.section-label{font:600 10px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--cyan);text-transform:uppercase;letter-spacing:.14em;margin-bottom:18px}.section h2{font-size:clamp(30px,5vw,48px);line-height:1.06;letter-spacing:-.045em;margin:0 0 24px}.body-copy{font-size:17px;line-height:1.75;color:#b8c2d0;max-width:720px;margin:0}.facts{margin-top:38px;border-top:1px solid var(--line)}.fact{display:grid;grid-template-columns:170px 1fr;gap:22px;padding:15px 0;border-bottom:1px solid var(--line);font-size:13px}.fact span:first-child{color:var(--muted)}
+.project{padding:48px 0;border-top:1px solid var(--line)}.project:first-of-type{padding-top:6px;border-top:0}.project-kicker{font:600 10px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:13px}.project h3{margin:0;font-size:clamp(28px,4vw,42px);letter-spacing:-.04em}.project p{max-width:680px;margin:14px 0 20px;color:var(--muted);font-size:15px;line-height:1.7}.tags{font:500 10px ui-monospace,SFMono-Regular,Menlo,monospace;color:#bdc7d5;text-transform:uppercase;letter-spacing:.08em;margin-bottom:24px}.shot{height:360px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:#f3f0eb;box-shadow:0 18px 50px rgba(0,0,0,.25);position:relative}.shot.dark{background:#f6f8fc}.browserbar{height:30px;background:#fff;border-bottom:1px solid #dedede;display:flex;align-items:center;gap:5px;padding:0 11px}.browserbar i{width:6px;height:6px;border-radius:50%;background:#bbb}.dash{height:calc(100% - 30px);display:grid;grid-template-columns:100px 1fr;color:#28231f;font-family:Arial,sans-serif}.side{background:white;border-right:1px solid #e7dfd6;padding:14px 8px}.side b{display:block;font-size:7px;color:#998f86;margin-bottom:8px}.side span{display:block;font-size:8px;padding:7px;border-radius:5px;margin-bottom:3px}.side span.on{background:#fff1df;color:#df7600;border-left:2px solid #df7600}.main{padding:15px}.tabs{font-size:8px;display:flex;gap:14px;margin-bottom:14px}.tabs strong{color:#e47a00}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi{background:#fff;border:1px solid #e7dfd7;border-radius:6px;padding:9px}.kpi small{display:block;font-size:6px;color:#888}.kpi b{display:block;margin-top:4px;font-size:14px}.chart{height:150px;background:#fff;border:1px solid #e7dfd7;border-radius:7px;margin-top:9px;padding:10px}.chart b{font-size:8px}.bars{height:105px;display:flex;align-items:end;gap:7px;padding-top:10px}.bars i{flex:1;background:#efa452;border-radius:2px 2px 0 0}.market .side{background:#0f1930;border-color:#223150;color:#dce7fa}.market .side span.on{background:#182744;color:#7fb8ff;border-color:#6da9ff}.market .main{background:#f5f7fb}.market .tabs strong{color:#397ddb}.market .bars i{background:#4b8df8}
+.project-link{display:inline-block;margin-top:20px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:4px}
+.stack-list{border-top:1px solid var(--line);margin-top:34px}.stack-row{display:grid;grid-template-columns:170px 1fr;gap:22px;padding:17px 0;border-bottom:1px solid var(--line);font-size:13px}.stack-row b{color:#dce4ee}.stack-row span{color:var(--muted);line-height:1.6}.timeline{border-top:1px solid var(--line);margin-top:28px}.timeline-row{display:grid;grid-template-columns:150px 190px 1fr;gap:22px;padding:18px 0;border-bottom:1px solid var(--line);font-size:13px}.timeline-row time{color:var(--muted);font:500 10px ui-monospace,SFMono-Regular,Menlo,monospace}.timeline-row p{margin:0;color:var(--muted);line-height:1.6}
+footer{padding-top:64px;padding-bottom:70px}footer h2{font-size:clamp(36px,6vw,64px);letter-spacing:-.05em;line-height:1;margin:0 0 24px}footer p{color:var(--muted);font-size:15px;line-height:1.6;max-width:570px;margin:0 0 24px}footer a{font-size:14px;border-bottom:1px solid white;padding-bottom:5px}
+@media(max-width:680px){body{padding:0}.page{border-radius:0;border-left:0;border-right:0}.nav{display:none}.hero{padding-top:66px;padding-bottom:70px}.section{padding-top:52px;padding-bottom:52px}.fact,.stack-row,.timeline-row{grid-template-columns:1fr;gap:6px}.shot{height:270px}.dash{grid-template-columns:76px 1fr}.kpis{grid-template-columns:1fr 1fr}.kpi:last-child{display:none}}
+</style>
+</head>
+<body>
+<article class="page">
+  <header class="inner"><div class="brand">Lucas Cavalcante</div><nav class="nav"><a href="#sobre">Sobre</a><a href="#projetos">Projetos</a><a href="#stack">Stack</a><a href="#trajetoria">Trajetória</a></nav></header>
+
+  <section class="hero inner">
+    <div class="eyebrow">Dados · Automação · Software</div>
+    <h1>Olá, sou <span>Lucas Cavalcante.</span></h1>
+    <p class="lead">Desenvolvo sistemas, dashboards e automações orientados a dados — da estruturação da informação à entrega da solução em produção.</p>
+    <div class="actions"><a class="primary" href="#projetos">Ver projetos →</a><a class="secondary" href="#contato">Entrar em contato</a></div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section class="section inner" id="sobre">
+    <div class="section-label">01 / Sobre</div>
+    <h2>Transformo processos e dados em ferramentas que as pessoas conseguem usar.</h2>
+    <p class="body-copy">Meu trabalho combina análise, automação e desenvolvimento. O objetivo não é exibir tecnologia, mas construir soluções que reduzam trabalho manual, organizem regras de negócio e tornem a informação mais útil para decisão.</p>
+    <div class="facts"><div class="fact"><span>Foco</span><b>Dados & Automação</b></div><div class="fact"><span>Backend</span><b>SQL · Python · APIs</b></div><div class="fact"><span>Visualização</span><b>Dashboards · Web Apps</b></div><div class="fact"><span>Entrega</span><b>Git · Docker · VPS</b></div></div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section class="section inner" id="projetos">
+    <div class="section-label">02 / Projetos selecionados</div>
+    <h2>Trabalho recente.</h2>
+
+    <article class="project">
+      <div class="project-kicker">01 · Analytics</div><h3>Painel Comercial</h3><p>Visão consolidada de atendimento, conversão e receita, com filtros por período, unidade e profissional.</p><div class="tags">SQL · PostgreSQL · JavaScript · Docker</div>
+      <div class="shot"><div class="browserbar"><i></i><i></i><i></i></div><div class="dash"><aside class="side"><b>UNIDADES</b><span class="on">Alpha</span><span>Beta</span><span>Gama</span><span>Delta</span></aside><main class="main"><div class="tabs"><strong>Dashboard</strong><span>Agendamentos</span><span>Propostas</span></div><div class="kpis"><div class="kpi"><small>ATENDIDOS</small><b>947</b></div><div class="kpi"><small>CONVERSÃO</small><b>43%</b></div><div class="kpi"><small>FATURAMENTO</small><b>R$ 486k</b></div></div><div class="chart"><b>FUNIL COMERCIAL</b><div class="bars"><i style="height:92%"></i><i style="height:74%"></i><i style="height:49%"></i><i style="height:33%"></i><i style="height:58%"></i><i style="height:69%"></i></div></div></main></div></div>
+      <a class="project-link" href="#">Explorar projeto →</a>
+    </article>
+
+    <article class="project">
+      <div class="project-kicker">02 · Produto</div><h3>Cérebro Financeiro</h3><p>Protótipo de gestão financeira multi-marketplace para reunir vendas, custos, repasses e estoque em uma única visão.</p><div class="tags">React · TypeScript · TanStack · Tailwind</div>
+      <div class="shot dark market"><div class="browserbar"><i></i><i></i><i></i></div><div class="dash"><aside class="side"><b>FINANCEIRO</b><span class="on">Visão geral</span><span>Vendas</span><span>Produtos</span><span>Contas</span></aside><main class="main"><div class="tabs"><strong>Visão geral</strong><span>Este mês</span><span>Consolidado</span></div><div class="kpis"><div class="kpi"><small>FATURAMENTO</small><b>R$ 128k</b></div><div class="kpi"><small>RECEITA LÍQUIDA</small><b>R$ 94k</b></div><div class="kpi"><small>PEDIDOS</small><b>684</b></div></div><div class="chart"><b>VENDAS POR DIA</b><div class="bars"><i style="height:34%"></i><i style="height:52%"></i><i style="height:41%"></i><i style="height:78%"></i><i style="height:64%"></i><i style="height:88%"></i></div></div></main></div></div>
+      <a class="project-link" href="#">Explorar projeto →</a>
+    </article>
+  </section>
+
+  <div class="rule"></div>
+
+  <section class="section inner" id="stack"><div class="section-label">03 / Stack</div><h2>Ferramentas como meio, não como fim.</h2><p class="body-copy">A stack muda conforme o problema. Estas são as tecnologias que aparecem com mais frequência no meu trabalho.</p><div class="stack-list"><div class="stack-row"><b>Dados</b><span>SQL, PostgreSQL, Power BI, DAX, Pandas</span></div><div class="stack-row"><b>Automação</b><span>Python, APIs, n8n, Selenium, integrações</span></div><div class="stack-row"><b>Desenvolvimento</b><span>JavaScript, TypeScript, React, HTML, CSS</span></div><div class="stack-row"><b>Entrega</b><span>Git, Docker, Nginx, VPS</span></div></div></section>
+
+  <div class="rule"></div>
+
+  <section class="section inner" id="trajetoria"><div class="section-label">04 / Trajetória</div><h2>Experiência aplicada.</h2><div class="timeline"><div class="timeline-row"><time>2025 — atual</time><b>Tecnologia & Dados</b><p>Dashboards, automações, integrações, SQL e soluções internas orientadas ao negócio.</p></div><div class="timeline-row"><time>2023 — 2024</time><b>Desenvolvimento / Dados</b><p>Automação de processos, relatórios, tratamento de dados e integrações operacionais.</p></div><div class="timeline-row"><time>2022 — 2026</time><b>Ciência da Computação</b><p>Formação focada em software, dados, algoritmos e engenharia de sistemas.</p></div></div></section>
+
+  <div class="rule"></div>
+
+  <footer class="inner" id="contato"><h2>Vamos construir algo útil.</h2><p>Estou aberto a oportunidades e conversas sobre dados, automação, desenvolvimento e produtos digitais.</p><a href="#">Entrar em contato →</a></footer>
+</article>
+</body>
+</html>
