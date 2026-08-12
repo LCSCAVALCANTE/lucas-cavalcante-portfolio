@@ -46,7 +46,7 @@ function Home() {
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
       <section className="relative grid gap-12 pt-16 pb-24 sm:pt-24 sm:pb-32 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
-        <div className="copy-panel animate-fade-up flex flex-col gap-6 p-6 sm:p-8 lg:gap-8">
+        <div className="copy-panel animate-fade-up flex flex-col gap-5 p-5 sm:p-7 lg:gap-6">
           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1.5 font-mono text-xs text-cyan">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
             {profile.title}
