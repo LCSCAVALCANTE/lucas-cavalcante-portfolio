@@ -24,18 +24,19 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
 
       - name: Build static site
-        env:
-          GITHUB_PAGES: "true"
-        run: npm run build
+        run: npm run build:pages
 
-      - name: Disable Jekyll processing
-        run: touch .output/public/.nojekyll
+      - name: Prepare GitHub Pages files
+        run: |
+          mv dist-pages/index.pages.html dist-pages/index.html
+          cp dist-pages/index.html dist-pages/404.html
+          touch dist-pages/.nojekyll
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -43,7 +44,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .output/public
+          path: dist-pages
 
   deploy:
     environment:
