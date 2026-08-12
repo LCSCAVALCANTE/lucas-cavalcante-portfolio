@@ -45,7 +45,11 @@ export const experiences = [
 
 export const education = [
   { period: "2022 - 2026", course: "Ciência da Computação", institution: "UNICID - Universidade Cidade de São Paulo" },
-  { period: "2024", course: "Excel Avançado", institution: "Xperiun" },
   { period: "2025", course: "Automação com Python e n8n", institution: "Xperiun" },
   { period: "2025", course: "SQL Intermediário", institution: "Xperiun" },
+  { period: "2024", course: "Excel Avançado", institution: "Xperiun" },
+  { period: "2022", course: "Adminstrando Banco de Dados", institution: "Fundação Bradesco", duration: "Curta (até 40 horas)" },
+  { period: "2022", course: "Fundamentos de TI: HARDWARE E SOFTWARE", institution: "Fundação Bradesco", duration: "Curta (até 40 horas)" },
+  { period: "2022", course: "Fundamentos de Lógica de Programação", institution: "Fundação Bradesco", duration: "Curta (até 40 horas)" },
+  { period: "2022", course: "HTML", institution: "Fundação Bradesco", duration: "Curta (até 40 horas)" },
 ];
