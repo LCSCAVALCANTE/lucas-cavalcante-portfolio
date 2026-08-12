@@ -19,14 +19,11 @@ export default defineConfig({
     outDir: "dist-pages",
     emptyOutDir: true,
     sourcemap: false,
-    minify: "esbuild",
+    minify: "oxc",
     cssMinify: true,
     reportCompressedSize: false,
     rollupOptions: {
       input: "index.pages.html",
-      output: {
-        generatedCode: "es2015",
-      },
     },
   },
 });
