@@ -38,7 +38,6 @@
 
 :root {
   --radius: 0.75rem;
-  /* Deep tech dark palette */
   --background: oklch(0.16 0.02 260);
   --foreground: oklch(0.97 0.01 250);
   --card: oklch(0.21 0.025 262);
@@ -129,6 +128,63 @@
   text-shadow: 0 1px 2px oklch(0.16 0.02 260 / 0.5), 0 0 4px oklch(0.16 0.02 260 / 0.3);
 }
 
+@property --neon-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes neon-border-run {
+  to { --neon-angle: 360deg; }
+}
+
+.neon-button {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.neon-button::before,
+.neon-button::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  background:
+    conic-gradient(
+      from var(--neon-angle),
+      transparent 0deg 220deg,
+      rgba(56, 189, 248, 0.05) 235deg,
+      rgba(56, 189, 248, 0.95) 252deg,
+      rgba(96, 165, 250, 1) 270deg,
+      rgba(167, 139, 250, 0.95) 288deg,
+      rgba(167, 139, 250, 0.08) 306deg,
+      transparent 325deg 360deg
+    );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: neon-border-run 3.4s linear infinite;
+  z-index: 2;
+}
+
+.neon-button::after {
+  inset: -5px;
+  padding: 5px;
+  filter: blur(7px);
+  opacity: 0.45;
+  z-index: 1;
+}
+
+.neon-button > * {
+  position: relative;
+  z-index: 3;
+}
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -182,7 +238,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .project-burst-particle,
-  .project-burst-flash {
+  .project-burst-flash,
+  .neon-button::before,
+  .neon-button::after {
     animation-duration: 60ms;
   }
 }
