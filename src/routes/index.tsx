@@ -51,9 +51,8 @@ function Home() {
             <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
             {profile.title}
           </span>
-          <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-            Olá, sou <br className="hidden sm:block" />
-            <span className="gradient-text">{profile.name}</span>
+          <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+            Olá, sou <span className="gradient-text">{profile.name}</span>
           </h1>
           <div className="h-1 w-20 rounded-full bg-gradient-to-r from-primary to-purple" />
           <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
