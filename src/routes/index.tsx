@@ -47,10 +47,15 @@ function Home() {
       <section className="relative grid gap-12 pt-16 pb-24 sm:pt-24 sm:pb-32 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
         <div className="copy-panel animate-fade-up flex flex-col gap-5 p-5 sm:p-7 lg:gap-6">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1.5 font-mono text-xs text-cyan">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
-            {profile.title}
-          </span>
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1.5 font-mono text-xs text-cyan">
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
+              Analista de Tecnologia
+            </span>
+            <span className="inline-flex w-fit items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 font-mono text-xs text-primary">
+              Dados, Automação e Integrações
+            </span>
+          </div>
           <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:whitespace-nowrap lg:text-[42px] xl:text-[46px]">
             Olá, sou <span className="gradient-text">{profile.name}</span>
           </h1>
