@@ -86,7 +86,7 @@ function Home() {
             <div className="relative">
               <div className="mb-6 flex items-center justify-between">
                 <span className="font-mono text-xs uppercase tracking-widest text-primary">Perfil técnico</span>
-                <span className="flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> Em produção</span>
+                <span className="flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">Em produção</span>
               </div>
               <div className="space-y-4">
                 <div className="flex gap-3 rounded-xl border border-border/60 bg-background/40 p-3"><Database className="mt-0.5 h-5 w-5 shrink-0 text-cyan" /><div><div className="font-semibold">Dados que viram decisão</div><p className="mt-1 text-sm text-muted-foreground">ETL, SQL, dashboards e análises para orientar o negócio.</p></div></div>
@@ -120,7 +120,11 @@ function Home() {
       </Section>
 
       <Section eyebrow="02 - Stack" title="Habilidades">
-        <p className="copy-panel mb-8 max-w-2xl px-5 py-4 text-base leading-relaxed text-muted-foreground">Da extração dos dados à manutenção da solução em produção: tecnologia aplicada para resolver problemas reais.</p>
+        <div className="glass-card mb-8 rounded-2xl p-6 sm:p-10">
+          <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Da extração dos dados à manutenção da solução em produção: tecnologia aplicada para resolver problemas reais.
+          </p>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {['Dados', 'Ingestão de dados', 'Integração', 'Desenvolvimento', 'Entrega'].map((category) => (
             <div key={category} className="glass-card rounded-2xl p-5">
