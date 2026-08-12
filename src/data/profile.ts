@@ -1,6 +1,6 @@
 export const profile = {
   name: "Lucas Cavalcante",
-  title: "Analista de Tecnologia | Dados, Automação e Integrações",
+  title: "Analista de Tecnologia - Dados, Automação e Integrações",
   tagline: "Transformo processos complexos em soluções simples, mensuráveis e prontas para a operação.",
   about: "Desenvolvo soluções internas que conectam dados, pessoas e processos. Minha atuação combina automação, engenharia de dados, dashboards e aplicações web para resolver problemas reais do negócio.\n\nDo levantamento da necessidade à entrega em produção, trabalho com integrações via API, ETL, SQL, Python, Node.js, React, PostgreSQL e n8n, sempre com foco em confiabilidade, clareza e impacto operacional.",
   contact: {
