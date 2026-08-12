@@ -66,7 +66,7 @@ function Home() {
             <Link
               to="/projetos"
               onClick={openProjects}
-              className="neon-button group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+              className="neon-button group inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-accent"
             >
               <span>Ver Projetos</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
