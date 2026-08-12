@@ -67,14 +67,14 @@ function ContactPage() {
         />
       </div>
       <div className="relative z-10 mx-auto max-w-4xl px-6 py-16 sm:py-24">
-      <div className="animate-fade-up">
-        <div className="reading-label mb-4 font-mono text-xs uppercase tracking-widest text-primary">
+      <div className="copy-panel animate-fade-up p-6 sm:p-8">
+        <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Contato
         </div>
         <h1 className="font-display text-4xl font-bold sm:text-5xl lg:text-6xl">
           Vamos <span className="gradient-text">conversar</span>
         </h1>
-        <p className="reading-surface mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           Aberto a novos projetos, colaborações e oportunidades em dados,
           automação e desenvolvimento. Escolha o canal que preferir.
         </p>

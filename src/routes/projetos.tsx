@@ -65,14 +65,14 @@ function ProjectsPage() {
       </div>
       <div className="relative z-10 mx-auto max-w-6xl px-6 py-16 sm:py-24">
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
-      <div className="animate-fade-up">
-        <div className="reading-label mb-4 font-mono text-xs uppercase tracking-widest text-primary">
+      <div className="copy-panel animate-fade-up max-w-3xl p-6 sm:p-8">
+        <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Portfólio
         </div>
         <h1 className="font-display text-4xl font-bold sm:text-5xl lg:text-6xl">
           Meus <span className="gradient-text">Projetos</span>
         </h1>
-        <p className="reading-surface mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           Uma seleção de soluções, dashboards, automações e sistemas que desenvolvi para transformar dados em decisões e otimizar processos.
         </p>
       </div>

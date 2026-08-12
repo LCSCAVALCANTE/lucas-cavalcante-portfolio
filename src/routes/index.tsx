@@ -46,14 +46,14 @@ function Home() {
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
       <section className="relative grid gap-12 pt-16 pb-24 sm:pt-24 sm:pb-32 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
-        <div className="animate-fade-up">
+        <div className="copy-panel animate-fade-up p-6 sm:p-8">
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
             Olá, sou <span className="gradient-text">{profile.name}</span>
           </h1>
-          <p className="reading-label mt-4 font-mono text-sm text-primary sm:text-base">
+          <p className="mt-4 font-mono text-sm text-primary sm:text-base">
             {profile.title}
           </p>
-          <p className="reading-surface mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {profile.tagline}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -114,7 +114,7 @@ function Home() {
       </Section>
 
       <Section eyebrow="02 - Stack" title="Habilidades">
-        <p className="reading-surface mb-8 max-w-2xl text-base leading-relaxed text-muted-foreground">Da extração dos dados à manutenção da solução em produção: tecnologia aplicada para resolver problemas reais.</p>
+        <p className="copy-panel mb-8 max-w-2xl px-5 py-4 text-base leading-relaxed text-muted-foreground">Da extração dos dados à manutenção da solução em produção: tecnologia aplicada para resolver problemas reais.</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {['Dados', 'Ingestão de dados', 'Integração', 'Desenvolvimento', 'Entrega'].map((category) => (
             <div key={category} className="glass-card rounded-2xl p-5">
@@ -187,7 +187,7 @@ function Section({
   return (
     <section id={id} className="py-16 sm:py-20">
       <div className="mb-8 flex items-center gap-3">
-        <div className="reading-label flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary">
+        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary">
           {icon}
           {eyebrow}
         </div>

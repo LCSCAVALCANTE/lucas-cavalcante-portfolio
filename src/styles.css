@@ -104,24 +104,16 @@
   box-shadow: var(--shadow-card);
 }
 
-@utility reading-surface {
-  width: fit-content;
-  border: 1px solid color-mix(in oklab, var(--border) 78%, transparent);
-  border-radius: 0.8rem;
-  background: color-mix(in oklab, var(--background) 84%, transparent);
-  padding: 0.65rem 0.9rem;
-  box-shadow: 0 8px 28px -18px oklch(0.05 0.02 260 / 85%);
-  backdrop-filter: blur(12px);
-}
-
-@utility reading-label {
-  width: fit-content;
-  border: 1px solid color-mix(in oklab, var(--primary) 22%, transparent);
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--background) 86%, transparent);
-  padding: 0.4rem 0.7rem;
-  box-shadow: 0 6px 20px -14px oklch(0.05 0.02 260 / 90%);
-  backdrop-filter: blur(10px);
+@utility copy-panel {
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  border-radius: 1.5rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--background) 88%, transparent),
+    color-mix(in oklab, var(--card) 68%, transparent)
+  );
+  box-shadow: 0 22px 55px -36px oklch(0.05 0.02 260 / 95%);
+  backdrop-filter: blur(14px);
 }
 
 @utility glow-hover {
