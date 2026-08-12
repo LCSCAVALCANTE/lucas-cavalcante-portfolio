@@ -51,7 +51,7 @@ function Home() {
             <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
             {profile.title}
           </span>
-          <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:whitespace-nowrap lg:text-[42px] xl:text-[46px]">
             Olá, sou <span className="gradient-text">{profile.name}</span>
           </h1>
           <div className="h-1 w-20 rounded-full bg-gradient-to-r from-primary to-purple" />
