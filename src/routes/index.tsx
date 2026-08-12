@@ -189,7 +189,7 @@ function Section({
   return (
     <section id={id} className="py-16 sm:py-20">
       <div className="mb-8 flex items-center gap-3">
-        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-foreground/80">
+        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-foreground/80 text-eyebrow-shadow">
           {icon}
           {eyebrow}
         </div>
