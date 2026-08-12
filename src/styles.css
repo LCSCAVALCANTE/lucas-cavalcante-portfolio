@@ -148,9 +148,7 @@
 .neon-button::after {
   content: "";
   position: absolute;
-  inset: -2px;
   border-radius: inherit;
-  padding: 2px;
   pointer-events: none;
   background:
     conic-gradient(
@@ -169,14 +167,19 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: neon-border-run 3.4s linear infinite;
+}
+
+.neon-button::before {
+  inset: 0;
+  padding: 1px;
   z-index: 2;
 }
 
 .neon-button::after {
-  inset: -5px;
-  padding: 5px;
-  filter: blur(7px);
-  opacity: 0.45;
+  inset: -2px;
+  padding: 3px;
+  filter: blur(5px);
+  opacity: 0.42;
   z-index: 1;
 }
 
