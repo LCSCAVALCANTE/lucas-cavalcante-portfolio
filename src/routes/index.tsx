@@ -46,17 +46,20 @@ function Home() {
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
       <section className="relative grid gap-12 pt-16 pb-24 sm:pt-24 sm:pb-32 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
-        <div className="copy-panel animate-fade-up p-6 sm:p-8">
-          <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-            Olá, sou <span className="gradient-text">{profile.name}</span>
-          </h1>
-          <p className="mt-4 font-mono text-sm text-primary sm:text-base">
+        <div className="copy-panel animate-fade-up flex flex-col gap-6 p-6 sm:p-8 lg:gap-8">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1.5 font-mono text-xs text-cyan">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
             {profile.title}
-          </p>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          </span>
+          <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+            Olá, sou <br className="hidden sm:block" />
+            <span className="gradient-text">{profile.name}</span>
+          </h1>
+          <div className="h-1 w-20 rounded-full bg-gradient-to-r from-primary to-purple" />
+          <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
             {profile.tagline}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-2 flex flex-wrap gap-3">
             <Link
               to="/projetos"
               onClick={openProjects}
