@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Linkedin, Github, MessageCircle, ArrowUpRight } from "lucide-react";
 import { profile } from "@/data/profile";
+import DottedBg2 from "@/components/DottedBg2";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
@@ -53,7 +54,19 @@ const channels = [
 
 function ContactPage() {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16 sm:py-24">
+    <div className="relative isolate min-h-[calc(100vh-5rem)] overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <DottedBg2
+          bgColor="#080D16"
+          colors={["#38BDF899", "#60A5FA99", "#A78BFA99"]}
+          frequency={2}
+          speed={4}
+          cellSize={1}
+          gamma={5}
+          paletteBias={-1}
+        />
+      </div>
+      <div className="relative z-10 mx-auto max-w-4xl px-6 py-16 sm:py-24">
       <div className="animate-fade-up">
         <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Contato
@@ -92,8 +105,8 @@ function ContactPage() {
             </a>
           );
         })}
+        </div>
       </div>
-
     </div>
   );
 }

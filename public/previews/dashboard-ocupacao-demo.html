@@ -1881,7 +1881,7 @@ function render() {
 
   filtrado.forEach(function(r) {
     var tInfo = getTempoInfo(r.Data, isMensal);
-    var uni = r.Unidade || '—';
+    var uni = r.Unidade || '-';
     r._UniTempo = uni + "|||" + tInfo.label + "|||" + tInfo.sort;
   });
 
@@ -1909,10 +1909,10 @@ function render() {
       var entry = profEntries[j];
       var nome = entry[0];
       var d = entry[1];
-      var unidade = '—';
+      var unidade = '-';
       for (var k = 0; k < filtrado.length; k++) {
         if (filtrado[k].Profissional === nome) {
-          unidade = filtrado[k].Unidade || '—';
+          unidade = filtrado[k].Unidade || '-';
           break;
         }
       }
@@ -1943,10 +1943,10 @@ function render() {
     var entryIA = profEntriesIA[jIA];
     var nomeIA = entryIA[0];
     var dIA = entryIA[1];
-    var unidadeIA = '—';
+    var unidadeIA = '-';
     for (var kIA = 0; kIA < filtrado.length; kIA++) {
       if (filtrado[kIA].Profissional === nomeIA) {
-        unidadeIA = filtrado[kIA].Unidade || '—';
+        unidadeIA = filtrado[kIA].Unidade || '-';
         break;
       }
     }
@@ -2014,8 +2014,8 @@ function render() {
     for (var j = 0; j < utEntries.length; j++) {
       var entry = utEntries[j];
       var partes = entry[0].split('|||');
-      var unidade = partes[0] || '—';
-      var tempoLbl = partes[1] || '—';
+      var unidade = partes[0] || '-';
+      var tempoLbl = partes[1] || '-';
       var d = entry[1];
       var occ = calcOcupacao(d.totalScheduled, d.totalSlots, d.totalBlocked);
       uniTempoRows += '<tr>' +
@@ -2045,8 +2045,8 @@ function render() {
   for (var jUtIA = 0; jUtIA < utEntriesIA.length; jUtIA++) {
     var entryUtIA = utEntriesIA[jUtIA];
     var partesIA = entryUtIA[0].split('|||');
-    var unidadeTempoIA = partesIA[0] || '—';
-    var tempoLblIA = partesIA[1] || '—';
+    var unidadeTempoIA = partesIA[0] || '-';
+    var tempoLblIA = partesIA[1] || '-';
     var dTempoIA = entryUtIA[1];
     var occTempoIA = calcOcupacao(dTempoIA.totalScheduled, dTempoIA.totalSlots, dTempoIA.totalBlocked);
     resumoUniTempo += '- Unidade: ' + unidadeTempoIA + ' | Período: ' + tempoLblIA + ' | Ocupação: ' + fPct(occTempoIA) + ' | Capacidade: ' + fNum(dTempoIA.totalSlots) + ' | Confirmados: ' + fNum(dTempoIA.totalScheduled) + ' | Faltas: ' + fNum(dTempoIA.totalNoShow) + '\n';

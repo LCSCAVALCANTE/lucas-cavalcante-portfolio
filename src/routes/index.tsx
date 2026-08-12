@@ -1,15 +1,50 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Mail, Sparkles, Briefcase, GraduationCap } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { ArrowRight, Mail, Sparkles, Briefcase, GraduationCap, Database, Rocket, ShieldCheck } from "lucide-react";
 import { profile, skills, experiences, education } from "@/data/profile";
+import { NavigationBurst } from "@/components/NavigationBurst";
+import DottedBg2 from "@/components/DottedBg2";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
+  const navigate = useNavigate();
+  const timerRef = useRef<number | null>(null);
+  const [burst, setBurst] = useState<{ x: number; y: number; key: number } | null>(null);
+
+  useEffect(() => () => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+  }, []);
+
+  function openProjects(event: MouseEvent<HTMLAnchorElement>) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX || rect.left + rect.width / 2;
+    const y = event.clientY || rect.top + rect.height / 2;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setBurst({ x, y, key: Date.now() });
+    timerRef.current = window.setTimeout(() => navigate({ to: "/projetos" }), reduceMotion ? 60 : 520);
+  }
+
   return (
-    <div className="mx-auto max-w-6xl px-6">
-      <section className="relative pt-16 pb-24 sm:pt-24 sm:pb-32">
+    <div className="relative isolate overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <DottedBg2
+          bgColor="#080D16"
+          colors={["#38BDF899", "#60A5FA99", "#A78BFA99"]}
+          frequency={2}
+          speed={4}
+          cellSize={1}
+          gamma={5}
+          paletteBias={-1}
+        />
+      </div>
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
+        {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
+      <section className="relative grid gap-12 pt-16 pb-24 sm:pt-24 sm:pb-32 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
         <div className="animate-fade-up">
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
@@ -24,6 +59,7 @@ function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/projetos"
+              onClick={openProjects}
               className="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-purple px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
             >
               Ver Projetos
@@ -36,6 +72,22 @@ function Home() {
               <Mail className="h-4 w-4" />
               Entrar em contato
             </Link>
+          </div>
+        </div>
+        <div className="animate-fade-in lg:pl-8" style={{ animationDelay: "180ms" }}>
+          <div className="glass-card relative overflow-hidden rounded-3xl p-6 sm:p-8">
+            <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/15 blur-3xl" />
+            <div className="relative">
+              <div className="mb-6 flex items-center justify-between">
+                <span className="font-mono text-xs uppercase tracking-widest text-primary">Perfil técnico</span>
+                <span className="flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> Em produção</span>
+              </div>
+              <div className="space-y-4">
+                <div className="flex gap-3 rounded-xl border border-border/60 bg-background/40 p-3"><Database className="mt-0.5 h-5 w-5 shrink-0 text-cyan" /><div><div className="font-semibold">Dados que viram decisão</div><p className="mt-1 text-sm text-muted-foreground">ETL, SQL, dashboards e análises para orientar o negócio.</p></div></div>
+                <div className="flex gap-3 rounded-xl border border-border/60 bg-background/40 p-3"><Rocket className="mt-0.5 h-5 w-5 shrink-0 text-primary" /><div><div className="font-semibold">Soluções que entram em operação</div><p className="mt-1 text-sm text-muted-foreground">Integrações, deploy, versionamento e manutenção contínua.</p></div></div>
+                <div className="flex gap-3 rounded-xl border border-border/60 bg-background/40 p-3"><ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-purple" /><div><div className="font-semibold">Segurança na medida certa</div><p className="mt-1 text-sm text-muted-foreground">Acesso por unidade, controle e confiabilidade para cada contexto.</p></div></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -62,16 +114,13 @@ function Home() {
       </Section>
 
       <Section eyebrow="02 - Stack" title="Habilidades">
-        <div className="flex flex-wrap gap-2">
-          {skills.map((s, i) => (
-            <span
-              key={s.name}
-              className="glass-card glow-hover animate-fade-up rounded-full px-4 py-2 text-sm font-medium"
-              style={{ animationDelay: `${i * 40}ms` }}
-            >
-              <span className="mr-2 font-mono text-xs text-primary">{"</>"}</span>
-              {s.name}
-            </span>
+        <p className="mb-8 max-w-2xl text-base leading-relaxed text-muted-foreground">Da extração dos dados à manutenção da solução em produção: tecnologia aplicada para resolver problemas reais.</p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {['Dados', 'Ingestão de dados', 'Integração', 'Desenvolvimento', 'Entrega'].map((category) => (
+            <div key={category} className="glass-card rounded-2xl p-5">
+              <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">{category}</div>
+              <div className="flex flex-wrap gap-2">{skills.filter((s) => s.category === category).map((s) => <span key={s.name} className="rounded-lg border border-border/60 bg-background/40 px-2.5 py-1.5 text-xs font-medium text-muted-foreground">{s.name}</span>)}</div>
+            </div>
           ))}
         </div>
       </Section>
@@ -116,7 +165,8 @@ function Home() {
             </ol>
           </div>
         </div>
-      </Section>
+        </Section>
+      </div>
     </div>
   );
 }

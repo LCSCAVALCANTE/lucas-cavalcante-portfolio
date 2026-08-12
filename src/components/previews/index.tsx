@@ -24,10 +24,16 @@ export const projectPreviews: Record<string, ComponentType> = {
   "painel-comercial": () => (
     <IframePreview src="/previews/painel-comercial-demo.html" label="Painel Comercial (demo)" />
   ),
+  "gestor-de-estoque": () => (
+    <IframePreview
+      src="/previews/gestor-estoque-demo.html"
+      label="Gestor de Estoque, demonstração com dados fictícios"
+    />
+  ),
   "cerebro-financeiro": () => (
     <IframePreview
       src="/previews/cerebro-financeiro-demo.html"
-      label="Cérebro Financeiro (demo com dados fictícios)"
+      label="Painel e-commerce, demonstração com dados fictícios"
     />
   ),
   "insertvalue-feegow": () => (

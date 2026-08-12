@@ -126,6 +126,51 @@
   50% { transform: translateY(-8px); }
 }
 
+@keyframes project-burst-particle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35) rotate(0deg);
+  }
+  12% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(-50% + var(--burst-x)),
+      calc(-50% + var(--burst-y))
+    ) scale(1.15) rotate(var(--burst-rotation));
+  }
+}
+
+@keyframes project-burst-flash {
+  0% { opacity: 0.8; transform: translate(-50%, -50%) scale(0.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8); }
+}
+
+.project-burst-particle {
+  position: absolute;
+  line-height: 1;
+  opacity: 0;
+  user-select: none;
+  will-change: transform, opacity;
+  animation: project-burst-particle 620ms cubic-bezier(.18,.72,.25,1) forwards;
+}
+
+.project-burst-flash {
+  position: absolute;
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  background: radial-gradient(circle, oklch(0.82 0.15 210 / 55%), oklch(0.7 0.2 305 / 22%) 45%, transparent 70%);
+  animation: project-burst-flash 500ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-burst-particle,
+  .project-burst-flash {
+    animation-duration: 60ms;
+  }
+}
+
 @utility animate-fade-up {
   animation: fade-up 0.7s ease-out both;
 }

@@ -79,14 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lucas Cavalcante — Analista de Dados & Automação" },
+      { title: "Lucas Cavalcante | Analista de Dados & Automação" },
       {
         name: "description",
         content:
-          "Portfólio de Lucas Cavalcante — Analista de Dados especializado em Power BI, SQL, Python, automações com n8n e desenvolvimento de dashboards.",
+          "Portfólio de Lucas Cavalcante, Analista de Dados especializado em Power BI, SQL, Python, automações com n8n e desenvolvimento de dashboards.",
       },
       { name: "author", content: "Lucas Cavalcante" },
-      { property: "og:title", content: "Lucas Cavalcante — Analista de Dados & Automação" },
+      { property: "og:title", content: "Lucas Cavalcante | Analista de Dados & Automação" },
       {
         property: "og:description",
         content:

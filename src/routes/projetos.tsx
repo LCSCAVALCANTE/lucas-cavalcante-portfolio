@@ -1,8 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowRight, Eye } from "lucide-react";
 import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
 import { projectPreviews } from "@/components/previews";
+import { NavigationBurst } from "@/components/NavigationBurst";
+import DottedBg2 from "@/components/DottedBg2";
 
 export const Route = createFileRoute("/projetos")({
   head: () => ({
@@ -24,8 +27,44 @@ export const Route = createFileRoute("/projetos")({
 });
 
 function ProjectsPage() {
+  const navigate = useNavigate();
+  const timerRef = useRef<number | null>(null);
+  const [burst, setBurst] = useState<BurstState | null>(null);
+
+  useEffect(() => () => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+  }, []);
+
+  function openProject(event: MouseEvent<HTMLAnchorElement>, id: string) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX || rect.left + rect.width / 2;
+    const y = event.clientY || rect.top + rect.height / 2;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    setBurst({ x, y, key: Date.now() });
+    timerRef.current = window.setTimeout(() => {
+      navigate({ to: "/projetos/$id", params: { id } });
+    }, reduceMotion ? 60 : 520);
+  }
+
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
+    <div className="relative isolate overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <DottedBg2
+          bgColor="#080D16"
+          colors={["#38BDF899", "#60A5FA99", "#A78BFA99"]}
+          frequency={2}
+          speed={4}
+          cellSize={1}
+          gamma={5}
+          paletteBias={-1}
+        />
+      </div>
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-16 sm:py-24">
+        {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
       <div className="animate-fade-up">
         <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Portfólio
@@ -73,6 +112,7 @@ function ProjectsPage() {
               <Link
                 to="/projetos/$id"
                 params={{ id: p.id }}
+                onClick={(event) => openProject(event, p.id)}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-cyan"
               >
                 Ver detalhes
@@ -93,7 +133,14 @@ function ProjectsPage() {
             </div>
           </article>
         ))}
+        </div>
       </div>
     </div>
   );
+}
+
+interface BurstState {
+  x: number;
+  y: number;
+  key: number;
 }

@@ -531,11 +531,11 @@
     const toggleDay = k => setOpenDay(o => ({ ...o, [k]: !o[k] }));
     return html`<${React.Fragment}>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking — top ${top.length} profissionais</div>
+        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking | top ${top.length} profissionais</div>
         <${Chartjs} horizontal=${true} labels=${top.map(e=>e.name)} data=${top.map(e=>e.total)} height=${Math.max(150, top.length*34)} />
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-user"></i>Profissionais — detalhe por dia <small>· ${brl0(grand)}</small></div>
+        <div class="visual-h"><i class="ti ti-user"></i>Profissionais | detalhe por dia <small>· ${brl0(grand)}</small></div>
         <div class="subh">Por dia</div>
         <table>
           <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
@@ -622,11 +622,11 @@
     </div>` : null;
     return html`<${React.Fragment}>${banner}
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking — top ${top.length} procedimentos</div>
+        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking | top ${top.length} procedimentos</div>
         <${Chartjs} horizontal=${true} labels=${top.map(e=>e.name)} data=${top.map(e=>e.total)} height=${Math.max(150, top.length*34)} />
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-clipboard-list"></i>Procedimentos — detalhe por dia <small>· ${brl0(grand)}</small></div>
+        <div class="visual-h"><i class="ti ti-clipboard-list"></i>Procedimentos | detalhe por dia <small>· ${brl0(grand)}</small></div>
         <div class="subh">Por dia</div>
         <table>
           <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
@@ -707,7 +707,7 @@
         <div style=${{fontSize:"11px",color:"#a59c8d",paddingBottom:"7px"}}>separe por vírgula p/ vários termos</div>
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-package"></i>Pacotes — por profissional solicitante <small>· ${pacotes.length} pacote(s) · ${brl0(grandPac)}</small></div>
+        <div class="visual-h"><i class="ti ti-package"></i>Pacotes | por profissional solicitante <small>· ${pacotes.length} pacote(s) · ${brl0(grandPac)}</small></div>
         <table>
           <thead><tr><th>Pacote / Profissional</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
           <tbody>
@@ -724,7 +724,7 @@
         </table>
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-calendar"></i>Pacotes — por dia <small>· ${porDia.length} dia(s) · ${brl0(totalDia)}</small></div>
+        <div class="visual-h"><i class="ti ti-calendar"></i>Pacotes | por dia <small>· ${porDia.length} dia(s) · ${brl0(totalDia)}</small></div>
         <table>
           <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
           <tbody>
@@ -746,7 +746,7 @@
             <tr class="total"><td>Total</td><td></td><td class="num">${brl(pacProcTot)}</td></tr>
           </tbody>
         </table>
-        ${pacProc.length>200 ? html`<div style=${{padding:"6px 14px 12px",fontSize:"11px",color:"#a59c8d"}}>Mostrando 200 de ${pacProc.length} — use os filtros acima pra refinar.</div>` : null}
+        ${pacProc.length>200 ? html`<div style=${{padding:"6px 14px 12px",fontSize:"11px",color:"#a59c8d"}}>Mostrando 200 de ${pacProc.length} | use os filtros acima pra refinar.</div>` : null}
       </div>
     </>`;
   }
@@ -802,7 +802,7 @@
         <td class="num">${fmt(v1)}</td>
         <td class="num">${fmt(v2)}</td>
         <td class="num" style=${{color: variacao===null?"#a59c8d":(up?"#2e7d32":"#b3261e"),fontWeight:600}}>
-          ${variacao===null ? "—" : html`<i class=${"ti "+(up?"ti-trending-up":"ti-trending-down")}></i> ${(up?"+":"")}${variacao.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})}%`}
+          ${variacao===null ? "-" : html`<i class=${"ti "+(up?"ti-trending-up":"ti-trending-down")}></i> ${(up?"+":"")}${variacao.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})}%`}
         </td>
       </tr>`;
     };
@@ -860,20 +860,20 @@
       <div class="canvas">
         <${KpiCompareTable} mes1Label=${antLabel} mes2Label=${posLabel} k1=${k1} k2=${k2} />
         <div class="visual">
-          <div class="visual-h"><i class="ti ti-chart-line"></i>Valor por dia — ${antLabel} x ${posLabel}</div>
+          <div class="visual-h"><i class="ti ti-chart-line"></i>Valor por dia | ${antLabel} x ${posLabel}</div>
           <${ComboChartjs} labels=${labels} dataBar=${dataAnt} dataLine=${dataPos} labelBar=${antLabel} labelLine=${posLabel} height=${260} />
         </div>
         <div class="grid2">
-          <${Matrix} title=${"Por profissional — "+antLabel} icon="ti-user" entities=${prof1} nameHead="Profissional" />
-          <${Matrix} title=${"Por profissional — "+posLabel} icon="ti-user" entities=${prof2} nameHead="Profissional" />
+          <${Matrix} title=${"Por profissional | "+antLabel} icon="ti-user" entities=${prof1} nameHead="Profissional" />
+          <${Matrix} title=${"Por profissional | "+posLabel} icon="ti-user" entities=${prof2} nameHead="Profissional" />
         </div>
         <div class="grid2">
-          <${Matrix} title=${"Por procedimento — "+antLabel} icon="ti-clipboard-list" entities=${proc1} nameHead="Procedimento" />
-          <${Matrix} title=${"Por procedimento — "+posLabel} icon="ti-clipboard-list" entities=${proc2} nameHead="Procedimento" />
+          <${Matrix} title=${"Por procedimento | "+antLabel} icon="ti-clipboard-list" entities=${proc1} nameHead="Procedimento" />
+          <${Matrix} title=${"Por procedimento | "+posLabel} icon="ti-clipboard-list" entities=${proc2} nameHead="Procedimento" />
         </div>
         <div class="grid2">
-          <${Matrix} title=${"Por pacote — "+antLabel} icon="ti-package" entities=${pac1} nameHead="Pacote" />
-          <${Matrix} title=${"Por pacote — "+posLabel} icon="ti-package" entities=${pac2} nameHead="Pacote" />
+          <${Matrix} title=${"Por pacote | "+antLabel} icon="ti-package" entities=${pac1} nameHead="Pacote" />
+          <${Matrix} title=${"Por pacote | "+posLabel} icon="ti-package" entities=${pac2} nameHead="Pacote" />
         </div>
       </div>
     </>`;
@@ -1026,12 +1026,12 @@
       <img class="logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23E8830F'/%3E%3Ctext x='32' y='41' font-size='26' font-family='Segoe UI, sans-serif' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E" alt="Painel demo" />
       <p class="gate-sub">Painel de Propostas</p>
       <label>Login</label>
-      <input type="text" value=${u} onChange=${e => setU(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="ex.: morumbi" />
+      <input type="text" value=${u} onChange=${e => setU(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="ex.: Unidade Centro" />
       <label>Senha</label>
       <input type="password" value=${p} onChange=${e => setP(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="••••••" />
       <button class="btn" onClick=${go} disabled=${busy}>${busy ? "Entrando..." : "Entrar"}</button>
       <div class="err">${err}</div>
-      <div class="hint">Ambiente de demonstração — qualquer login e senha funcionam</div>
+      <div class="hint">Ambiente de demonstração | qualquer login e senha funcionam</div>
     </div></div>`;
   }
   function App(){
