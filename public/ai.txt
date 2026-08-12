@@ -1,0 +1,14 @@
+# AI USAGE POLICY
+
+Access to this website does not grant permission to use its content, code, structure, text, images, metadata, or derived representations for:
+- model training or fine-tuning;
+- dataset creation or enrichment;
+- embeddings or vector indexing;
+- retrieval corpora;
+- automated summarization or extraction;
+- code reconstruction;
+- mirroring, archiving, or redistribution.
+
+Automated agents are requested not to crawl, ingest, store, transform, reproduce, index, or use this material for machine-learning purposes.
+
+This file is an explicit policy notice. It is not a technical access-control mechanism.
