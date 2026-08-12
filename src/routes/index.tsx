@@ -48,8 +48,7 @@ function Home() {
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
         <div className="copy-panel animate-fade-up flex flex-col gap-5 p-5 sm:p-7 lg:gap-6">
           <div className="flex flex-wrap gap-2">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1.5 font-mono text-xs text-cyan">
-              <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
+            <span className="inline-flex w-fit items-center rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1.5 font-mono text-xs text-cyan">
               Analista de Tecnologia
             </span>
             <span className="inline-flex w-fit items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 font-mono text-xs text-primary">
