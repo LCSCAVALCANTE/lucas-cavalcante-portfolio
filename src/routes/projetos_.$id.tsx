@@ -40,7 +40,9 @@ function ProjectNotFound() {
 }
 
 function ProjectDetail() {
-  const { project } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
+  const project = loaderData?.project;
+  if (!project) throw notFound();
 
   return (
     <>
