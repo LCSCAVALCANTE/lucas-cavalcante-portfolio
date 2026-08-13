@@ -116,27 +116,41 @@ function ContactPage() {
         </div>
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2">
-          {channels.map((c, i) => (
-            <a
-              key={c.label}
-              href={c.href}
-              target={c.href.startsWith("mailto:") ? undefined : "_blank"}
-              rel="noreferrer"
-              className="glass-card glow-hover animate-fade-up group flex items-center justify-between gap-4 rounded-2xl p-6"
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              <div className="flex min-w-0 items-center gap-4">
-                <div className={`grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-gradient-to-br ${c.accent}`}>
-                  <Lottie src={c.lottie} speed={c.speed} className="h-12 w-12" />
+          {channels.map((c, i) => {
+            const isGitHub = c.label === "GitHub";
+
+            return (
+              <a
+                key={c.label}
+                href={c.href}
+                target={c.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel="noreferrer"
+                className="glass-card glow-hover animate-fade-up group flex items-center justify-between gap-4 rounded-2xl p-6"
+                style={{ animationDelay: `${i * 80}ms` }}
+              >
+                <div className="flex min-w-0 items-center gap-4">
+                  <div
+                    className={
+                      isGitHub
+                        ? "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-gray-500"
+                        : `grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-gradient-to-br ${c.accent}`
+                    }
+                  >
+                    <Lottie
+                      src={c.lottie}
+                      speed={c.speed}
+                      className={isGitHub ? "h-12 w-12 brightness-0 invert" : "h-12 w-12"}
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-display font-semibold">{c.label}</div>
+                    <div className="truncate text-sm text-muted-foreground">{c.value}</div>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <div className="font-display font-semibold">{c.label}</div>
-                  <div className="truncate text-sm text-muted-foreground">{c.value}</div>
-                </div>
-              </div>
-              <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
-            </a>
-          ))}
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+              </a>
+            );
+          })}
         </div>
       </div>
     </div>
