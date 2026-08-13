@@ -35,7 +35,7 @@ const channels = [
     label: "LinkedIn",
     value: "linkedin.com/in/lucascavalcante",
     href: profile.contact.linkedin,
-    lottie: "https://lottie.host/a25ddb48-5c10-4425-932e-5aacea8ea9b8/T1RPRbwrBs.lottie",
+    lottie: "https://lottie.host/f22fd347-f68d-4f1f-9f16-cbf6fbc28e79/MB5jGr9s8i.lottie",
     speed: "0.55",
     accent: "from-cyan/30 to-cyan/5",
   },
