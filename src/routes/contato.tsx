@@ -139,7 +139,11 @@ function ContactPage() {
                     <Lottie
                       src={c.lottie}
                       speed={c.speed}
-                      className={isGitHub ? "h-10 w-10 rounded-[10px] bg-[#71717a]" : "h-12 w-12"}
+                      className={
+                        isGitHub
+                          ? "h-10 w-10 rounded-[10px] ring-2 ring-inset ring-[#71717a] grayscale invert brightness-50 contrast-125"
+                          : "h-12 w-12"
+                      }
                     />
                   </div>
                   <div className="min-w-0">
