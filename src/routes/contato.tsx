@@ -132,14 +132,14 @@ function ContactPage() {
                   <div
                     className={
                       isGitHub
-                        ? "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-[#71717a]"
+                        ? "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-transparent"
                         : `grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-gradient-to-br ${c.accent}`
                     }
                   >
                     <Lottie
                       src={c.lottie}
                       speed={c.speed}
-                      className="h-12 w-12"
+                      className={isGitHub ? "h-10 w-10 rounded-[10px] bg-[#71717a]" : "h-12 w-12"}
                     />
                   </div>
                   <div className="min-w-0">
