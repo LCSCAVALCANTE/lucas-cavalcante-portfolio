@@ -132,17 +132,14 @@ function ContactPage() {
                   <div
                     className={
                       isGitHub
-                        ? "relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-transparent"
+                        ? "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[#3a3f47] via-[#24292f] to-[#161b22] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_6px_16px_rgba(0,0,0,0.20)]"
                         : `grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-gradient-to-br ${c.accent}`
                     }
                   >
-                    {isGitHub && (
-                      <span className="pointer-events-none absolute inset-[4px] rounded-[9px] bg-[#ffffff]" />
-                    )}
                     <Lottie
                       src={c.lottie}
                       speed={c.speed}
-                      className={isGitHub ? "relative z-10 h-12 w-12" : "h-12 w-12"}
+                      className={isGitHub ? "h-11 w-11" : "h-12 w-12"}
                     />
                   </div>
                   <div className="min-w-0">
