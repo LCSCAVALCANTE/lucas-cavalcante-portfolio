@@ -132,15 +132,31 @@ function ContactPage() {
                   <div
                     className={
                       isGitHub
-                        ? "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[#3a3f47] via-[#24292f] to-[#161b22] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_6px_16px_rgba(0,0,0,0.20)]"
+                        ? "grid h-12 w-12 shrink-0 place-items-center rounded-[14px] border border-white/[0.06] bg-white/[0.04] text-purple transition-transform duration-200 group-hover:scale-105 group-hover:bg-white/[0.08]"
                         : `grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-gradient-to-br ${c.accent}`
                     }
                   >
-                    <Lottie
-                      src={c.lottie}
-                      speed={c.speed}
-                      className={isGitHub ? "h-11 w-11" : "h-12 w-12"}
-                    />
+                    {isGitHub ? (
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        className="h-[22px] w-[22px]"
+                      >
+                        <defs>
+                          <mask id="github-mark-contact">
+                            <rect width="24" height="24" rx="5" fill="white" />
+                            <path
+                              d="M12 2.25C6.615 2.25 2.25 6.615 2.25 12c0 4.384 2.85 8.104 6.791 9.411.448.084.616-.397.616-.605 0-.22-.01-.793-.01-1.558-2.785.602-3.37-1.342-3.37-1.342-.452-1.16-1.109-1.464-1.109-1.464-.91-.622.066-.61.066-.61 1.005.074 1.535.995 1.535.995.891 1.522 2.336 1.083 2.907.828.09-.603.348-1.01.633-1.242-2.222-.252-4.555-1.11-4.555-4.946 0-1.091.391-1.984 1.028-2.686-.217-.253-.945-1.273.099-2.652 0 0 .838-.282 2.747 1.002.796-.217 1.65-.325 2.499-.325.85 0 1.703.108 2.5.325 1.91-1.284 2.747-1.002 2.747-1.002 1.044 1.379.316 2.399.1 2.652.636.702 1.027 1.595 1.027 2.686 0 3.851-2.34 4.696-4.57 4.918.36.31.685.915.685 1.845 0 1.333-.012 2.408-.012 2.737 0 .253.176.539.645.448 3.93-1.298 6.76-4.964 6.76-9.36 0-5.385-4.365-9.75-9.75-9.75z"
+                              fill="black"
+                            />
+                          </mask>
+                        </defs>
+                        <rect width="24" height="24" rx="5" mask="url(#github-mark-contact)" />
+                      </svg>
+                    ) : (
+                      <Lottie src={c.lottie} speed={c.speed} className="h-12 w-12" />
+                    )}
                   </div>
                   <div className="min-w-0">
                     <div className="font-display font-semibold">{c.label}</div>
