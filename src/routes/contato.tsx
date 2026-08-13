@@ -132,7 +132,7 @@ function ContactPage() {
                   <div
                     className={
                       isGitHub
-                        ? "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-white"
+                        ? "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-[#71717a]"
                         : `grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-gradient-to-br ${c.accent}`
                     }
                   >
