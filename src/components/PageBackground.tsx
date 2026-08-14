@@ -8,7 +8,19 @@ export function PageBackground() {
         className="absolute inset-0 md:hidden"
         style={{
           background:
-            "radial-gradient(90% 48% at 50% 0%, rgba(56, 189, 248, 0.16), transparent 72%), radial-gradient(75% 42% at 100% 36%, rgba(167, 139, 250, 0.12), transparent 75%), radial-gradient(65% 38% at 0% 72%, rgba(96, 165, 250, 0.08), transparent 76%)",
+            "radial-gradient(90% 48% at 50% 0%, rgba(56, 189, 248, 0.22), transparent 72%), radial-gradient(75% 42% at 100% 36%, rgba(167, 139, 250, 0.16), transparent 75%), radial-gradient(65% 38% at 0% 72%, rgba(96, 165, 250, 0.12), transparent 76%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-60 md:hidden"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(96, 165, 250, 0.52) 1px, transparent 1.5px)",
+          backgroundSize: "24px 24px",
+          maskImage:
+            "linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.7) 60%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.7) 60%, transparent 100%)",
         }}
       />
       <div className="absolute inset-0 hidden md:block">

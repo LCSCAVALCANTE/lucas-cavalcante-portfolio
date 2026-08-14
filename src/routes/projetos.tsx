@@ -55,7 +55,7 @@ function ProjectsPage() {
       <PageBackground />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-24">
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
-      <div className="copy-panel animate-fade-up mx-auto max-w-4xl p-5 sm:p-8">
+      <div className="glass-card animate-fade-up rounded-2xl p-5 sm:p-10">
         <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Portfólio
         </div>
