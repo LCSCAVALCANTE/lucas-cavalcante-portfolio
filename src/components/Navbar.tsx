@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { siteLogoDataUrl } from "@/data/site-logo";
 
 const links = [
   { to: "/", label: "Home" },
@@ -11,14 +10,15 @@ const links = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const logoSrc = `${import.meta.env.BASE_URL}site-logo-final.svg?v=20260814`;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
-          <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-black p-[2px] shadow-lg">
+          <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-black shadow-lg">
             <img
-              src={siteLogoDataUrl}
+              src={logoSrc}
               alt="Logo Lucas Cavalcante"
               className="h-full w-full rounded-full object-cover"
             />
