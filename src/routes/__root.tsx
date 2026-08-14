@@ -13,7 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { siteFaviconDataUrl } from "@/data/site-logo";
+import { siteLogoDataUrl } from "@/data/site-logo";
 
 function NotFoundComponent() {
   return (
@@ -98,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: siteFaviconDataUrl, type: "image/svg+xml" },
+      { rel: "icon", href: siteLogoDataUrl, type: "image/png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
