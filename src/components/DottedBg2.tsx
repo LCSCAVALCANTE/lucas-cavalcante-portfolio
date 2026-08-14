@@ -290,6 +290,8 @@ interface DottedBg2Props {
   gamma?: number;
   paletteBias?: number;
   disableOnMobile?: boolean;
+  maxDpr?: number;
+  frameRate?: number;
   style?: CSSProperties;
 }
 
@@ -302,6 +304,8 @@ export default function DottedBg2({
   gamma = 5,
   paletteBias = -5,
   disableOnMobile = false,
+  maxDpr = 2,
+  frameRate = 30,
   style,
 }: DottedBg2Props) {
   const paletteColors =
@@ -363,7 +367,7 @@ export default function DottedBg2({
       return;
 
     const renderer = new Renderer({
-      dpr: Math.min(window.devicePixelRatio || 1, 2),
+      dpr: Math.min(window.devicePixelRatio || 1, maxDpr),
       alpha: true,
       premultipliedAlpha: false,
     });
@@ -454,7 +458,7 @@ export default function DottedBg2({
     });
     dotMeshRef.current = dotMesh;
 
-    const frameInterval = 1e3 / 30;
+    const frameInterval = 1e3 / frameRate;
     const update = (time: number) => {
       if (!isPlayingRef.current) {
         rafIdRef.current = null;
@@ -584,7 +588,7 @@ export default function DottedBg2({
             return;
           }
           const last = lastTimeRef.current;
-          const frameInterval = 1e3 / 30;
+          const frameInterval = 1e3 / frameRate;
           if (time - last < frameInterval) {
             rafIdRef.current = requestAnimationFrame(update);
             return;
@@ -608,7 +612,7 @@ export default function DottedBg2({
       }
       renderOnce();
     }
-  }, [effectivePlay]);
+  }, [effectivePlay, frameRate]);
 
   return (
     <div
