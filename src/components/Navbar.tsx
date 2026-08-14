@@ -10,7 +10,7 @@ const links = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const logoSrc = `${import.meta.env.BASE_URL}site-logo-final.svg?v=20260814b`;
+  const logoSrc = `${import.meta.env.BASE_URL}site-logo-final.svg?v=20260814c`;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl">
