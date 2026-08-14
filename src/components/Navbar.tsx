@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { siteLogoDataUrl } from "@/data/site-logo";
 
 const links = [
   { to: "/", label: "Home" },
@@ -15,8 +16,12 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-purple font-display text-sm font-bold text-primary-foreground shadow-lg">
-            LC
+          <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-black shadow-lg">
+            <img
+              src={siteLogoDataUrl}
+              alt="Logo Lucas Cavalcante"
+              className="h-8 w-8 rounded-full object-cover [clip-path:circle(40%_at_50%_50%)]"
+            />
           </span>
           <span className="font-display text-sm font-semibold tracking-tight sm:text-base">
             Lucas Cavalcante
