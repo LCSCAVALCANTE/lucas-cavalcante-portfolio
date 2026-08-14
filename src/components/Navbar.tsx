@@ -10,7 +10,7 @@ const links = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const logoSrc = `${import.meta.env.BASE_URL}site-logo-final.svg?v=20260814c`;
+  const logoSrc = `${import.meta.env.BASE_URL}site-logo-final.svg?v=20260814d`;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl">
@@ -20,7 +20,7 @@ export function Navbar() {
             <img
               src={logoSrc}
               alt="Logo Lucas Cavalcante"
-              className="h-full w-full rounded-full object-contain"
+              className="h-full w-full rounded-full object-cover"
             />
           </span>
           <span className="font-display text-sm font-semibold tracking-tight sm:text-base">
