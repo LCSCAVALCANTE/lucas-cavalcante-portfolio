@@ -289,6 +289,7 @@ interface DottedBg2Props {
   cellSize?: number;
   gamma?: number;
   paletteBias?: number;
+  disableOnMobile?: boolean;
   style?: CSSProperties;
 }
 
@@ -300,6 +301,7 @@ export default function DottedBg2({
   cellSize = 1,
   gamma = 5,
   paletteBias = -5,
+  disableOnMobile = false,
   style,
 }: DottedBg2Props) {
   const paletteColors =
@@ -354,6 +356,11 @@ export default function DottedBg2({
     let resizeObserver: ResizeObserver | null = null;
     const container = containerRef.current;
     if (!container) return;
+    if (
+      disableOnMobile &&
+      window.matchMedia("(max-width: 767px)").matches
+    )
+      return;
 
     const renderer = new Renderer({
       dpr: Math.min(window.devicePixelRatio || 1, 2),

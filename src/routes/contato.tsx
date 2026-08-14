@@ -2,7 +2,7 @@ import { createElement, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { profile } from "@/data/profile";
-import DottedBg2 from "@/components/DottedBg2";
+import { PageBackground } from "@/components/PageBackground";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
@@ -80,25 +80,15 @@ function ContactPage() {
 
   return (
     <div className="relative isolate min-h-[calc(100vh-5rem)] overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <DottedBg2
-          bgColor="#080D16"
-          colors={["#38BDF899", "#60A5FA99", "#A78BFA99"]}
-          frequency={2}
-          speed={4}
-          cellSize={1}
-          gamma={5}
-          paletteBias={-1}
-        />
-      </div>
+      <PageBackground />
 
-      <div className="relative z-10 mx-auto max-w-4xl px-6 py-16 sm:py-24">
-        <div className="copy-panel relative min-h-[320px] overflow-hidden p-6 sm:p-8 lg:p-10">
+      <div className="relative z-10 mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-24">
+        <div className="copy-panel relative overflow-hidden p-5 sm:min-h-[320px] sm:p-8 lg:p-10">
           <div className="relative z-10 max-w-[580px] lg:pr-[17rem]">
             <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
               Contato
             </div>
-            <h1 className="font-display text-4xl font-bold sm:text-5xl lg:text-6xl">
+            <h1 className="font-display text-3xl font-bold sm:text-5xl lg:text-6xl">
               Vamos <span className="gradient-text">conversar</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -115,7 +105,7 @@ function ContactPage() {
           </div>
         </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid gap-3 sm:mt-12 sm:grid-cols-2 sm:gap-4">
           {channels.map((c, i) => {
             const isGitHub = c.label === "GitHub";
 
@@ -125,7 +115,7 @@ function ContactPage() {
                 href={c.href}
                 target={c.href.startsWith("mailto:") ? undefined : "_blank"}
                 rel="noreferrer"
-                className="glass-card glow-hover animate-fade-up group flex items-center justify-between gap-4 rounded-2xl p-6"
+                className="glass-card glow-hover animate-fade-up group flex items-center justify-between gap-3 rounded-2xl p-4 sm:gap-4 sm:p-6"
                 style={{ animationDelay: `${i * 80}ms` }}
               >
                 <div className="flex min-w-0 items-center gap-4">

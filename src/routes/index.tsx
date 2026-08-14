@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowRight, Mail, Sparkles, Briefcase, GraduationCap, Database, Rocket, ShieldCheck } from "lucide-react";
 import { profile, skills, experiences, education } from "@/data/profile";
 import { NavigationBurst } from "@/components/NavigationBurst";
-import DottedBg2 from "@/components/DottedBg2";
+import { PageBackground } from "@/components/PageBackground";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -31,20 +31,10 @@ function Home() {
 
   return (
     <div className="relative isolate overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <DottedBg2
-          bgColor="#080D16"
-          colors={["#38BDF899", "#60A5FA99", "#A78BFA99"]}
-          frequency={2}
-          speed={4}
-          cellSize={1}
-          gamma={5}
-          paletteBias={-1}
-        />
-      </div>
-      <div className="relative z-10 mx-auto max-w-6xl px-6">
+      <PageBackground />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
-      <section className="relative grid gap-12 pt-16 pb-24 sm:pt-24 sm:pb-32 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+      <section className="relative grid gap-8 pb-16 pt-10 sm:gap-12 sm:pb-32 sm:pt-24 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
         <div className="copy-panel animate-fade-up flex flex-col gap-5 p-5 sm:p-7 lg:gap-6">
           <div className="flex flex-wrap gap-2">
@@ -66,14 +56,14 @@ function Home() {
             <Link
               to="/projetos"
               onClick={openProjects}
-              className="neon-button group inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-accent"
+              className="neon-button group inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-accent sm:w-auto"
             >
               <span>Ver Projetos</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/contato"
-              className="neon-button inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-accent"
+              className="neon-button inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card/60 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-accent sm:w-auto"
             >
               <Mail className="h-4 w-4" />
               <span>Entrar em contato</span>
@@ -99,7 +89,7 @@ function Home() {
       </section>
 
       <Section id="sobre" eyebrow="01 - Sobre" title="Sobre mim" icon={<Sparkles className="h-4 w-4" />}>
-        <div className="glass-card rounded-2xl p-6 sm:p-10">
+        <div className="glass-card rounded-2xl p-5 sm:p-10">
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
             {profile.about}
           </p>
@@ -120,7 +110,7 @@ function Home() {
       </Section>
 
       <Section eyebrow="02 - Stack" title="Habilidades">
-        <div className="glass-card mb-8 rounded-2xl p-6 sm:p-10">
+        <div className="glass-card mb-8 rounded-2xl p-5 sm:p-10">
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
             Da extração dos dados à manutenção da solução em produção: tecnologia aplicada para resolver problemas reais.
           </p>
@@ -198,7 +188,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="py-16 sm:py-20">
+    <section id={id} className="py-12 sm:py-20">
       <div className="mb-8 flex items-center gap-3">
         <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-white text-eyebrow-shadow">
           {icon}

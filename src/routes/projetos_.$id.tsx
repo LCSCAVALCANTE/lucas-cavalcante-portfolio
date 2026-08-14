@@ -29,7 +29,7 @@ export const Route = createFileRoute("/projetos_/$id")({
 
 function ProjectNotFound() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-24 text-center">
+    <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
       <h1 className="font-display text-3xl font-bold">Projeto não encontrado</h1>
       <p className="mt-2 text-muted-foreground">Este projeto pode ter sido removido ou movido.</p>
       <Link to="/projetos" className="mt-6 inline-flex items-center gap-2 text-primary hover:text-cyan">
@@ -44,7 +44,7 @@ function ProjectDetail() {
 
   return (
     <>
-    <article className="mx-auto max-w-4xl px-6 py-16 sm:py-24">
+    <article className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-24">
       <Link
         to="/projetos"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -60,7 +60,7 @@ function ProjectDetail() {
             {project.technologies.length} tecnologias
           </span>
         </div>
-        <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl">
+        <h1 className="font-display text-3xl font-bold leading-tight sm:text-5xl">
           {project.name}
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
@@ -87,7 +87,7 @@ function ProjectDetail() {
         </InfoCard>
       </div>
 
-      <section className="mt-10 glass-card rounded-2xl p-6">
+      <section className="mt-8 glass-card rounded-2xl p-5 sm:mt-10 sm:p-6">
         <div className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-purple">
           <Wrench className="h-4 w-4" />
           Tecnologias utilizadas
@@ -105,7 +105,7 @@ function ProjectDetail() {
       </section>
 
       {project.pipeline && project.pipeline.length > 0 && (
-        <section className="mt-10 glass-card rounded-2xl p-6">
+        <section className="mt-8 glass-card rounded-2xl p-5 sm:mt-10 sm:p-6">
           <div className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-cyan">
             <ListOrdered className="h-4 w-4" />
             Como funciona
@@ -124,7 +124,7 @@ function ProjectDetail() {
       )}
 
       {project.deliverables && project.deliverables.length > 0 && (
-        <section className="mt-10 glass-card rounded-2xl p-6">
+        <section className="mt-8 glass-card rounded-2xl p-5 sm:mt-10 sm:p-6">
           <div className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-emerald-300">
             <CheckCircle2 className="h-4 w-4" />
             Entregáveis
@@ -160,7 +160,7 @@ function ProjectPreviewSection({ projectId }: { projectId: string }) {
   const Preview = projectPreviews[projectId];
   if (!Preview) return null;
   return (
-    <section id="previa" className="mx-auto max-w-[1600px] px-6 pb-24 scroll-mt-24">
+    <section id="previa" className="mx-auto max-w-[1600px] scroll-mt-24 px-4 pb-16 sm:px-6 sm:pb-24">
       <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
         Prévia
       </div>
@@ -183,7 +183,7 @@ function InfoCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="glass-card rounded-2xl p-6">
+    <div className="glass-card rounded-2xl p-5 sm:p-6">
       <div className={`mb-2 flex items-center gap-2 font-mono text-xs uppercase tracking-widest ${color}`}>
         {icon}
         {title}

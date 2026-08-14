@@ -5,7 +5,7 @@ import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
 import { projectPreviews } from "@/components/previews";
 import { NavigationBurst } from "@/components/NavigationBurst";
-import DottedBg2 from "@/components/DottedBg2";
+import { PageBackground } from "@/components/PageBackground";
 
 export const Route = createFileRoute("/projetos")({
   head: () => ({
@@ -52,24 +52,14 @@ function ProjectsPage() {
 
   return (
     <div className="relative isolate overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <DottedBg2
-          bgColor="#080D16"
-          colors={["#38BDF899", "#60A5FA99", "#A78BFA99"]}
-          frequency={2}
-          speed={4}
-          cellSize={1}
-          gamma={5}
-          paletteBias={-1}
-        />
-      </div>
-      <div className="relative z-10 mx-auto max-w-6xl px-6 py-16 sm:py-24">
+      <PageBackground />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-24">
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
-      <div className="copy-panel animate-fade-up mx-auto max-w-4xl p-6 sm:p-8">
+      <div className="copy-panel animate-fade-up mx-auto max-w-4xl p-5 sm:p-8">
         <div className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
           Portfólio
         </div>
-        <h1 className="font-display text-4xl font-bold sm:text-5xl lg:text-6xl">
+        <h1 className="font-display text-3xl font-bold sm:text-5xl lg:text-6xl">
           Meus <span className="gradient-text">Projetos</span>
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -77,11 +67,11 @@ function ProjectsPage() {
         </p>
       </div>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
         {projects.map((p, i) => (
           <article
             key={p.id}
-            className="glass-card glow-hover animate-fade-up group flex flex-col rounded-2xl p-6"
+            className="glass-card glow-hover animate-fade-up group flex flex-col rounded-2xl p-5 sm:p-6"
             style={{ animationDelay: `${i * 80}ms` }}
           >
             <div className="mb-4 flex items-start justify-between gap-3">

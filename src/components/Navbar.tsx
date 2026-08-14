@@ -13,12 +13,12 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-purple font-display text-sm font-bold text-primary-foreground shadow-lg">
             LC
           </span>
-          <span className="font-display text-base font-semibold tracking-tight">
+          <span className="font-display text-sm font-semibold tracking-tight sm:text-base">
             Lucas Cavalcante
           </span>
         </Link>
@@ -40,7 +40,7 @@ export function Navbar() {
 
         <button
           onClick={() => setOpen((o) => !o)}
-          className="rounded-md p-2 text-muted-foreground hover:bg-accent md:hidden"
+          className="grid h-11 w-11 place-items-center rounded-lg text-muted-foreground hover:bg-accent md:hidden"
           aria-label="Menu"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -49,7 +49,7 @@ export function Navbar() {
 
       {open && (
         <nav className="border-t border-border/50 bg-background/95 md:hidden">
-          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-3">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3 sm:px-6">
             {links.map((l) => (
               <Link
                 key={l.to}
@@ -58,7 +58,7 @@ export function Navbar() {
                 activeOptions={{ exact: l.to === "/" }}
                 activeProps={{ className: "text-foreground bg-accent/60" }}
                 inactiveProps={{ className: "text-muted-foreground" }}
-                className="rounded-md px-3 py-2 text-sm font-medium"
+                className="rounded-md px-3 py-3 text-sm font-medium"
               >
                 {l.label}
               </Link>

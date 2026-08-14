@@ -82,10 +82,27 @@
       radial-gradient(1200px circle at 10% -10%, oklch(0.72 0.17 250 / 12%), transparent 50%),
       radial-gradient(900px circle at 90% 10%, oklch(0.7 0.2 305 / 10%), transparent 55%);
     background-attachment: fixed;
+    overflow-x: hidden;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+  }
+}
+
+@media (max-width: 767px) {
+  body {
+    background-image: none;
+    background-attachment: scroll;
+  }
+
+  .copy-panel,
+  .glass-card {
+    backdrop-filter: blur(8px);
+  }
+
+  .glow-hover:hover {
+    transform: none;
   }
 }
 
