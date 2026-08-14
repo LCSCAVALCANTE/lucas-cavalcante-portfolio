@@ -27,7 +27,7 @@ const channels = [
     label: "E-mail",
     value: profile.contact.email,
     href: `mailto:${profile.contact.email}`,
-    lottie: "https://lottie.host/f196ea15-613b-4f76-a4e3-6246e4f4afaa/JFImcWkfhu.lottie",
+    lottie: "https://lottie.host/2433a92b-66b2-4e0c-8293-2595eba27c19/qv01aQwHYt.lottie",
     speed: "1",
     accent: "from-primary/30 to-primary/5",
   },
@@ -139,7 +139,7 @@ function ContactPage() {
                     <Lottie
                       src={c.lottie}
                       speed={c.speed}
-                      className={isGitHub ? "h-9 w-9" : "h-12 w-12"}
+                      className={isGitHub ? "h-9 w-9 brightness-0 invert" : "h-12 w-12"}
                     />
                   </div>
                   <div className="min-w-0">
