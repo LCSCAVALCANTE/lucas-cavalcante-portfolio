@@ -44,7 +44,7 @@ const channels = [
     value: "github.com/LCSCAVALCANTE",
     href: profile.contact.github,
     lottie: "https://lottie.host/9d5079c5-b731-4a94-9b62-a6982f6c9e1b/oIYyaAcIW4.lottie",
-    speed: "1",
+    speed: "7",
     accent: "from-purple/30 to-purple/5",
   },
   {
