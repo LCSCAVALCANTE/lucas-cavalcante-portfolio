@@ -1,0 +1,130 @@
+/* Tema claro (09/10/2026). Botão lua/sol ao lado do "+" (index.html, #temaBtn); escolha guardada no navegador.
+   Só vale com <html data-tema="claro">: o tema escuro continua exatamente como era.
+   1) as variáveis do tema; 2) as regras que tinham cor escura fixa (fundos, bordas, sombras e textos claros). */
+
+html[data-tema="claro"] {
+  color-scheme: light;
+  --bg:       #f3f6fb;
+  --surface:  #ffffff;
+  --surface2: #f1f5f9;
+  --border:   #dfe5ee;
+  --blue:     #2563eb;
+  --blue2:    #1d4ed8;
+  --green:    #16a34a;
+  --orange:   #ea580c;
+  --red:      #dc2626;
+  --amber:    #d97706;
+  --cyan:     #0891b2;
+  --purple:   #7c3aed;
+  --text1:    #0f172a;
+  --text2:    #334155;
+  --text3:    #475569;
+  --text4:    #64748b;
+  --text5:    #64748b;
+  --pink:     #db2777;
+  --sombra:   0 18px 50px rgba(15, 23, 42, 0.14);
+}
+
+/* Barra do topo, menu lateral, fundos de sobreposição */
+html[data-tema="claro"] .topbar { background: #ffffff; }
+html[data-tema="claro"] .sidebar { background: #ffffff; box-shadow: 18px 0 60px rgba(15, 23, 42, 0.15); }
+html[data-tema="claro"] .sidebar-header { background: rgba(255, 255, 255, 0.88); }
+html[data-tema="claro"] .sidebar-link .ico { background: var(--surface2); border-color: var(--border); }
+html[data-tema="claro"] .sidebar-backdrop,
+html[data-tema="claro"] .saude-overlay { background: rgba(15, 23, 42, 0.35); }
+
+/* Cartões flutuantes: seletor de mês, Saúde do painel, balão das Dicas, explicação da ocupação */
+html[data-tema="claro"] .mes-picker,
+html[data-tema="claro"] .saude-box,
+html[data-tema="claro"] .dica-flutuante,
+html[data-tema="claro"] .occ-info { background: #ffffff; border-color: var(--border); box-shadow: var(--sombra); }
+html[data-tema="claro"] .occ-info::before,
+html[data-tema="claro"] .occ-info.acima::before { background: #ffffff; border-color: var(--border); }
+html[data-tema="claro"] .mes-cel { background: var(--surface2); }
+html[data-tema="claro"] .mes-atalho.ativo,
+html[data-tema="claro"] .mes-cel.selecionado { color: var(--blue); }
+html[data-tema="claro"] .saude-chips,
+html[data-tema="claro"] .saude-rodape { border-color: var(--border); }
+html[data-tema="claro"] .saude-item { background: var(--surface2); border-color: var(--border); }
+html[data-tema="claro"] .saude-chip.ativo { color: var(--blue); }
+html[data-tema="claro"] .occ-info-conta,
+html[data-tema="claro"] .occ-info-linha { border-color: var(--border); }
+html[data-tema="claro"] .occ-info-num,
+html[data-tema="claro"] .occ-info-formula,
+html[data-tema="claro"] .occ-info-bloco,
+html[data-tema="claro"] .occ-info-agora { background: var(--surface2); border-color: var(--border); }
+html[data-tema="claro"] .occ-info-num.destaque { background: #eff6ff; border-color: #bfdbfe; }
+html[data-tema="claro"] .occ-info-bloco.agend .occ-info-conta .v { color: var(--purple); }
+
+/* Variação contra o período anterior */
+html[data-tema="claro"] .occ-avg-chip.up,
+html[data-tema="claro"] .kpi-py-delta.pos { color: var(--green); }
+html[data-tema="claro"] .occ-avg-chip.eq,
+html[data-tema="claro"] .kpi-py-delta.eq { color: var(--amber); }
+html[data-tema="claro"] .occ-avg-chip.down,
+html[data-tema="claro"] .kpi-py-delta.neg { color: var(--red); background: #fee2e2; }
+
+/* Números coloridos (cores definidas no painel.js para o fundo escuro): um tom mais escuro no branco */
+html[data-tema="claro"] .kpi-value,
+html[data-tema="claro"] .info-card-pct,
+html[data-tema="claro"] .info-card .val { filter: brightness(0.82) saturate(1.15); }
+html[data-tema="claro"] .info-card-icon { background: #e8eef7; }
+html[data-tema="claro"] .occ-avg-chip.base { border-color: var(--border); }
+html[data-tema="claro"] .info-card .badge { background: color-mix(in srgb, currentColor 12%, #ffffff) !important; }
+
+/* Botões do topo */
+html[data-tema="claro"] .hints-btn.ativo { color: var(--blue); background: #dbeafe; border-color: #93c5fd; box-shadow: none; }
+
+/* Chat (NEXA) */
+html[data-tema="claro"] .chat-panel { background: #ffffff; border-color: var(--border); box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18), 0 0 0 1px var(--border); }
+html[data-tema="claro"] .chat-msg.bot { border-color: var(--border); }
+html[data-tema="claro"] .chat-menu-wrap { background: var(--surface2); border-color: var(--border); }
+html[data-tema="claro"] .chat-menu-header,
+html[data-tema="claro"] .chat-footer-info { border-color: var(--border); }
+html[data-tema="claro"] .chat-menu-cat-title,
+html[data-tema="claro"] .chat-cat-name { color: var(--text1); }
+html[data-tema="claro"] .chat-menu-back-btn,
+html[data-tema="claro"] .chat-cat-card:hover .chat-cat-arrow { color: var(--blue); }
+html[data-tema="claro"] .chat-cat-card { background: #ffffff !important; }
+html[data-tema="claro"] .chat-q-btn { background: var(--surface2); color: var(--text2); border-color: var(--border); }
+
+/* Aviso de abertura */
+html[data-tema="claro"] #aviso-overlay { background: rgba(15, 23, 42, 0.45); }
+html[data-tema="claro"] #aviso-box { background: #ffffff; border-color: var(--border); box-shadow: 0 24px 80px rgba(15, 23, 42, 0.2); }
+html[data-tema="claro"] #aviso-header,
+html[data-tema="claro"] #aviso-footer { border-color: var(--border); }
+html[data-tema="claro"] #aviso-footer { background: var(--surface2); }
+html[data-tema="claro"] #aviso-close { background: var(--surface2); border-color: var(--border); color: var(--text4); }
+html[data-tema="claro"] #aviso-body { scrollbar-color: var(--border) transparent; }
+html[data-tema="claro"] #aviso-body::-webkit-scrollbar-thumb { background: var(--border); }
+html[data-tema="claro"] #aviso-body .aviso-item,
+html[data-tema="claro"] #aviso-body .aviso-sub { background: var(--surface2); border-color: var(--border); }
+html[data-tema="claro"] #aviso-timer-bar-bg { background: var(--border); }
+html[data-tema="claro"] #aviso-title,
+html[data-tema="claro"] #aviso-body .aviso-saudacao { color: var(--text1); }
+html[data-tema="claro"] #aviso-body p,
+html[data-tema="claro"] #aviso-body .aviso-item p,
+html[data-tema="claro"] #aviso-body .aviso-sub strong { color: var(--text2); }
+html[data-tema="claro"] #aviso-body .aviso-intro,
+html[data-tema="claro"] #aviso-body .aviso-sub,
+html[data-tema="claro"] #aviso-timer-num { color: var(--text4); }
+html[data-tema="claro"] #aviso-label,
+html[data-tema="claro"] #aviso-body .aviso-atencao,
+html[data-tema="claro"] #aviso-body .aviso-item.amber .item-num { color: var(--amber); }
+
+/* Agendador (DLC; estilos injetados pelo agendador.js) */
+html[data-tema="claro"] .ag-topo { background: rgba(255, 255, 255, 0.92); }
+html[data-tema="claro"] .ag-tela { background: radial-gradient(1200px 500px at 15% -10%, #2563eb12, transparent 60%), var(--bg); }
+html[data-tema="claro"] .ag-dia { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 10px 30px rgba(15, 23, 42, 0.06); }
+html[data-tema="claro"] .ag-tag,
+html[data-tema="claro"] .ag-dia-n.tem,
+html[data-tema="claro"] .ag-acao { color: var(--blue); }
+html[data-tema="claro"] .ag-tag { background: #dbeafe; }
+html[data-tema="claro"] .ag-tag.feriado { background: #fef3c7; color: #b45309; }
+html[data-tema="claro"] .ag-centro.feriado { color: #b45309; }
+html[data-tema="claro"] .ag-linha.verde { color: #15803d; background: #dcfce7; border-color: #86efac; }
+
+/* Botão do tema: lua no escuro (clique = claro), sol no claro (clique = escuro) */
+.tema-btn .ico-sol { display: none; }
+html[data-tema="claro"] .tema-btn .ico-lua { display: none; }
+html[data-tema="claro"] .tema-btn .ico-sol { display: block; color: #d97706; }

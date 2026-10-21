@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="450" viewBox="0 0 450 450"><!-- MODO DEMO: ícone neutro fictício -->
+  <rect width="450" height="450" rx="100" fill="#4361ee"/>
+  <rect x="190" y="100" width="70" height="250" rx="18" fill="#fff"/>
+  <rect x="100" y="190" width="250" height="70" rx="18" fill="#fff"/>
+</svg>

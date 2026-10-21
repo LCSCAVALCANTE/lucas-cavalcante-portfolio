@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<!-- MODO DEMO: dados fictícios. demo-dados.js responde /api/*, /ia e /auth/* sem rede; carrega antes de tudo -->
+<script src="demo-dados.js"></script>
+<!-- Tema claro (09/10/2026): aplicado antes de desenhar, para não piscar escuro -->
+<script>try { if (localStorage.getItem('painel-tema') === 'claro') document.documentElement.dataset.tema = 'claro'; } catch (e) {}</script>
+<!-- Visual novo (09/10/2026): PADRÃO. ?visual=atual volta ao visual anterior, ?visual=novo religa (fica guardado
+     no navegador). Sem tema escolhido, abre no claro. -->
+<script>
+try {
+  var vnParam = new URLSearchParams(location.search).get('visual');
+  if (vnParam === 'novo' || vnParam === 'atual') localStorage.setItem('painel-visual', vnParam);
+  if (localStorage.getItem('painel-visual') !== 'atual') {
+    document.documentElement.dataset.visual = 'novo';
+    if (!localStorage.getItem('painel-tema')) document.documentElement.dataset.tema = 'claro';
+  }
+} catch (e) {}
+</script>
+<!-- MODO DEMO: caminhos relativos (a demo roda numa subpasta) -->
+<link rel="stylesheet" href="tema-claro.css"/>
+<link rel="stylesheet" href="visual-novo.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard de Ocupação de Agenda</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0c1525;
+  --surface:  #111d30;
+  --surface2: #0c1a2e;
+  --border:   #1a2436;
+  --blue:     #3b82f6;
+  --blue2:    #1d4ed8;
+  --green:    #22c55e;
+  --orange:   #f97316;
+  --red:      #ef4444;
+  --amber:    #f59e0b;
+  --cyan:     #06b6d4;
+  --purple:   #8b5cf6;
+  --text1:    #f1f5f9;
+  --text2:    #cbd5e1;
+  --text3:    #94a3b8;
+  --text4:    #94a3b8;
+  --text5:    #64748b;
+  --pink:     #ec4899;
+}
+
+/* 08/10/2026: só o html tem altura fixa. Com o body preso em 100% da janela, a barra do topo (sticky) soltava depois da
+   primeira tela e o cabeçalho das tabelas ficava 68px abaixo do topo, com as linhas aparecendo por cima dele. */
+html { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text1);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 68px;
+  background: #080f1d;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+  flex-shrink: 0;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-logo {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 14px #3b82f640;
+  flex-shrink: 0;
+
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.topbar-logo:hover { transform: translateY(-1px); opacity: 0.95; }
+.topbar-logo:active { transform: translateY(0px) scale(0.98); }
+/* 09/10/2026: logo no lugar do 🏥 (MODO DEMO: logo neutro logo-demo.svg no lugar do logo da empresa).
+   Continua abrindo o menu; um traço fino separa o logo do título. */
+.topbar-logo.marca { width: auto; height: 36px; background: none; box-shadow: none; border-radius: 0;
+  padding-right: 16px; border-right: 1px solid var(--border); }
+.topbar-logo.marca img, .sidebar-badge.marca img { height: 100%; width: auto; display: block; }
+
+.topbar-title { font-size: 19px; font-weight: 800; letter-spacing: -0.4px; color: var(--text1); }
+.topbar-sub   { font-size: 11px; color: var(--text4); margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.btn-compare {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 11px;
+  padding: 9px 14px;
+  min-width: 228px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.btn-compare:hover {
+  transform: translateY(-1px);
+  border-color: #3b82f650;
+}
+
+.btn-compare-ico { font-size: 13px; color: var(--blue); }
+.btn-compare-label { font-size: 12px; font-weight: 800; letter-spacing: 0.3px; color: var(--text1); }
+.btn-compare-hint { font-size: 11px; color: var(--text4); }
+.btn-compare-copy { display: inline-flex; align-items: baseline; gap: 6px; }
+
+.btn-compare-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text5);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.btn-compare.is-active {
+  border-color: #3b82f680;
+  background: linear-gradient(135deg, #1d4ed833, #3b82f622);
+  box-shadow: 0 0 0 1px #1d4ed84d, 0 8px 20px rgba(59,130,246,0.22);
+}
+
+.btn-compare.is-active .btn-compare-dot {
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55eaa;
+}
+
+/* Seletor do mês de comparação (01/10/2026): painel preso ao botão "Comparar mês". */
+.mes-picker { position: fixed; z-index: 9200; width: 300px; padding: 14px;
+  background: linear-gradient(180deg, #13223a 0%, #0e1a2d 100%); border: 1px solid #243450; border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55); }
+.mes-picker[hidden] { display: none; }
+.mes-picker-titulo { font-size: 12px; color: var(--text3); margin-bottom: 10px; }
+.mes-picker-titulo b { color: var(--text1); }
+.mes-atalhos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.mes-atalho { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px;
+  color: var(--text2); font: inherit; font-size: 11.5px; font-weight: 700; }
+.mes-atalho small { font-size: 11px; font-weight: 500; color: var(--text4); }
+.mes-atalho:hover:not([disabled]) { border-color: #3b82f660; }
+.mes-atalho.ativo { border-color: var(--blue); background: #1d4ed833; color: #93c5fd; }
+.mes-atalho[disabled] { opacity: .4; cursor: not-allowed; }
+.mes-ano { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.mes-ano span { font-size: 13px; font-weight: 800; color: var(--text1); }
+.mes-ano-btn { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text2); cursor: pointer; font-size: 15px; line-height: 1; }
+.mes-ano-btn:hover:not([disabled]) { border-color: #3b82f660; }
+.mes-ano-btn[disabled] { opacity: .3; cursor: not-allowed; }
+.mes-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.mes-cel { padding: 8px 0; border-radius: 9px; border: 1px solid transparent; background: #0b1628; color: var(--text2);
+  font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+.mes-cel:hover:not([disabled]) { border-color: #3b82f660; color: var(--text1); }
+.mes-cel.ativo { background: var(--blue); color: #fff; }
+.mes-cel.selecionado { border-color: #3b82f680; color: #93c5fd; opacity: 1; cursor: default; }
+.mes-cel[disabled]:not(.selecionado) { opacity: .3; cursor: not-allowed; }
+.mes-cel:focus-visible, .mes-atalho:focus-visible, .mes-ano-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.mes-desligar { margin-top: 12px; width: 100%; padding: 8px; border-radius: 9px; border: 1px solid var(--border);
+  background: transparent; color: var(--text3); font: inherit; font-size: 12px; cursor: pointer; }
+.mes-desligar:hover { color: var(--text1); border-color: #3b82f660; }
+
+.date-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 9px 14px;
+}
+.date-pill label { font-size: 11px; color: var(--text4); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.date-pill input[type="date"] {
+  background: transparent; border: none;
+  color: var(--text2); font-size: 13px;
+  font-family: inherit; outline: none; cursor: pointer;
+}
+
+/* Torna o ícone do calendário mais cinza e visível */
+.date-pill input[type="date"] {
+  padding-right: 20px; /* Reduz espaço para o ícone ficar mais próximo do texto */
+}
+
+.date-pill input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) brightness(1.1);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 3px;
+  margin-left: -18px; /* Posiciona o ícone sobrepondo o espaço do padding */
+}
+.sep { color: var(--text5); font-size: 14px; }
+
+.filter-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.filter-select-display {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 8px;
+  padding: 8px 32px 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  min-width: 220px;
+  white-space: nowrap;
+}
+
+.filter-select-display::after {
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 12px;
+  color: var(--text4);
+}
+
+.filter-select-wrapper.open .filter-select-display {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px #1d4ed84d;
+}
+
+.filter-select-options {
+  position: absolute;
+
+  /* abre ACIMA do campo */
+  top: auto;
+  bottom: calc(100% + 6px);
+
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 0;
+  max-height: 260px;
+  overflow-y: auto;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.7);
+  z-index: 50;
+  display: none;
+}
+
+.filter-select-wrapper.open .filter-select-options { display: block; }
+
+.filter-select-option {
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+}
+.filter-select-option:hover { background: var(--surface2); }
+.filter-select-option.is-all { font-weight: 600; color: var(--text1); }
+
+.btn-filter {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: #fff; border: none; border-radius: 11px;
+  padding: 10px 22px; font-size: 13px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.2px;
+  box-shadow: 0 4px 14px #3b82f640;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.btn-filter:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.main { flex: 1; padding: 28px 36px 48px; }
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 18px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--kpi-accent, var(--blue));
+  opacity: 0.9;
+}
+.kpi-card:hover, .kpi-card.highlight {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  border-color: #3b82f630;
+}
+
+.kpi-top { display: flex; align-items: center; gap: 8px; }
+.kpi-icon { font-size: 17px; color: var(--text4); }
+.kpi-label { font-size: 10.5px; color: var(--text4); font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; line-height: 1.2; }
+.kpi-value { font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -1.5px; }
+.kpi-sub { font-size: 11px; color: var(--text5); margin-top: 2px; }
+.kpi-progress-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.kpi-progress-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.kpi-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--kpi-accent, var(--blue));
+  border-radius: 999px;
+  transition: width 0.6s ease;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--kpi-accent, var(--blue)) 65%, transparent);
+}
+.kpi-progress-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--kpi-accent, var(--text2));
+  min-width: 44px;
+  text-align: right;
+}
+
+.occ-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 28px;
+  margin-bottom: 30px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: default;
+}
+.occ-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  border-color: #3b82f630;
+}
+.occ-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.occ-title { font-size: 16px; font-weight: 700; color: var(--text1); display: flex; align-items: center; gap: 8px; }
+.occ-pct   { font-size: 30px; font-weight: 800; color: var(--blue); letter-spacing: -1px; }
+.progress-track {
+  height: 20px; background: var(--surface2);
+  border-radius: 999px; overflow: hidden; margin-bottom: 10px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 16px #3b82f640;
+}
+/* Encaixes: não entram na ocupação; aparecem em amarelo depois da barra, na cor do card Encaixes. */
+#secOcc .progress-track { display: flex; }
+#secOcc .progress-fill { flex-shrink: 0; }
+#secOcc .progress-track.tem-encaixe .progress-fill { border-radius: 999px 0 0 999px; }
+.progress-enc {
+  height: 100%; flex-shrink: 0;
+  background: var(--amber);
+  border-radius: 0 999px 999px 0;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 12px #f59e0b40;
+}
+.occ-footer { display: flex; justify-content: space-between; font-size: 11px; color: var(--text5); }
+
+/* MODO DICAS (30/09/2026). Mesmo modelo do painel comercial: um botão liga as dicas e cada elemento
+   explicado leva o texto no próprio atributo data-dica. Uma regra só, sem elemento extra no DOM. */
+.hints-btn {
+  display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: 11px; background: var(--surface);
+  color: var(--text4); cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.hints-btn svg { width: 19px; height: 19px; display: block; }
+.hints-btn:hover { color: var(--blue); border-color: #3b82f660; }
+/* Ligado: azul forte e fundo suave, para o estado ficar óbvio de longe — é um modo, não um clique que passa. */
+.hints-btn.ativo { color: #60a5fa; border-color: var(--blue); background: #1d4ed833; box-shadow: 0 0 0 1px #1d4ed84d; }
+
+/* Qualidade da agenda (01/10/2026): segunda linha de cards e pop-up da Saúde dos dados. */
+.qual-titulo { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text4);
+  margin: -6px 0 10px; display: flex; align-items: center; gap: 10px; }
+.qual-titulo::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.kpi-card-clicavel { cursor: pointer; }
+.kpi-card-clicavel:focus-visible { outline: 2px solid var(--kpi-accent); outline-offset: 2px; }
+.saude-overlay { position: fixed; inset: 0; z-index: 9500; display: none; align-items: center; justify-content: center;
+  background: rgba(2,6,15,0.66); backdrop-filter: blur(3px); padding: 16px; }
+.saude-overlay.aberto { display: flex; }
+.saude-box { width: min(860px, 100%); max-height: min(86vh, 900px); display: flex; flex-direction: column;
+  background: linear-gradient(180deg, #13223a 0%, #0e1a2d 100%); border: 1px solid #243450; border-radius: 18px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
+.saude-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 18px 20px 12px; }
+.saude-titulo { font-size: 16px; font-weight: 800; color: var(--text1); }
+.saude-resumo { font-size: 12.5px; color: var(--text3); margin-top: 4px; }
+.saude-nota { font-weight: 800; }
+.saude-fechar { background: none; border: 1px solid var(--border); color: var(--text3); border-radius: 9px; width: 32px; height: 32px;
+  cursor: pointer; font-size: 14px; flex-shrink: 0; }
+.saude-fechar:hover { color: var(--text1); border-color: #3b82f660; }
+.saude-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 12px; border-bottom: 1px solid #1a2436; }
+.saude-chip { background: var(--surface); border: 1px solid var(--border); color: var(--text3); border-radius: 999px;
+  padding: 5px 11px; font-size: 11.5px; font-weight: 600; cursor: pointer; }
+.saude-chip span { color: var(--text5); margin-left: 3px; font-weight: 700; }
+.saude-chip.ativo { color: #60a5fa; border-color: var(--blue); background: #1d4ed833; }
+.saude-lista { overflow-y: auto; overflow-x: hidden; padding: 12px 20px; display: flex; flex-direction: column; gap: 10px; }
+.saude-item { border: 1px solid #1f2d45; border-left: 3px solid var(--sev); border-radius: 12px; padding: 10px 13px; background: #0b1628; }
+.saude-item-tipo { font-size: 10.5px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--sev); margin-bottom: 4px; }
+.saude-item-frase { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.saude-item-frase b { color: var(--text1); }
+.saude-item-acao { font-size: 12px; color: var(--text4); margin-top: 4px; }
+/* Grade estimada (02/10/2026): aviso discreto, sem cor de alarme */
+.saude-aviso-estimada { margin-top: 6px; font-size: 12px; color: var(--text3); background: #64748b1f; border: 1px solid #64748b40;
+  border-radius: 8px; padding: 6px 10px; }
+.saude-aviso-estimada b { color: var(--text2); }
+.tag-estimada { margin-left: 6px; font-size: 9.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  color: #94a3b8; border: 1px solid #64748b66; border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+.saude-vazio { font-size: 12.5px; color: var(--text4); padding: 14px 4px; text-align: center; }
+.saude-rodape { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px;
+  border-top: 1px solid #1a2436; font-size: 11px; color: var(--text5); }
+.saude-copiar { background: var(--blue); color: #fff; border: none; border-radius: 9px; padding: 8px 14px; font-weight: 700;
+  font-size: 12px; cursor: pointer; white-space: nowrap; }
+@media (max-width: 600px) { .saude-rodape { flex-direction: column; align-items: stretch; } }
+
+/* Saúde do painel (01/10/2026). Campo liso, igual aos do topo (datas, comparar): sem animação, sem ícone, sem nível;
+   uma cor só, sem alarme. O clique abre o pop-up das pendências. */
+.topbar-centro { display: flex; align-items: center; justify-content: center; flex: 1; min-width: 0; padding: 0 16px; }
+.health-button {
+  --health-color: #38bdf8;
+  position: relative; overflow: hidden; flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 9px 14px; min-height: 39px;
+  color: var(--text2); font: inherit; cursor: pointer; transition: border-color 0.15s;
+}
+.health-button:hover { border-color: #3b82f660; }
+.health-button:focus-visible { outline: 2px solid var(--health-color); outline-offset: 2px; }
+.health-content { position: relative; display: inline-flex; align-items: center; gap: 8px; }
+.health-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--health-color); flex-shrink: 0; }
+.health-label { font-size: 11px; color: var(--text4); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.health-status { font-size: 13px; font-weight: 700; color: var(--text1); white-space: nowrap; }
+/* O título nunca cede espaço: em tela média some o rótulo, em tela pequena fica só o ponto. */
+@media (min-width: 1100px) { .topbar-left { flex-shrink: 0; } .topbar-title { white-space: nowrap; } }
+@media (max-width: 1500px) { .topbar-centro { padding: 0 6px; } .health-label { display: none; } }
+@media (max-width: 1400px) { .topbar-centro { flex: 0; padding: 0 8px; } .health-status { display: none; } .health-button { padding: 9px 12px; } }
+
+/* Horário da última carga (painel ao vivo). */
+.ao-vivo { display: flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 11px; color: var(--text4); white-space: nowrap; }
+.ao-vivo::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green, #22c55e); box-shadow: 0 0 0 3px #22c55e26; }
+.ao-vivo[hidden] { display: none; }
+.ao-vivo.parado::before { background: var(--amber); box-shadow: 0 0 0 3px #f59e0b26; }
+
+body.dicas-on [data-dica] { cursor: help; }
+/* Balão das dicas: um elemento só, fixo na janela e posicionado pelo painel.js (abre para baixo se couber,
+   senão para cima; nunca sai pela lateral). Não depende de overflow dos cards nem obriga a rolar a página. */
+.dica-flutuante {
+  position: fixed; z-index: 9000; top: 0; left: 0;
+  max-width: min(320px, calc(100vw - 16px)); padding: 10px 12px; border-radius: 10px;
+  background: linear-gradient(180deg, #13223a 0%, #0e1a2d 100%); border: 1px solid #2a3b57;
+  color: var(--text2); font-size: 12px; font-weight: 500; line-height: 1.5; text-align: left;
+  white-space: pre-line; box-shadow: 0 14px 34px rgba(0,0,0,0.55); pointer-events: none;
+  opacity: 0; transform: translateY(3px); transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.dica-flutuante.visivel { opacity: 1; transform: none; }
+.dica-flutuante.acima { transform: translateY(-3px); }
+.dica-flutuante.acima.visivel { transform: none; }
+
+
+/* Explicação da Taxa de Ocupação: só no modo Dicas, ao passar o mouse no card. Abre para cima (.acima)
+   quando não cabe abaixo do card na janela. */
+/* z-index no card: o hover (transform) cria uma camada própria, e sem isso os filtros das seções seguintes
+   (Por Profissional / unidades) eram desenhados por cima do balão. */
+#secOcc { position: relative; z-index: 30; }
+.occ-info {
+  position: absolute; top: calc(100% + 12px); left: 24px; z-index: 60;
+  width: min(1060px, calc(100% - 48px)); box-sizing: border-box;
+  background: linear-gradient(180deg, #13223a 0%, #0e1a2d 100%);
+  border: 1px solid #243450; border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px #3b82f614 inset;
+  padding: 16px 18px; color: var(--text2); font-size: 12.5px; line-height: 1.5;
+  opacity: 0; transform: translateY(-6px) scale(0.99); transform-origin: top left; pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.occ-info::before { /* setinha apontando para o card */
+  content: ''; position: absolute; top: -7px; left: 36px; width: 12px; height: 12px;
+  background: #13223a; border-left: 1px solid #243450; border-top: 1px solid #243450; transform: rotate(45deg);
+}
+body.dicas-on #secOcc:hover .occ-info { opacity: 1; transform: none; }
+body.dicas-on #secOcc { cursor: help; }
+.occ-info.acima { top: auto; bottom: calc(100% + 12px); transform: translateY(6px) scale(0.99); transform-origin: bottom left; }
+.occ-info.acima::before { top: auto; bottom: -7px; border: none; border-right: 1px solid #243450; border-bottom: 1px solid #243450; background: #0e1a2d; }
+
+.occ-info-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+/* três colunas lado a lado; em tela estreita empilha */
+.occ-info-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+/* 08/10/2026: um bloco por taxa; "Neste filtro" numa faixa inteira embaixo, com os números lado a lado */
+.occ-info-grid .occ-info-agora { grid-column: 1 / -1; }
+/* 08/10/2026: conta do filtro dentro de cada bloco; números do filtro numa régua de caixas iguais */
+.occ-info-conta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid #1a2740; }
+.occ-info-conta .k { font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; color: var(--text3); }
+.occ-info-conta .v { font-size: 17px; font-weight: 800; color: var(--text1); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.occ-info-bloco .occ-info-conta .v { color: var(--blue); }
+.occ-info-bloco.agend .occ-info-conta .v { color: #a78bfa; }
+.occ-info-bloco.preench .occ-info-conta .v { color: var(--green, #22c55e); }
+.occ-info-regua { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 900px) { .occ-info-regua { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.occ-info-num { background: #07101e; border: 1px solid #1a2740; border-radius: 8px; padding: 6px 10px; }
+.occ-info-num .k { display: block; font-size: 10.5px; color: var(--text4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.occ-info-num .v { display: block; font-size: 15px; font-weight: 800; color: var(--text1); font-variant-numeric: tabular-nums; }
+.occ-info-num.destaque { border-color: #2a3b57; background: #0d1a2e; }
+.occ-info-bloco.agend .occ-info-rotulo::before { background: #8b5cf6; }
+.occ-info-bloco.preench .occ-info-rotulo::before { background: var(--green, #22c55e); }
+@media (max-width: 900px) { .occ-info-grid { grid-template-columns: 1fr; } }
+.occ-info-icone { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  background: #3b82f61f; border: 1px solid #3b82f640; font-size: 17px; flex-shrink: 0; }
+.occ-info-titulo { font-size: 14.5px; font-weight: 800; color: var(--text1); letter-spacing: -0.2px; }
+.occ-info-sub { font-size: 11.5px; color: var(--text4); }
+
+.occ-info-bloco { border-radius: 12px; padding: 11px 13px; margin: 0; display: flex; flex-direction: column;
+  background: #0b1628; border: 1px solid var(--border); border-left: 3px solid var(--blue); }
+.occ-info-bloco.enc { border-left-color: var(--amber); }
+.occ-info-rotulo { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.7px; color: var(--blue); margin-bottom: 6px; }
+.occ-info-bloco.enc .occ-info-rotulo { color: var(--amber); }
+.occ-info-rotulo::before { content: ''; width: 20px; height: 7px; border-radius: 999px;
+  background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa); }
+.occ-info-bloco.enc .occ-info-rotulo::before { background: var(--amber); }
+.occ-info-texto { color: var(--text3); font-size: 12.5px; margin-bottom: 10px; }
+.occ-info-texto b { color: var(--text1); font-weight: 700; }
+.occ-info-formula { margin-top: auto; font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--text2);
+  white-space: normal; align-self: stretch; text-align: center;
+  background: #07101e; border: 1px dashed #2a3b57; border-radius: 8px; padding: 6px 10px; display: inline-block; }
+
+.occ-info-agora { border-radius: 12px; padding: 11px 13px; background: #0b1628;
+  border: 1px solid var(--border); border-left: 3px solid #475569; }
+.occ-info-agora-titulo { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px;
+  color: var(--text4); margin-bottom: 8px; }
+.occ-info-mini { display: flex; height: 6px; border-radius: 999px; overflow: hidden; background: var(--surface2); margin-bottom: 6px; }
+.occ-info-mini .azul { background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa); }
+.occ-info-mini .enc { background: var(--amber); }
+.occ-info-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding: 3px 0; border-bottom: 1px solid #1a2740; font-size: 12px; }
+.occ-info-linha:last-child { border-bottom: none; }
+.occ-info-linha .k { color: var(--text3); }
+.occ-info-linha .k small { color: var(--text5); font-size: 11px; margin-left: 4px; }
+.occ-info-linha .v { color: var(--text1); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.occ-info-linha.destaque { padding: 4px 0; }
+.occ-info-linha.destaque .k { color: var(--text2); font-weight: 700; }
+.occ-info-linha.destaque .v { font-size: 15px; font-weight: 800; }
+.occ-info-linha .v.azul { color: var(--blue); }
+.occ-info-linha .v.enc  { color: var(--amber); }
+.occ-avg { font-weight: 700; color: var(--text4); }
+/* 05/10/2026: Taxa de Agendamento e Preenchimento da Grade, abaixo da barra da Taxa de Ocupação */
+.occ-extra { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.occ-extra-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.occ-extra-rotulo { display: block; font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--text4); }
+.occ-extra-valor { font-size: 20px; font-weight: 800; color: var(--text1); margin-right: 8px; }
+.occ-extra-delta { font-size: 11px; font-weight: 700; }
+.occ-extra-delta.up { color: var(--green, #22c55e); } .occ-extra-delta.down { color: var(--red, #ef4444); } .occ-extra-delta.eq { color: var(--text4); }
+.occ-extra-trilho { height: 5px; border-radius: 999px; background: var(--border); margin-top: 6px; overflow: hidden; }
+.occ-extra-trilho > div { height: 100%; background: var(--blue); opacity: .7; border-radius: 999px; }
+@media (max-width: 640px) { .occ-extra { grid-template-columns: 1fr; } }
+.occ-avg-wrap { display: inline-flex; align-items: center; gap: 8px; }
+.occ-avg-main { color: var(--text3); font-weight: 800; letter-spacing: 0.2px; }
+.occ-avg-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 11px;
+  font-weight: 800;
+}
+.occ-avg-chip.base { color: var(--text2); border-color: #334155; }
+.occ-avg-chip.up { color: #22c55e; border-color: #22c55e66; background: #14532d40; }
+.occ-avg-chip.down { color: #ef4444; border-color: #ef444466; background: #7f1d1d40; }
+.occ-avg-chip.eq { color: #f59e0b; border-color: #f59e0b66; background: #78350f40; }
+
+.kpi-py-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.kpi-py-base {
+  font-size: 11px;
+  color: var(--text4);
+}
+
+.kpi-py-delta {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.kpi-py-delta.pos {
+  color: #22c55e;
+  border-color: #22c55e55;
+  background: #14532d44;
+}
+
+.kpi-py-delta.neg {
+  color: #ef4444;
+  border-color: #ef444455;
+  background: #7f1d1d44;
+}
+
+.kpi-py-delta.eq {
+  color: #f59e0b;
+  border-color: #f59e0b55;
+  background: #78350f44;
+}
+
+/* 06/10/2026: botão "Baixar Excel" em Registros Detalhados */
+.btn-excel { margin-left: auto; background: transparent; border: 1px solid var(--border); color: var(--text2); border-radius: 8px;
+  padding: 6px 12px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; }
+.btn-excel:hover { border-color: var(--blue); color: var(--text1); }
+.section-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 18px; font-weight: 800; color: var(--text1);
+  margin: 32px 0 16px; letter-spacing: -0.3px;
+}
+.section-accent {
+  width: 4px; height: 22px;
+  background: var(--blue); border-radius: 2px; flex-shrink: 0;
+}
+
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+
+thead tr { background: var(--surface2); }
+thead th {
+  padding: 13px 16px;
+  text-align: left;
+  font-size: 10px; font-weight: 400;
+  color: var(--text5); text-transform: uppercase; letter-spacing: 0.7px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap; cursor: pointer; user-select: none;
+  transition: color 0.15s;
+}
+thead th:hover { color: var(--text3); }
+
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(59,130,246,0.04); }
+tbody td { padding: 13px 16px; color: var(--text2); font-size: 13.5px; vertical-align: middle; white-space: nowrap; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.table-card table#tblProf thead th { text-align: center; }
+.table-card table#tblProf tbody td { text-align: center; }
+.table-card table#tblProf tbody td:first-child,
+.table-card table#tblProf tbody td:nth-child(2) { text-align: left; }
+.table-card table#tblDia thead th { text-align: center; }
+.table-card table#tblDia thead th:first-child { text-align: left; }
+.table-card table#tblDia tbody td { text-align: center; font-variant-numeric: tabular-nums; }
+.table-card table#tblDia tbody td:first-child { text-align: left; }
+/* 08/10/2026: as tabelas cabem inteiras no cartão, até a última coluna (decisão do proprietário).
+   Cabeçalho quebra em até duas linhas, espaçamento menor, números centralizados em todas, como em Por Profissional. */
+.table-card thead th { white-space: normal; line-height: 1.35; padding: 12px 8px; text-align: center; vertical-align: middle; }
+.table-card tbody td { padding: 12px 8px; text-align: center; font-variant-numeric: tabular-nums; }
+.table-card thead th:first-child, .table-card tbody td:first-child { padding-left: 16px; text-align: left; }
+.table-card thead th:last-child, .table-card tbody td:last-child { padding-right: 16px; }
+.table-card table#tblProf thead th:nth-child(2), .table-card table#tblProf tbody td:nth-child(2),
+.table-card table#tblUniTempo thead th:nth-child(2), .table-card table#tblUniTempo tbody td:nth-child(2),
+.table-card table#tblDet thead th:nth-child(-n+5), .table-card table#tblDet tbody td:nth-child(-n+5) { text-align: left; }
+.table-card table#tblProf tbody td:first-child, .table-card table#tblDet tbody td:nth-child(4) { white-space: normal; min-width: 150px; }
+.table-card table#tblProf tbody td:nth-child(2), .table-card table#tblDet tbody td:nth-child(5) { white-space: normal; min-width: 110px; }
+.table-card thead th { letter-spacing: 0.4px; padding-left: 6px; padding-right: 6px; }
+.table-card tbody td { padding-left: 6px; padding-right: 6px; }
+.table-card .num { text-align: center; }
+/* 08/10/2026: cabeçalho fixo ao descer a página, até o fim de cada tabela (ajustarTabelas em painel.js) */
+.table-card { overflow: clip; }
+.table-card .table-wrapper { overflow: visible; }
+/* Tabela que não cabe na largura: a caixa da tabela rola nos dois sentidos e o cabeçalho fica no topo dela (com rolagem
+   lateral o sticky passa a valer dentro da caixa, e o top da barra do topo empurrava o cabeçalho para o meio das linhas). */
+.table-card .table-wrapper.rola { overflow: auto; max-height: calc(100vh - var(--topo-altura, 68px) - 16px); }
+.table-card .table-wrapper.rola thead th { top: 0; }
+.table-card thead th { position: sticky; top: var(--topo-altura, 68px); z-index: 5; background: var(--surface2);
+  box-shadow: inset 0 -1px 0 var(--border); }
+
+.avatar {
+  width: 36px; height: 36px; border-radius: 18px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+.prof-cell { display: flex; align-items: center; gap: 11px; }
+.prof-name { font-size: 13.5px; font-weight: 700; color: var(--text1); }
+
+/* 08/10/2026: taxas nas tabelas = só o número colorido */
+.taxa-num { font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mini-wrap { display: flex; align-items: center; gap: 8px; }
+.mini-track { width: 80px; height: 8px; background: var(--surface2); border-radius: 999px; overflow: hidden; flex-shrink: 0; }
+.mini-fill  { height: 100%; border-radius: 999px; }
+.mini-pct   { font-size: 12.5px; font-weight: 700; min-width: 38px; }
+.mini-track { display: flex; }
+.mini-fill { flex-shrink: 0; }
+.mini-fill.com-enc { border-radius: 999px 0 0 999px; }
+.mini-enc { height: 100%; flex-shrink: 0; border-radius: 0 999px 999px 0; background: var(--amber); }
+.mini-enc-pct { font-size: 11px; font-weight: 700; color: var(--amber); }
+
+
+.c-blue   { color: var(--blue);   }
+.c-green  { color: var(--green);  }
+.c-red    { color: var(--red);    }
+.c-amber  { color: var(--amber);  }
+.c-cyan   { color: var(--cyan);   }
+.c-orange { color: var(--orange); }
+.c-purple { color: var(--purple); }
+.c-muted  { color: var(--text4);  }
+.c-pink   { color: var(--pink);   }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+.info-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.info-card-icon {
+  width: 40px; height: 40px;
+  background: #1e3a5f; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.info-card-pct { font-size: 22px; font-weight: 800; letter-spacing: -0.8px; }
+.info-card-title {
+  font-size: 15px; font-weight: 800; color: var(--text1);
+  padding-bottom: 10px; margin-bottom: 10px;
+  border-bottom: 1px dashed var(--border);
+}
+.info-card-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.info-card-row .lbl { font-size: 12px; color: var(--text4); }
+.info-card-row .val { font-size: 13.5px; font-weight: 700; color: var(--text2); }
+.info-card-bar { margin-top: 12px; height: 6px; background: var(--surface2); border-radius: 999px; overflow: hidden; }
+.info-card-bar-fill { height: 100%; border-radius: 999px; }
+
+.badge {
+  display: inline-block; padding: 3px 12px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 700; margin-top: 6px;
+}
+
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text4); font-size: 14px; }
+.empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+
+@media (max-width: 1300px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px)  { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1100px) { .btn-compare-hint { display: none; } }
+
+/* --- SIDEBAR --- */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 140;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 320px;
+  max-width: 86vw;
+  background: linear-gradient(180deg, #0b1424, var(--surface));
+  border-right: 1px solid var(--border);
+  transform: translateX(-105%);
+  transition: transform 0.25s ease;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 18px 0 60px rgba(0,0,0,0.6);
+}
+
+body.sidebar-open .sidebar { transform: translateX(0); }
+body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
+
+.sidebar-header {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,15,29,0.65);
+  backdrop-filter: blur(8px);
+}
+
+.sidebar-brand { display: flex; align-items: center; gap: 12px; }
+
+.sidebar-badge {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  box-shadow: 0 4px 14px #3b82f640;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.sidebar-badge.marca { width: auto; height: 26px; background: none; box-shadow: none; border-radius: 0; }
+
+.sidebar-title { font-size: 13px; font-weight: 800; color: var(--text1); line-height: 1.1; }
+.sidebar-sub   { font-size: 11px; color: var(--text4); margin-top: 2px; }
+
+.sidebar-close {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, border-color 0.15s, opacity 0.15s;
+}
+.sidebar-close:hover { border-color: #3b82f630; transform: translateY(-1px); opacity: 0.95; }
+
+.sidebar-content {
+  padding: 14px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.sidebar-section .sec-h {
+  padding: 12px 12px;
+  font-size: 10.5px;
+  color: var(--text5);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  font-weight: 700;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar-link:last-child { border-bottom: none; }
+.sidebar-link:hover { background: rgba(59,130,246,0.06); color: var(--text1); }
+
+.sidebar-link .left { display: flex; align-items: center; gap: 10px; }
+.sidebar-link .ico {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: #10223c;
+  border: 1px solid #1a2b45;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.sidebar-link .hint { font-size: 11px; color: var(--text5); }
+
+/* destaque ao chegar via menu */
+.jump-highlight {
+  outline: 2px solid #3b82f680;
+  box-shadow: 0 0 0 6px #3b82f620;
+  border-radius: 12px;
+  animation: jumpPulse 900ms ease-out;
+}
+@keyframes jumpPulse {
+  0%   { box-shadow: 0 0 0 0 #3b82f630; }
+  100% { box-shadow: 0 0 0 10px #3b82f600; }
+}
+
+/* --- CHAT ASSISTENTE --- */
+.chat-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 28px rgba(29, 78, 216, 0.45);
+  z-index: 170;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.chat-fab:hover { transform: translateY(-2px) scale(1.03); }
+
+.chat-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 92px;
+  width: 430px;
+  max-width: calc(100vw - 32px);
+  /* 09/10/2026: cabe na tela com zoom (com 600px fixos + 92px de folga, abaixo de ~700px de altura o topo sumia) */
+  max-height: min(600px, calc(100vh - 116px));
+  border: 1px solid #1e3a5f;
+  border-radius: 20px;
+  background: #0d1b2e;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(59,130,246,0.15);
+  overflow: hidden;
+  z-index: 170;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(16px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.chat-panel.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.chat-head {
+  background: linear-gradient(135deg, #1a3faa, #2563eb, #3b82f6);
+  color: #fff;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+.chat-title { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; }
+.chat-status { font-size: 11px; opacity: 0.75; margin-top: 2px; }
+
+.chat-body {
+  padding: 14px;
+  overflow-y: auto;
+  min-height: 180px;
+  max-height: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.chat-msg {
+  max-width: 82%;
+  border-radius: 14px;
+  padding: 9px 11px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+.chat-msg.bot {
+  align-self: flex-start;
+  background: var(--surface2);
+  border: 1px solid #1a2b45;
+  color: var(--text2);
+}
+.chat-msg.user {
+  align-self: flex-end;
+  background: #1d4ed8;
+  color: #fff;
+}
+.chat-time {
+  margin-top: 4px;
+  display: block;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.chat-input-wrap {
+  border-top: 1px solid var(--border);
+  padding: 10px;
+}
+.chat-input-wrap.hidden {
+  display: none;
+}
+.chat-input-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 10px;
+}
+.chat-input-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text2);
+  font-size: 13px;
+}
+.chat-input-box input::placeholder { color: var(--text5); }
+.chat-send {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+}
+.chat-send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.chat-head-left { display: flex; align-items: center; gap: 10px; }
+.chat-head-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+
+/* --- CHAT LOGIN --- */
+.chat-login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  display: none;
+}
+.chat-login-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 36px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  min-width: 320px;
+  animation: loginPop 0.3s ease;
+}
+@keyframes loginPop {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.chat-login-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.chat-login-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text1);
+  margin-bottom: 8px;
+}
+.chat-login-sub {
+  font-size: 13px;
+  color: var(--text4);
+  margin-bottom: 28px;
+}
+.chat-login-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text1);
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.chat-login-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px #1d4ed84d;
+}
+.chat-login-input::placeholder {
+  color: var(--text5);
+  letter-spacing: 1px;
+}
+.chat-login-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+}
+.chat-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59,130,246,0.4);
+}
+.chat-login-error {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #ef4444;
+  display: none;
+}
+.chat-login-error.show { display: block; }
+.chat-login-hint {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #475569;
+}
+
+/* --- CHAT MENU (Categorias + Perguntas) --- */
+.chat-menu-wrap {
+  flex: 1;
+  border-top: 1px solid #1a3050;
+  background: #0b1829;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho do menu */
+.chat-menu-header {
+  padding: 10px 14px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #12243a;
+  flex-shrink: 0;
+}
+.chat-menu-header-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #4a7aa8;
+}
+.chat-menu-back-btn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(59,130,246,0.3);
+  color: #7db8f7;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-right: auto;
+}
+.chat-menu-back-btn:hover {
+  background: rgba(59,130,246,0.3);
+  color: #fff;
+}
+.chat-menu-back-btn.visible { display: flex; }
+.chat-menu-cat-title {
+  display: none;
+  font-size: 12px;
+  font-weight: 800;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chat-menu-cat-title.visible { display: block; }
+
+/* Lista de categorias */
+.chat-cats-list {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.chat-cat-card {
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+.chat-cat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+.chat-cat-card:hover::before { opacity: 1; }
+.chat-cat-card:hover { transform: translateX(3px); }
+.chat-cat-card:active { transform: scale(0.98); }
+
+.chat-cat-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.chat-cat-info { flex: 1; min-width: 0; }
+.chat-cat-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e2e8f0;
+  line-height: 1.2;
+}
+.chat-cat-count {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+.chat-cat-arrow {
+  font-size: 12px;
+  color: #4a7aa8;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.chat-cat-card:hover .chat-cat-arrow { transform: translateX(3px); color: #7db8f7; }
+
+/* Lista de perguntas */
+.chat-qs-list {
+  display: none;
+  padding: 10px;
+  flex-direction: column;
+  gap: 7px;
+}
+.chat-qs-list.visible { display: flex; }
+.chat-cats-list.hidden { display: none; }
+
+.chat-q-btn {
+  background: #0f2242;
+  border: 1px solid #1a3a6e;
+  border-radius: 10px;
+  padding: 11px 14px;
+  text-align: left;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.chat-q-btn::before {
+  content: '→';
+  color: #3b82f6;
+  font-size: 12px;
+  margin-top: 1px;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.chat-q-btn:hover {
+  background: rgba(59,130,246,0.25);
+  border-color: #3b82f6;
+  color: #fff;
+  transform: translateX(3px);
+}
+.chat-q-btn:hover::before { transform: translateX(3px); }
+.chat-q-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Rodapé info */
+.chat-footer-info {
+  padding: 8px 14px;
+  border-top: 1px solid #12243a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.chat-footer-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e;
+  animation: pulse-dot 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+.chat-footer-text {
+  font-size: 10.5px;
+  color: #4a7aa8;
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">
+      <div class="sidebar-badge marca"><img src="logo-demo.svg" alt="Clínica Demo"></div><!-- MODO DEMO: logo neutro -->
+      <div>
+        <div class="sidebar-title">Dashboard</div>
+        <div class="sidebar-sub">Ocupação de Agenda</div>
+      </div>
+    </div>
+    <button class="sidebar-close" id="sidebarClose" aria-label="Fechar menu">✕</button>
+  </div>
+
+  <div class="sidebar-content">
+    <div class="sidebar-section">
+      <div class="sec-h">Navegação</div>
+
+      <div class="sidebar-link" data-scroll="#kpiContainer">
+        <div class="left"><span class="ico">📌</span><span>Visão geral</span></div>
+        <span class="hint"></span>
+      </div>
+
+      <div class="sidebar-link" data-scroll="#secOcc">
+        <div class="left"><span class="ico">📊</span><span>Ocupação geral</span></div>
+        <span class="hint"></span>
+      </div>
+
+      <div class="sidebar-link" data-scroll="#secProf">
+        <div class="left"><span class="ico">👤</span><span>Por profissional</span></div>
+        <span class="hint"></span>
+      </div>
+
+      <div class="sidebar-link" data-scroll="#secUni">
+        <div class="left"><span class="ico">🏥</span><span>Por unidade</span></div>
+        <span class="hint"></span>
+      </div>
+
+      <div class="sidebar-link" data-scroll="#secUniTempo">
+        <div class="left"><span class="ico">📅</span><span id="sideUniTempo">Por unidade semanal</span></div>
+        <span class="hint"></span>
+      </div>
+
+      <div class="sidebar-link" data-scroll="#secPer">
+        <div class="left"><span class="ico">⏳</span><span>Por período</span></div>
+        <span class="hint"></span>
+      </div>
+
+      <div class="sidebar-link" data-scroll="#secDia">
+        <div class="left"><span class="ico">📆</span><span>Por dia da semana</span></div>
+        <span class="hint"></span>
+      </div>
+
+      <div class="sidebar-link" data-scroll="#secDet">
+        <div class="left"><span class="ico">🔍</span><span>Registros detalhados</span></div>
+        <span class="hint"></span>
+      </div>
+
+    </div>
+  </div>
+</aside>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo marca" id="btnSidebar" title="Menu">
+      <img src="logo-demo.svg" alt="Clínica Demo"><!-- MODO DEMO: logo neutro -->
+    </div>
+    <div>
+      <div class="topbar-title">Dashboard de Ocupação de Agenda</div>
+      <span class="ao-vivo" id="aoVivo" hidden data-dica-dir="fim"
+            data-dica="Os dados são atualizados sozinhos a cada 10 minutos, sem recarregar a página. O horário é o da última carga."></span>
+    </div>
+  </div>
+  <!-- Saúde do painel (01/10/2026): botão com "líquido" que enche conforme a saúde; abre o pop-up das pendências -->
+  <div class="topbar-centro">
+    <button type="button" class="health-button" id="healthButton" data-dica-dir="fim"
+            data-dica="Saúde do painel: % dos agendamentos do período sem pendência de cadastro (grade, bloqueio, profissional, status).&#10;Quanto mais cheio o aquário, mais redondos estão os dados. Clique para ver o que dá para ajustar na Feegow.">
+      <span class="health-content">
+        <span class="health-dot"></span>
+        <span class="health-label">Saúde do painel</span>
+        <span class="health-status" id="healthStatus">—</span>
+      </span>
+    </button>
+  </div>
+  <div class="topbar-right">
+    <button type="button" class="hints-btn" id="dicasBtn" aria-pressed="false" aria-label="Dicas" data-dica-dir="fim"
+            data-dica="Liga as dicas: passe o mouse sobre os cards, as colunas e os filtros para ver o que cada um mostra e como é calculado.">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M7.5 4h12a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H18"/>
+        <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h11A1.5 1.5 0 0 1 17 8.5v7A1.5 1.5 0 0 1 15.5 17H7l-3 3v-3a1.5 1.5 0 0 1-1-1.5Z"/>
+      </svg>
+    </button>
+    <button type="button" class="hints-btn" id="configBtn" aria-label="Configurações" data-dica-dir="fim"
+            data-dica="Sua conta (sair) e os registros de acesso ao painel.">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+      </svg>
+    </button>
+    <!-- DLC agendador (08/10/2026): escondido; agendador.js só mostra se o servidor tem a DLC -->
+    <button type="button" class="hints-btn" id="agendadorBtn" style="display:none" aria-label="Agendador" data-dica-dir="fim"
+            data-dica="Agendador: horários livres dos próximos 4 dias (sem domingo). Clique num horário para marcá-lo em verde, em discussão com o cliente.">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+    </button>
+    <!-- Tema (09/10/2026): lua no escuro, sol no claro; estilos em tema-claro.css -->
+    <button type="button" class="hints-btn tema-btn" id="temaBtn" aria-pressed="false" aria-label="Usar tema claro" data-dica-dir="fim"
+            data-dica="Tema do painel: lua = escuro, sol = claro. Clique para trocar; a escolha fica guardada neste navegador.">
+      <svg class="ico-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z"/>
+      </svg>
+      <svg class="ico-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>
+      </svg>
+    </button>
+    <button class="btn-compare" id="btnComparePY" type="button" aria-pressed="false" style="display:none">
+      <span class="btn-compare-ico">⇄</span>
+      <span class="btn-compare-copy"><span class="btn-compare-label">Comparar período anterior</span><span class="btn-compare-hint">Ano anterior</span></span>
+      <span class="btn-compare-dot"></span>
+    </button>
+    <button class="btn-compare" id="btnCompareMOM" type="button" aria-pressed="false" style="display:none">
+      <span class="btn-compare-ico">⇄</span>
+      <span class="btn-compare-copy"><span class="btn-compare-label">Comparar mês</span><span class="btn-compare-hint">Escolher mês</span></span>
+      <span class="btn-compare-dot"></span>
+    </button>
+    <div class="date-pill">
+      <label>De:</label>
+      <input type="date" id="dataInicio" value="2026-09-29"/>
+      <span class="sep"></span>
+      <label>Até:</label>
+      <input type="date" id="dataFim" value="2026-09-29"/>
+    </div>
+    <button class="btn-filter" id="btnFiltro">Aplicar Filtro</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpiContainer"></div>
+
+  <!-- Qualidade da agenda (01/10/2026) -->
+  <div class="qual-titulo">Qualidade da agenda</div>
+  <div class="kpi-grid" id="qualContainer"></div>
+
+  <!-- Ocupação geral -->
+  <div class="occ-card" id="secOcc">
+    <div class="occ-header">
+      <div class="occ-title"><span>📊</span> Taxa de Ocupação Geral</div>
+      <div class="occ-pct" id="occPct">0%</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="occBar" style="width:0%"></div>
+      <div class="progress-enc" id="occEncBar" style="width:0%"></div>
+    </div>
+    <div class="occ-footer">
+      <span>0%</span>
+      <span class="occ-avg" id="occAvg">MÉDIA DO PERÍODO: 0%</span>
+      <span>100%</span>
+    </div>
+    <div class="occ-extra" id="occExtra"></div>
+    <div class="occ-info" id="occInfo" role="tooltip">
+      <div class="occ-info-head">
+        <div class="occ-info-icone">📊</div>
+        <div>
+          <div class="occ-info-titulo">Como ler a Taxa de Ocupação</div>
+          <div class="occ-info-sub">As três taxas usam o mesmo divisor: capacidade − bloqueios</div>
+        </div>
+      </div>
+      <div class="occ-info-grid">
+        <div class="occ-info-bloco">
+          <div class="occ-info-rotulo">Taxa de Ocupação</div>
+          <div class="occ-info-texto">Horários <b>agendados</b> (marcados e atendidos, com retornos; sem encaixes e sem faltas)
+            sobre a <b>capacidade menos os bloqueios</b>.</div>
+          <div class="occ-info-formula">agendados ÷ (capacidade − bloqueios)</div>
+          <div class="occ-info-conta" id="occContaOcup"></div>
+        </div>
+        <div class="occ-info-bloco agend">
+          <div class="occ-info-rotulo">Taxa de Agendamento</div>
+          <div class="occ-info-texto">Horários <b>agendados</b> mais as <b>faltas</b> (o horário estava reservado)
+            sobre a <b>capacidade menos os bloqueios</b>.</div>
+          <div class="occ-info-formula">(agendados + faltas) ÷ (capacidade − bloqueios)</div>
+          <div class="occ-info-conta" id="occContaAgend"></div>
+        </div>
+        <div class="occ-info-bloco preench">
+          <div class="occ-info-rotulo">Preenchimento da Grade</div>
+          <div class="occ-info-texto">Horários que <b>não ficaram livres</b> na agenda da Feegow (inclui encaixes e atendimentos
+            longos) sobre a <b>capacidade menos os bloqueios</b>.</div>
+          <div class="occ-info-formula">(capacidade − bloqueios − livres) ÷ (capacidade − bloqueios)</div>
+          <div class="occ-info-conta" id="occContaPreench"></div>
+        </div>
+        <div class="occ-info-agora" id="occInfoAgora"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Por Profissional -->
+  <div class="section-title" id="secProf"><div class="section-accent"></div><span>👤</span> Por Profissional</div>
+  <div id="profFilters" style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 10px 0">
+    <div class="filter-select-wrapper" data-filter="prof">
+      <div class="filter-select-display" id="selProfDisplay">Todos os profissionais</div>
+      <div class="filter-select-options" id="selProfOptions"></div>
+    </div>
+    <div class="filter-select-wrapper" data-filter="uni">
+      <div class="filter-select-display" id="selUniDisplay">Todas as unidades</div>
+      <div class="filter-select-options" id="selUniOptions"></div>
+    </div>
+  </div>
+  <div class="table-card">
+    <div class="table-wrapper">
+      <table id="tblProf">
+        <thead><tr>
+          <th>Profissional</th><th>Unidade</th><th>Capacidade</th>
+          <th class="agTotCol">Agendamentos Totais</th><th class="agAtendCol">AGENDAMENTOS MARCADOS</th><th>TOTAL DE PACIENTES</th><th>Representantes</th><th>Livres</th><th>Bloqueios</th>
+          <th>Encaixes</th><th>Desmarcados</th><th>Faltas</th><th>Ocupação</th><th>Agendamento</th><th>Preenchimento</th>
+        </tr></thead>
+        <tbody id="tbProf"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Por Unidade -->
+  <div class="section-title" id="secUni"><div class="section-accent"></div><span>🏥</span> Por Unidade</div>
+  <div class="card-grid" id="cardUnidade"></div>
+
+  <!-- Por Unidade Semanal / Mensal -->
+  <div class="section-title" id="secUniTempo"><div class="section-accent"></div><span>📅</span> <span id="tituloUniTempo">Por unidade semanal</span></div>
+  <div class="table-card">
+    <div class="table-wrapper">
+      <table id="tblUniTempo">
+        <thead><tr>
+          <th>Unidade</th><th id="thTempoLabel">Período</th><th>Capacidade</th>
+          <th class="agTotCol">Agendamentos Totais</th><th class="agAtendCol">AGENDAMENTOS MARCADOS</th><th>TOTAL DE PACIENTES</th><th>Representantes</th><th>Livres</th><th>Bloqueios</th>
+          <th>Encaixes</th><th>Desmarcados</th><th>Faltas</th><th>Ocupação</th><th>Agendamento</th><th>Preenchimento</th>
+        </tr></thead>
+        <tbody id="tbUniTempo"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Por Período -->
+  <div class="section-title" id="secPer"><div class="section-accent"></div><span>⏳</span> Por Período</div>
+  <div class="card-grid" id="cardPeriodo"></div>
+
+  <!-- Por Dia da Semana -->
+  <div class="section-title" id="secDia"><div class="section-accent"></div><span>📆</span> Por Dia da Semana</div>
+  <div class="table-card">
+    <div class="table-wrapper">
+      <table id="tblDia">
+        <thead><tr>
+          <th>Dia</th><th>Capacidade</th><th class="agTotCol">Agendamentos Total</th><th class="agAtendCol">Agendamentos Marcados</th><th>Total de Pacientes</th><th>Representantes</th><th>Livres</th><th>Bloqueios</th><th>Faltas</th><th>Ocupação</th><th>Agendamento</th><th>Preenchimento</th>
+        </tr></thead>
+        <tbody id="tbDia"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Registros Detalhados -->
+  <div class="section-title" id="secDet"><div class="section-accent"></div><span>🔍</span> Registros Detalhados
+    <button type="button" class="btn-excel" id="btnExcel" data-dica="Salva em Excel (.xlsx) todas as linhas do filtro atual: médico, grade, dia, período, unidade, capacidade, bloqueios, marcados, faltas, livres e as três taxas.">Baixar Excel</button></div>
+  <div class="table-card">
+    <div class="table-wrapper">
+      <table id="tblDet">
+        <thead><tr>
+          <th>Data</th><th>Dia</th><th>Período</th><th>Profissional</th><th>Unidade</th>
+          <th>Capacidade</th><th>Agendamentos Marcados</th><th>Total de Pacientes</th><th>Representantes</th><th>Livres</th><th>Bloqueios</th>
+          <th>Encaixes</th><th>Faltas</th><th>Ocupação</th><th>Agendamento</th><th>Preenchimento</th>
+        </tr></thead>
+        <tbody id="tbDet"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- CHAT ASSISTENTE -->
+<div class="chat-login-overlay" id="chatLoginOverlay">
+  <div class="chat-login-box">
+    <div class="chat-login-icon">🔐</div>
+    <div class="chat-login-title">Acesso Restrito</div>
+    <div class="chat-login-sub">Digite o token de acesso ao assistente</div>
+    <input type="password" class="chat-login-input" id="chatTokenInput" placeholder="••••" maxlength="10" autocomplete="off"/>
+    <div class="chat-login-error" id="chatLoginError">Token inválido. Tente novamente.</div>
+    <button class="chat-login-btn" id="chatLoginBtn">Acessar</button>
+    <div class="chat-login-hint">Demonstração: use o token <b>demo</b></div><!-- MODO DEMO: token fictício -->
+  </div>
+</div>
+
+<button class="chat-fab" id="chatFab" aria-label="Abrir assistente">💬</button>
+<div class="chat-panel" id="chatPanel" aria-live="polite">
+  <div class="chat-head">
+    <div class="chat-head-left">
+      <div class="chat-head-avatar">🧠</div>
+      <div>
+        <div class="chat-title">NEXA</div>
+        <div class="chat-status">● Online agora</div>
+      </div>
+    </div>
+    <button class="sidebar-close" id="chatClose" aria-label="Fechar assistente">✕</button>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div class="chat-msg bot">
+      Olá! 👋 Sou a <strong>NEXA</strong>, assistente de inteligência da Clínica Demo.<!-- MODO DEMO: marca neutra -->
+      <span class="chat-time">Agora</span>
+    </div>
+    <div class="chat-msg bot">
+      Antes de começar, confirme o intervalo de tempo que deseja analisar usando os filtros de data no topo da dashboard. O período selecionado será usado como base para todas as minhas respostas.
+      <span class="chat-time">Agora</span>
+    </div>
+    <div class="chat-msg bot">
+      Escolha um tema abaixo para obter insights estratégicos sobre a ocupação da agenda.
+      <span class="chat-time">Agora</span>
+    </div>
+  </div>
+
+  <!-- MENU NAVEGÁVEL -->
+  <div class="chat-menu-wrap" id="chatMenuWrap">
+    <div class="chat-menu-header">
+      <button class="chat-menu-back-btn" id="chatMenuBack">◀ Voltar</button>
+      <span class="chat-menu-cat-title" id="chatMenuCatTitle"></span>
+      <span class="chat-menu-header-label" id="chatMenuLabel">Escolha um tema</span>
+    </div>
+    <!-- categorias e perguntas injetadas via JS -->
+    <div class="chat-cats-list" id="chatCatsList"></div>
+    <div class="chat-qs-list" id="chatQsList"></div>
+  </div>
+
+  <div class="chat-input-wrap hidden" id="chatInputWrap">
+    <div class="chat-input-box">
+      <input type="text" id="chatInput" placeholder="Digite sua pergunta..." maxlength="500" autocomplete="off" />
+      <button class="chat-send" id="chatSend" type="button" aria-label="Enviar pergunta">➤</button>
+    </div>
+  </div>
+
+  <div class="chat-footer-info">
+    <div class="chat-footer-dot"></div>
+    <span class="chat-footer-text">Respostas geradas em tempo real pela IA com seus dados</span>
+  </div>
+</div>
+
+<!-- ===== LOGIN PELO HUB (16/10/2026, docs/ACESSO.md) ===== -->
+<div id="telaLogin" class="login-gate" hidden>
+  <form class="login-gate-card" id="loginForm" autocomplete="on" novalidate>
+    <img class="login-gate-logo" src="logo-demo-30.svg" alt="Clínica Demo"><!-- MODO DEMO: logo neutro -->
+    <p class="login-gate-sub">Dashboard de Ocupação de Agenda</p>
+    <label for="loginEmail">E-mail do Hub</label>
+    <input type="text" id="loginEmail" name="email" placeholder="ex.: diretoria" autocomplete="username">
+    <label for="loginSenha">Senha</label>
+    <input type="password" id="loginSenha" name="senha" placeholder="••••••" autocomplete="current-password">
+    <button type="submit" class="login-gate-btn" id="loginBotao">Entrar</button>
+    <div class="login-gate-err" id="loginErro" role="alert"></div>
+    <div class="login-gate-hint">Use a mesma conta e senha do Hub</div><!-- MODO DEMO: marca removida -->
+  </form>
+</div>
+<div id="configModal" class="config-overlay" hidden>
+  <div class="config-box" role="dialog" aria-modal="true" aria-labelledby="configTitulo">
+    <div class="config-head">
+      <div class="config-titulo" id="configTitulo">Configurações</div>
+      <button type="button" class="config-fechar" id="configFechar" aria-label="Fechar">×</button>
+    </div>
+    <div class="config-abas" role="tablist">
+      <button type="button" class="config-aba ativa" data-aba="conta" role="tab">Sua conta</button>
+      <button type="button" class="config-aba" data-aba="log" role="tab">Registros de acesso</button>
+    </div>
+    <div class="config-painel" data-painel="conta">
+      <div class="config-conta">
+        <div class="config-avatar" id="configAvatar"></div>
+        <div>
+          <div class="config-nome" id="configNome"></div>
+          <div class="config-email" id="configEmail"></div>
+          <div class="config-papel" id="configPapel"></div>
+        </div>
+      </div>
+      <p class="config-nota">Conta e senha são as do Hub.<!-- MODO DEMO: marca removida --> Para trocar a senha ou pedir acesso, use o Hub.</p>
+      <button type="button" class="config-sair" id="configSair">Sair da conta</button>
+    </div>
+    <div class="config-painel" data-painel="log" hidden>
+      <div class="config-log-topo">
+        <select id="configLogFiltro" aria-label="Filtrar evento">
+          <option value="">Todos os eventos</option>
+          <option value="ENTROU">Entrou</option>
+          <option value="RECUSADO">Recusado</option>
+          <option value="SAIU">Saiu</option>
+          <option value="EXPORTOU">Exportou</option>
+        </select>
+        <span class="config-log-total" id="configLogTotal"></span>
+      </div>
+      <div class="config-log-tabela" id="configLog"></div>
+      <p class="config-nota">Conta como entrada só quem digita a senha (recarregar a página não conta). Senha errada não
+        aparece aqui: quem valida a senha é o Hub. Últimos 500 registros.</p>
+    </div>
+  </div>
+</div>
+<style>
+/* Sem sessão, só a tela de login aparece: nada do painel é desenhado nem carregado. */
+body.tela-login > *:not(#telaLogin):not(script):not(style) { display: none !important; }
+/* Tela de login copiada do Painel Comercial (16/10/2026): mesmas medidas e cores, em tema claro fixo. */
+.login-gate { position: fixed; inset: 0; z-index: 1000; min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; padding: 24px; font-family: "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(120% 120% at 50% 0%, #fff 0%, #faf8f5 60%, #f3f0eb 100%); }
+.login-gate[hidden] { display: none; }
+.login-gate *, .login-gate *::before, .login-gate *::after { box-sizing: border-box; }
+.login-gate-card { width: 340px; background: #ffffff; border: 1px solid #e8e0d6; border-radius: 16px; padding: 32px 28px;
+  box-shadow: 0 12px 34px rgba(54, 42, 28, 0.12); text-align: center; zoom: 1.08; }
+.login-gate-logo { width: 170px; height: auto; margin: 0 auto 6px; display: block; }
+.login-gate-sub { color: #8b8177; font-size: 12.5px; margin: 0 0 18px; line-height: 1.4; }
+.login-gate label { display: block; font-size: 12px; color: #8b8177; margin: 12px 0 5px; text-align: left; }
+.login-gate input { width: 100%; height: 40px; padding: 0 12px; border: 1px solid #e8e0d6; border-radius: 9px; font-size: 14px;
+  background: #ffffff; color: #2b241d; transition: border-color 0.15s ease, box-shadow 0.15s ease; font-family: inherit; }
+.login-gate input:focus { outline: none; border-color: #ef8100; box-shadow: 0 0 0 3px #fff2e2; }
+.login-gate-btn { width: 100%; height: 42px; margin-top: 20px; background: #ef8100; color: #fff; border: 0; border-radius: 9px;
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s ease; font-family: inherit; }
+.login-gate-btn:hover { background: #d67300; }
+.login-gate-btn:disabled { opacity: 0.6; cursor: default; }
+.login-gate-err { color: #b3261e; font-size: 12.5px; margin-top: 10px; min-height: 16px; }
+.login-gate-hint { margin-top: 16px; font-size: 12px; color: #8b8177; border-top: 1px solid #e8e0d6; padding-top: 13px; }
+/* Engrenagem (16/10/2026): conta e registros de acesso */
+.config-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(2, 6, 18, 0.55); display: flex;
+  align-items: flex-start; justify-content: center; padding: 72px 16px 16px; }
+.config-overlay[hidden] { display: none; }
+.config-box { width: min(760px, 100%); max-height: calc(100vh - 100px); display: flex; flex-direction: column;
+  background: var(--surface, #0f1b2d); border: 1px solid var(--border, #1e2d45); border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35); overflow: hidden; }
+.config-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 6px; }
+.config-titulo { font-size: 16px; font-weight: 800; color: var(--text1, #f1f5f9); }
+.config-fechar { background: none; border: none; color: var(--text3, #94a3b8); font-size: 24px; line-height: 1; cursor: pointer; padding: 2px 6px; }
+.config-fechar:hover { color: var(--text1, #f1f5f9); }
+.config-abas { display: flex; gap: 4px; padding: 6px 20px 0; border-bottom: 1px solid var(--border, #1e2d45); }
+.config-aba { background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 12px; font-size: 13px;
+  font-weight: 600; color: var(--text3, #94a3b8); cursor: pointer; margin-bottom: -1px; }
+.config-aba.ativa { color: var(--blue, #3b82f6); border-bottom-color: var(--blue, #3b82f6); }
+.config-painel { padding: 18px 20px 20px; overflow-y: auto; }
+.config-painel[hidden] { display: none; }
+.config-conta { display: flex; align-items: center; gap: 14px; }
+.config-avatar { width: 46px; height: 46px; border-radius: 999px; background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; flex-shrink: 0; }
+.config-nome { font-size: 15px; font-weight: 700; color: var(--text1, #f1f5f9); }
+.config-email { font-size: 13px; color: var(--text3, #94a3b8); }
+.config-papel { font-size: 11.5px; color: var(--text4, #64748b); margin-top: 2px; }
+.config-nota { font-size: 12px; color: var(--text4, #64748b); margin: 14px 0 0; line-height: 1.5; }
+.config-sair { margin-top: 16px; background: transparent; border: 1px solid #ef444466; color: var(--red, #ef4444);
+  border-radius: 10px; padding: 9px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.config-sair:hover { background: #ef44441a; }
+.config-log-topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.config-log-topo select { background: var(--surface2, #13223a); border: 1px solid var(--border, #1e2d45); color: var(--text1, #f1f5f9);
+  border-radius: 8px; padding: 6px 10px; font-size: 12.5px; }
+.config-log-total { font-size: 12px; color: var(--text4, #64748b); }
+.config-log-tabela table { width: 100%; border-collapse: collapse; min-width: 0; }
+.config-log-tabela th { text-align: left; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;
+  color: var(--text4, #64748b); padding: 6px 8px; border-bottom: 1px solid var(--border, #1e2d45); position: static; background: none; box-shadow: none; }
+.config-log-tabela td { font-size: 12.5px; color: var(--text2, #cbd5e1); padding: 7px 8px; border-bottom: 1px solid var(--border, #1e2d45);
+  white-space: nowrap; text-align: left; }
+.config-log-tabela td.pessoa { white-space: normal; }
+.config-log-tabela td.pessoa small { display: block; color: var(--text4, #64748b); font-size: 11px; }
+.config-evento { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 8px; }
+.config-evento.ENTROU { background: #22c55e22; color: #16a34a; }
+.config-evento.RECUSADO { background: #ef444422; color: var(--red, #ef4444); }
+.config-evento.SAIU { background: #64748b22; color: var(--text3, #94a3b8); }
+.config-evento.EXPORTOU { background: #3b82f622; color: var(--blue, #3b82f6); }
+.config-vazio { font-size: 13px; color: var(--text3, #94a3b8); padding: 18px 0; text-align: center; }
+</style>
+<script>
+// Login pelo Hub. Quem decide o acesso é o servidor (a cada pedido, consultando o Hub); esta parte só mostra a tela
+// certa. Qualquer 401/403 de /api ou /ia depois de o painel abrir = acesso perdido: recarrega a página, o que
+// apaga os dados da memória e interrompe o "ao vivo"; sem sessão o carregador mostra o login e não baixa nada.
+(function () {
+  var fetchOriginal = window.fetch.bind(window);
+  window.fetch = function (url, opcoes) {
+    return fetchOriginal(url, opcoes).then(function (r) {
+      var caminho = String(typeof url === 'string' ? url : (url && url.url) || '').replace(location.origin, '');
+      var protegida = caminho.indexOf('/api/') === 0 || caminho === '/ia';
+      if (protegida && (r.status === 401 || r.status === 403) && window.DADOS) {
+        window.DADOS = null;
+        location.reload();
+      }
+      return r;
+    });
+  };
+
+  window.__mostrarLogin = function (mensagem) {
+    window.DADOS = null;
+    document.body.classList.add('tela-login');
+    document.getElementById('telaLogin').hidden = false;
+    document.getElementById('loginErro').textContent = mensagem || '';
+    setTimeout(function () { document.getElementById('loginEmail').focus(); }, 0);
+  };
+
+  document.getElementById('loginForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var botao = document.getElementById('loginBotao'), erro = document.getElementById('loginErro');
+    botao.disabled = true; botao.textContent = 'Entrando...'; erro.textContent = '';
+    // Igual ao Comercial: quem digita só o usuário ganha o domínio da casa.
+    var login = document.getElementById('loginEmail').value.trim();
+    if (login && login.indexOf('@') === -1) login += '@example.com'; // MODO DEMO: domínio fictício
+    fetchOriginal('/auth/entrar', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+      body: JSON.stringify({ email: login, senha: document.getElementById('loginSenha').value })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.ok) { location.reload(); return; }
+        erro.textContent = j.erro || ('Não foi possível entrar (HTTP ' + r.status + ').');
+        document.getElementById('loginSenha').value = '';
+      });
+    }).catch(function () {
+      erro.textContent = 'Sem conexão com o painel. Tente de novo.';
+    }).then(function () { botao.disabled = false; botao.textContent = 'Entrar'; });
+  });
+
+  // Engrenagem ao lado de Dicas (16/10/2026): sua conta (sair) e registros de acesso.
+  // O log só é lido por quem é dono, admin ou gestão no Hub (o servidor confere; a aba some para os outros).
+  window.__mostrarUsuario = function () {
+    var modal = document.getElementById('configModal');
+    var botao = document.getElementById('configBtn');
+    if (!modal || !botao) return;
+    var eu = null, linhas = [];
+    var PAPEL = { owner: 'Dono', admin: 'Administrador', gestao: 'Gestão', colaborador: 'Colaborador' };
+    var NOME_EVENTO = { ENTROU: 'Entrou', RECUSADO: 'Recusado', SAIU: 'Saiu', EXPORTOU: 'Exportou' };
+    var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+
+    fetch('/api/eu', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j) return;
+      eu = j;
+      var nome = eu.nome || eu.email;
+      document.getElementById('configNome').textContent = nome;
+      document.getElementById('configEmail').textContent = eu.email;
+      document.getElementById('configPapel').textContent = PAPEL[eu.papel] ? 'Papel no Hub: ' + PAPEL[eu.papel] : '';
+      document.getElementById('configAvatar').textContent = nome.split(/\s+/).filter(Boolean).slice(0, 2).map(function (p) { return p.charAt(0).toUpperCase(); }).join('');
+      if (!eu.leLog) modal.querySelector('[data-aba="log"]').hidden = true;
+    }).catch(function () {});
+
+    function aba(qual) {
+      modal.querySelectorAll('.config-aba').forEach(function (b) { b.classList.toggle('ativa', b.dataset.aba === qual); });
+      modal.querySelectorAll('.config-painel').forEach(function (p) { p.hidden = p.dataset.painel !== qual; });
+      if (qual === 'log') carregarLog();
+    }
+    function desenharLog() {
+      var filtro = document.getElementById('configLogFiltro').value;
+      var vis = linhas.filter(function (l) { return !filtro || l.evento === filtro; });
+      document.getElementById('configLogTotal').textContent = vis.length + (vis.length === 1 ? ' registro' : ' registros');
+      if (!vis.length) { document.getElementById('configLog').innerHTML = '<div class="config-vazio">Nenhum registro.</div>'; return; }
+      document.getElementById('configLog').innerHTML = '<table><thead><tr><th>Quando</th><th>Pessoa</th><th>Evento</th><th>Detalhe</th></tr></thead><tbody>' +
+        vis.map(function (l) {
+          var d = new Date(l.quando);
+          var det = l.detalhe || {};
+          var detalhe = l.evento === 'EXPORTOU' ? (det.linhas || 0) + ' linhas · ' + esc(det.ini) + ' a ' + esc(det.fim)
+            : l.evento === 'RECUSADO' ? 'sem acesso ao painel no Hub' : '';
+          return '<tr><td>' + d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</td>' +
+            '<td class="pessoa">' + esc(l.nome || l.usuario) + (l.nome ? '<small>' + esc(l.usuario) + '</small>' : '') + '</td>' +
+            '<td><span class="config-evento ' + esc(l.evento) + '">' + (NOME_EVENTO[l.evento] || esc(l.evento)) + '</span></td>' +
+            '<td>' + detalhe + '</td></tr>';
+        }).join('') + '</tbody></table>';
+    }
+    function carregarLog() {
+      document.getElementById('configLog').innerHTML = '<div class="config-vazio">Carregando…</div>';
+      fetch('/api/acesso/log', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (!j || !j.permitido) { linhas = []; document.getElementById('configLog').innerHTML = '<div class="config-vazio">Só dono, admin ou gestão no Hub veem os registros.</div>'; return; }
+        linhas = j.linhas || [];
+        desenharLog();
+      }).catch(function () { document.getElementById('configLog').innerHTML = '<div class="config-vazio">Não foi possível carregar os registros.</div>'; });
+    }
+    function abrir() { modal.hidden = false; aba('conta'); }
+    function fechar() { modal.hidden = true; }
+
+    botao.addEventListener('click', abrir);
+    document.getElementById('configFechar').addEventListener('click', fechar);
+    modal.addEventListener('click', function (ev) { if (ev.target === modal) fechar(); });
+    document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && !modal.hidden) fechar(); });
+    modal.querySelectorAll('.config-aba').forEach(function (b) { b.addEventListener('click', function () { aba(b.dataset.aba); }); });
+    document.getElementById('configLogFiltro').addEventListener('change', desenharLog);
+    document.getElementById('configSair').addEventListener('click', function () {
+      fetchOriginal('/auth/sair', { method: 'POST', credentials: 'same-origin' })
+        .then(function () { window.DADOS = null; location.reload(); });
+    });
+  };
+})();
+</script>
+<script>
+// Carregador: busca os dados, repõe as datas iniciais que o n8n gravava e só então roda o painel.
+// 16/10/2026: sem sessão (401) ou sem acesso (403) mostra o login; Hub fora (503) avisa e não abre nada.
+(function () {
+  var hoje = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }); // Brasília, não UTC
+  document.getElementById('dataInicio').value = hoje;
+  document.getElementById('dataFim').value = hoje;
+  fetch('/api/dados')
+    .then(function (r) {
+      if (r.status === 401 || r.status === 403 || r.status === 503) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          window.__mostrarLogin(r.status === 401 ? '' : (j.erro || ''));
+          throw { silencioso: true };
+        });
+      }
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      window.DADOS_VERSAO = r.headers.get('X-Versao');
+      return r.json();
+    })
+    .then(function (dados) {
+      window.DADOS = dados;
+      var s = document.createElement('script');
+      s.src = 'painel.js'; // MODO DEMO: caminho relativo
+      document.body.appendChild(s);
+      window.__mostrarUsuario();
+    })
+    .catch(function (e) {
+      if (e && e.silencioso) return;
+      document.body.insertAdjacentHTML('afterbegin',
+        '<div style="background:#7f1d1d;color:#fff;padding:12px 36px">Não foi possível carregar os dados: ' + e.message + '</div>');
+    });
+})();
+</script>
+<!-- ===== POP-UP SAÚDE DOS DADOS (01/10/2026) ===== -->
+<div id="saudeModal" class="saude-overlay" aria-hidden="true">
+  <div class="saude-box" role="dialog" aria-modal="true" aria-labelledby="saudeTitulo">
+    <div class="saude-head">
+      <div>
+        <div class="saude-titulo" id="saudeTitulo">Saúde dos dados</div>
+        <div class="saude-resumo" id="saudeResumo"></div>
+      </div>
+      <button type="button" class="saude-fechar" id="saudeFechar" aria-label="Fechar">✕</button>
+    </div>
+    <div class="saude-chips" id="saudeChips"></div>
+    <div class="saude-lista" id="saudeLista"></div>
+    <div class="saude-rodape">
+      <span>As pendências somem sozinhas quando corrigidas na Feegow (próxima atualização, até 10 min). Sem dados de paciente.</span>
+      <button type="button" class="saude-copiar" id="saudeCopiar">Copiar lista</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPUP AVISO METODOLOGIA ===== -->
+<style>
+#aviso-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.65);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(3px);
+  animation: fadeInOverlay 0.3s ease;
+}
+@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+#aviso-overlay.hide {
+  animation: fadeOutOverlay 0.3s ease forwards;
+}
+@keyframes fadeOutOverlay { to { opacity: 0; pointer-events: none; } }
+
+#aviso-box {
+  background: #111d30;
+  border: 1px solid #1a2436;
+  border-radius: 18px;
+  max-width: 680px;
+  width: calc(100% - 48px);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px #3b82f620;
+  animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+#aviso-header {
+  padding: 22px 24px 16px;
+  border-bottom: 1px solid #1a2436;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+#aviso-badge {
+  display: flex; align-items: center; gap: 10px;
+}
+#aviso-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, #f59e0b22, #f59e0b44);
+  border: 1px solid #f59e0b55;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+#aviso-title-block {}
+#aviso-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #f59e0b; text-transform: uppercase; }
+#aviso-title { font-size: 16px; font-weight: 800; color: #f1f5f9; margin-top: 2px; }
+
+#aviso-close {
+  width: 34px; height: 34px;
+  background: #1a2436;
+  border: 1px solid #243048;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #94a3b8;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+  line-height: 1;
+}
+#aviso-close:hover { background: #ef444420; border-color: #ef444450; color: #ef4444; transform: scale(1.08); }
+
+#aviso-body {
+  overflow-y: auto;
+  padding: 20px 24px;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #1a2436 transparent;
+}
+#aviso-body::-webkit-scrollbar { width: 6px; }
+#aviso-body::-webkit-scrollbar-track { background: transparent; }
+#aviso-body::-webkit-scrollbar-thumb { background: #1a2436; border-radius: 6px; }
+
+#aviso-body p { font-size: 13.5px; color: #cbd5e1; line-height: 1.7; margin-bottom: 12px; }
+#aviso-body .aviso-saudacao { font-size: 15px; color: #f1f5f9; font-weight: 600; margin-bottom: 16px; }
+#aviso-body .aviso-intro { color: #94a3b8; }
+#aviso-body .aviso-atencao {
+  font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+  color: #f59e0b; text-transform: uppercase; margin: 16px 0 10px;
+}
+#aviso-body .aviso-item {
+  background: #0c1a2e;
+  border: 1px solid #1a2436;
+  border-left: 3px solid #3b82f6;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+#aviso-body .aviso-item.amber { border-left-color: #f59e0b; }
+#aviso-body .aviso-item.purple { border-left-color: #8b5cf6; }
+#aviso-body .aviso-item .item-num { font-size: 12px; font-weight: 800; color: #3b82f6; margin-bottom: 4px; }
+#aviso-body .aviso-item.amber .item-num { color: #f59e0b; }
+#aviso-body .aviso-item.purple .item-num { color: #8b5cf6; }
+#aviso-body .aviso-item p { font-size: 13px; color: #cbd5e1; margin-bottom: 6px; }
+#aviso-body .aviso-item p:last-child { margin-bottom: 0; }
+#aviso-body .aviso-sub {
+  background: #080f1d;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 6px;
+  font-size: 12.5px; color: #94a3b8;
+}
+#aviso-body .aviso-sub strong { color: #cbd5e1; }
+
+#aviso-footer {
+  padding: 14px 24px 18px;
+  border-top: 1px solid #1a2436;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+#aviso-timer-wrap { display: flex; align-items: center; gap: 8px; }
+#aviso-timer-label { font-size: 11px; color: #64748b; }
+#aviso-timer-bar-bg {
+  width: 120px; height: 4px;
+  background: #1a2436;
+  border-radius: 4px;
+  overflow: hidden;
+}
+#aviso-timer-bar {
+  height: 100%; width: 100%;
+  background: #3b82f6;
+  border-radius: 4px;
+  transition: background 0.5s;
+}
+#aviso-timer-num { font-size: 12px; font-weight: 700; color: #94a3b8; min-width: 24px; }
+#aviso-btn-ok {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13px; font-weight: 700;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 14px #3b82f640;
+}
+#aviso-btn-ok:hover { opacity: 0.9; transform: translateY(-1px); }
+</style>
+
+<div id="aviso-overlay">
+  <div id="aviso-box">
+    <div id="aviso-header">
+      <div id="aviso-badge">
+        <div id="aviso-icon">⚠️</div>
+        <div id="aviso-title-block">
+          <div id="aviso-label">Aviso Importante</div>
+          <div id="aviso-title">Atualização na Metodologia de Análise</div>
+        </div>
+      </div>
+      <button id="aviso-close" title="Fechar">✕</button>
+    </div>
+
+    <div id="aviso-body">
+      <p class="aviso-saudacao">Olá,</p>
+      <p class="aviso-intro">Devido a uma instabilidade recente na API da Feegow e a inconsistências identificadas no uso e manutenção das grades criadas, foi implementado um novo método de análise dos dados de grade, utilizando a lógica <strong>D-1</strong>.</p>
+      <p class="aviso-intro">A partir deste mês, os dados passam a ter maior precisão, considerando as grades disponíveis e corretamente estruturadas.</p>
+
+      <div class="aviso-atencao">⚡ Atenção às seguintes informações</div>
+
+      <div class="aviso-item">
+        <div class="item-num">PONTO 1</div>
+        <p>O número de pacientes no período de grade está relacionado à KPI <strong style="color:#8b5cf6">"Total de pacientes no período" / "Pacientes Presentes"</strong>, representada pela cor roxa.</p>
+        <p>Esse número nunca será exatamente igual ao indicador de atendidos da semana por dois principais motivos:</p>
+        <div class="aviso-sub"><strong>1.1.</strong> Nem todos os pacientes estão vinculados a grades. A dashboard considera apenas os dados relacionados às grades listadas.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>1.2.</strong> Existem grades alteradas de forma incorreta, o que infelizmente impacta a precisão dos dados apresentados.</div>
+      </div>
+
+      <div class="aviso-item amber">
+        <div class="item-num">PONTO 2</div>
+        <p>Os dados exibidos estão diretamente ligados a uma grade.</p>
+        <p>Para construir uma dashboard de ocupação de agenda, a grade é o principal fator de cálculo. Sem uma grade cadastrada, não é possível calcular corretamente a porcentagem de ocupação, pois não há como medir a capacidade disponível.</p>
+      </div>
+
+      <div class="aviso-item purple">
+        <div class="item-num">PONTO 3 — Dados de 2025</div>
+        <p>Os dados de 2025 podem apresentar divergências devido a alterações realizadas nas grades ao longo do período. É importante deixar isso claro: os cálculos estão sendo realizados de forma precisa, porém a qualidade do resultado depende diretamente da qualidade e manutenção das grades.</p>
+        <p>Como muitas grades não foram criadas ou mantidas com o devido zelo, parte dos pacientes pode não ser captada nos indicadores.</p>
+      </div>
+
+      <!-- 13/10/2026: novidades de outubro (visual, taxas, Saúde, Qualidade e regras de livres/agendados) -->
+      <div class="aviso-atencao">✨ Novidades de outubro/2026</div>
+      <div class="aviso-item">
+        <div class="item-num">NOVO VISUAL</div>
+        <p>Menu fixo à esquerda (a alça na borda recolhe o menu), cabeçalho com o período e o botão <strong>Aplicar</strong>, e gráficos novos:</p>
+        <div class="aviso-sub"><strong>Ocupação ao longo do período:</strong> dia a dia, semana a semana ou mês a mês, conforme o tamanho do período. Com <strong>um dia só</strong> selecionado, vira a visão do dia: ranking por profissional e os turnos (manhã, tarde, noite), com quantos horários ainda dá para oferecer.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Dia da semana mais ocupado</strong> e <strong>Ocupação por unidade</strong>.</div>
+        <div class="aviso-sub" style="margin-top:6px">A lua/sol troca entre tema escuro e claro. Os números são os mesmos de antes: só a forma de mostrar mudou.</div>
+      </div>
+      <div class="aviso-item">
+        <div class="item-num">AS TRÊS TAXAS</div>
+        <p>Todas usam o mesmo divisor: <strong>capacidade − bloqueios</strong> (os horários que realmente podiam ser agendados).</p>
+        <div class="aviso-sub"><strong>Ocupação</strong> = agendados ÷ (capacidade − bloqueios).</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Agendamento</strong> = (agendados + faltas) ÷ (capacidade − bloqueios): o horário estava reservado, mesmo que o paciente não tenha vindo. Falta de encaixe não entra (encaixe não faz parte da agenda).</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Preenchimento da grade</strong> = (capacidade − bloqueios − livres) ÷ (capacidade − bloqueios): o que não ficou livre na agenda.</div>
+      </div>
+      <div class="aviso-item">
+        <div class="item-num">SAÚDE DO PAINEL</div>
+        <p>O campo <strong>Saúde do painel</strong>, no topo, mostra o <strong>% dos agendamentos do período sem pendência de cadastro</strong>. Quanto mais perto de 100%, mais confiáveis estão os números.</p>
+        <p>Clicando nele abre a lista do que dá para ajustar na Feegow, em frases, com o botão <strong>Copiar lista</strong>:</p>
+        <div class="aviso-sub"><strong>Sem grade vigente / dia sem grade:</strong> paciente marcado num horário ou num dia em que o profissional não tem grade cadastrada.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Bloqueio desatualizado:</strong> paciente marcado em horário bloqueado (hoje ou futuro).</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Status não finalizado:</strong> agendamento de dia que já passou ainda sem atendido/falta.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Agenda vazia:</strong> dia passado com grade aberta e nenhum paciente nem bloqueio (ausência não registrada).</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Grade estimada:</strong> turno de 2026 cuja grade foi apagada e recriada; a grade foi reconstituída pelo padrão de pacientes da época.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Sync parado:</strong> os dados não são atualizados há mais de 30 minutos (normalmente atualizam a cada 10).</div>
+      </div>
+      <div class="aviso-item">
+        <div class="item-num">QUALIDADE DA AGENDA</div>
+        <p>Os cartões abaixo dos indicadores mostram profissionais no período e os <strong>atendidos, faltas, desmarcados e encaixes fora da grade</strong> (marcados em horário sem grade). Encaixe fora da grade é legítimo: conta, mas não vira pendência.</p>
+      </div>
+      <div class="aviso-item amber">
+        <div class="item-num">LIVRES E AGENDADOS — AJUSTES DE 13/10</div>
+        <p>Para os livres baterem com a agenda diária da Feegow:</p>
+        <div class="aviso-sub"><strong>Vários procedimentos no mesmo agendamento:</strong> o horário fica ocupado pela <strong>soma dos tempos</strong> (ex.: consulta + crioterapia), como a agenda da Feegow mostra.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>"Aguardando resposta do paciente":</strong> o horário fica ocupado (não aparece como livre), mas não conta como agendado.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Horário final cadastrado errado</strong> (ex.: consulta de 20 min "até 15:20"): o painel usa a duração do procedimento.</div>
+        <div class="aviso-sub" style="margin-top:6px"><strong>Dois pacientes no mesmo horário</strong> (ex.: procedimento das 10:00 de 40 min + paciente às 10:20): o horário conta <strong>uma vez só</strong> nos agendados. A ocupação ficou um pouco menor e mais real: de 0,4 a 1 ponto percentual a menos nos meses de 2026.</div>
+      </div>
+    </div>
+
+    <div id="aviso-footer">
+      <div id="aviso-timer-wrap">
+        <span id="aviso-timer-label">Fechando em</span>
+        <div id="aviso-timer-bar-bg"><div id="aviso-timer-bar"></div></div>
+        <span id="aviso-timer-num">5:00</span>
+      </div>
+      <button id="aviso-btn-ok">Entendi</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var overlay = document.getElementById('aviso-overlay');
+  var bar     = document.getElementById('aviso-timer-bar');
+  var num     = document.getElementById('aviso-timer-num');
+  var TOTAL   = 300; // 5 minutos em segundos
+  var remaining = TOTAL;
+  var closed = false;
+
+  function closePopup() {
+    if (closed) return;
+    closed = true;
+    overlay.classList.add('hide');
+    setTimeout(function() { overlay.style.display = 'none'; }, 320);
+  }
+
+  document.getElementById('aviso-close').addEventListener('click', closePopup);
+  document.getElementById('aviso-btn-ok').addEventListener('click', closePopup);
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closePopup();
+  });
+
+  var interval = setInterval(function() {
+    if (closed) { clearInterval(interval); return; }
+    remaining--;
+    var pct = (remaining / TOTAL) * 100;
+    bar.style.width = pct + '%';
+    if (pct < 30) bar.style.background = '#ef4444';
+    else if (pct < 60) bar.style.background = '#f59e0b';
+    var m = Math.floor(remaining / 60);
+    var s = remaining % 60;
+    num.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if (remaining <= 0) { clearInterval(interval); closePopup(); }
+  }, 1000);
+})();
+</script>
+<!-- ===== FIM POPUP ===== -->
+<script>
+// Tema (09/10/2026): lua = escuro (padrão), sol = claro. Guarda a escolha neste navegador.
+(function () {
+  var btn = document.getElementById('temaBtn');
+  if (!btn) return;
+  function aplicar(claro) {
+    if (claro) document.documentElement.dataset.tema = 'claro'; else delete document.documentElement.dataset.tema;
+    btn.setAttribute('aria-pressed', String(claro));
+    btn.setAttribute('aria-label', claro ? 'Usar tema escuro' : 'Usar tema claro');
+  }
+  aplicar(document.documentElement.dataset.tema === 'claro');
+  btn.addEventListener('click', function () {
+    var claro = document.documentElement.dataset.tema !== 'claro';
+    aplicar(claro);
+    try { localStorage.setItem('painel-tema', claro ? 'claro' : 'escuro'); } catch (e) {}
+  });
+})();
+</script>
+<!-- MODO DEMO: caminhos relativos -->
+<script src="agendador.js" defer></script>
+<script src="visual-novo.js" defer></script>
+</body>
+</html>

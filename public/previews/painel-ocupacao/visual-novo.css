@@ -1,0 +1,349 @@
+/* Visual novo (09/10/2026, padrão) — inspirado no shot "Shopeers" (Dribbble), paleta do próprio shot:
+   #F0F2F5 #CACED6 #0B0D17 #29315D #0A24E9 #A9B6C0 #5C9764 #152EAE.
+   Padrão; ?visual=atual volta ao visual anterior (guardado no navegador). Só vale com <html data-visual="novo">:
+   o painel atual não muda. Mesmo DOM e mesmas funções; visual-novo.js monta o menu fixo, o cabeçalho e os gráficos. */
+
+/* ---------- Tokens ---------- */
+html[data-visual="novo"][data-tema="claro"] {
+  --bg: #f0f2f5; --surface: #ffffff; --surface2: #f6f7f9; --border: #e6e8ec;
+  --blue: #0a24e9; --blue2: #152eae; --green: #3f8a4a; --orange: #e8792b; --red: #e5484d; --amber: #d99a00;
+  --cyan: #1597b8; --purple: #6d4cf0; --pink: #d83d84;
+  --text1: #0b0d17; --text2: #29315d; --text3: #4a5272; --text4: #6b7385; --text5: #8a93a6;
+  --vn-ativo-bg: #eef1ff; --vn-sombra: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+  --vn-ok-bg: #e7f3e9; --vn-ruim-bg: #fde8e8; --vn-grade: #eef0f3;
+}
+html[data-visual="novo"]:not([data-tema="claro"]) {
+  --bg: #0b0d17; --surface: #13162a; --surface2: #191d35; --border: #262b48;
+  --blue: #4c63ff; --blue2: #3348e6; --green: #5fb36c; --orange: #f0954f; --red: #f16a6f; --amber: #f2b632;
+  --cyan: #3fc1e0; --purple: #9b84ff; --pink: #f272ab;
+  --text1: #f0f2f5; --text2: #caced6; --text3: #b3bac7; --text4: #a9b6c0; --text5: #7d879b;
+  --vn-ativo-bg: #1c2348; --vn-sombra: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --vn-ok-bg: #173323; --vn-ruim-bg: #3a1a20; --vn-grade: #22263f;
+}
+html[data-visual="novo"] body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: var(--bg); }
+
+/* ---------- Menu lateral fixo (no lugar da gaveta) ---------- */
+@media (min-width: 1100px) {
+  html[data-visual="novo"] body { padding-left: 248px; }
+  html[data-visual="novo"] .sidebar { transform: none !important; width: 248px; max-width: none; background: var(--surface);
+    box-shadow: none; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  html[data-visual="novo"] .sidebar-backdrop, html[data-visual="novo"] .sidebar-close { display: none !important; }
+  html[data-visual="novo"] .topbar-logo.marca { display: none; }
+  /* Logo centralizado no topo do menu (sem botão de fechar no menu fixo). Centralização ÓPTICA: o que vai ao meio são
+     as letras do logo, não a caixa da imagem (medido no PNG original, 398x84). Em % do próprio logo, vale para qualquer
+     tamanho. MODO DEMO: nome da marca e do arquivo removidos deste comentário. */
+  html[data-visual="novo"] .sidebar-header { justify-content: center; padding: 0; }
+  html[data-visual="novo"] .sidebar-brand { justify-content: center; }
+  /* Peso visual do desenho inteiro (letras + traço), medido no PNG: centro em x 180 de 398 (4,8% à esquerda do meio)
+     e y 40,9 de 84 (1,3% acima). A altura do topo do menu acompanha o bloco do título ao lado (visual-novo.js). */
+  html[data-visual="novo"] .sidebar-badge.marca img { transform: translate(4.8%, 1.3%); }
+  /* Sem barra do topo: os botões dela foram para o cabeçalho da página (visual-novo.js). Abaixo de 1100 px ela fica,
+     porque é o único jeito de abrir o menu (gaveta). Com ela escondida, o cabeçalho das tabelas gruda no topo (0 px). */
+  html[data-visual="novo"] .topbar { display: none; }
+}
+/* Topo do menu: logo solto, sem linha embaixo (a linha dele cruzava com a do topo e a vertical do menu, formando
+   uma cruz no canto). A linha da barra do topo fica só sobre o conteúdo e encosta no menu. */
+html[data-visual="novo"] .sidebar-header { height: 64px; background: transparent; backdrop-filter: none; padding: 0 22px;
+  border-bottom: 0; }
+html[data-visual="novo"] .sidebar-badge.marca { height: 34px; }
+/* mais forte que ".sidebar-badge.marca img { display: block }" do index.html: com o menu aberto só a palavra aparece */
+html[data-visual="novo"] .sidebar-badge.marca img.vn-icone-recolhido { display: none; }
+html[data-visual="novo"] .sidebar-brand > div:not(.sidebar-badge) { display: none; }
+/* min-height: 0 deixa a lista encolher e rolar por dentro (sem ele, em tela baixa/zoom alto, os últimos itens passavam
+   por baixo do cartão da NEXA); o cartão não encolhe e some abaixo de 700 px de altura (o botão do chat continua) */
+html[data-visual="novo"] .sidebar-content { padding: 14px 12px; flex: 1 1 auto; min-height: 0; overflow: auto; }
+html[data-visual="novo"] .vn-nexa-lateral { flex-shrink: 0; }
+@media (max-height: 700px) { html[data-visual="novo"] .vn-nexa-lateral { display: none; } }
+html[data-visual="novo"] .sidebar-section { background: none; border: 0; padding: 0; }
+html[data-visual="novo"] .sec-h { background: none; border: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--text5);
+  text-transform: none; padding: 6px 10px 8px; }
+html[data-visual="novo"] .sidebar-link { position: relative; padding: 9px 10px; margin: 2px 0; border-radius: 10px; border: 0;
+  background: none; color: var(--text3); font-size: 13.5px; font-weight: 500; transition: background .15s, color .15s; }
+html[data-visual="novo"] .sidebar-link:hover { background: var(--surface2); color: var(--text1); }
+html[data-visual="novo"] .sidebar-link .left { gap: 11px; }
+html[data-visual="novo"] .sidebar-link .ico { width: 20px; height: 20px; background: none; border: 0; display: grid; place-items: center;
+  color: var(--text4); font-size: 0; }
+html[data-visual="novo"] .sidebar-link .ico svg { width: 18px; height: 18px; }
+html[data-visual="novo"] .sidebar-link.vn-ativo { background: var(--vn-ativo-bg); color: var(--blue); font-weight: 600; }
+html[data-visual="novo"] .sidebar-link.vn-ativo .ico { color: var(--blue); }
+html[data-visual="novo"] .sidebar-link.vn-ativo::before { content: ''; position: absolute; left: -12px; top: 8px; bottom: 8px;
+  width: 3px; border-radius: 0 3px 3px 0; background: var(--blue); }
+html[data-visual="novo"] .vn-nexa-lateral { margin: 12px; padding: 16px; border-radius: 14px; color: #fff;
+  background: linear-gradient(160deg, #152eae 0%, #0a24e9 55%, #29315d 100%); }
+html[data-visual="novo"] .vn-nexa-lateral b { display: block; font-size: 14px; margin: 10px 0 4px; }
+html[data-visual="novo"] .vn-nexa-lateral p { font-size: 11.5px; line-height: 1.45; opacity: .85; margin: 0 0 12px; }
+html[data-visual="novo"] .vn-nexa-lateral button { width: 100%; height: 34px; border: 0; border-radius: 999px; background: #fff;
+  color: #0a24e9; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+html[data-visual="novo"] .vn-nexa-lateral .vn-orbe { width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,.18);
+  display: grid; place-items: center; }
+
+/* ---------- Barra do topo ---------- */
+html[data-visual="novo"] .topbar { height: 64px; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 28px; }
+/* Sem título na barra do topo: o cabeçalho da página ("Ocupação de Agenda") já diz onde se está */
+html[data-visual="novo"] .topbar-left .topbar-title { display: none; }
+html[data-visual="novo"] .hints-btn { width: 36px; height: 36px; border-radius: 999px; background: var(--surface); }
+html[data-visual="novo"] .health-button { border-radius: 999px; }
+
+/* ---------- Cabeçalho da página (montado pelo visual-novo.js) ---------- */
+html[data-visual="novo"] .main { padding: 24px 28px 48px; }
+html[data-visual="novo"] .vn-cabecalho { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+html[data-visual="novo"] .vn-cabecalho h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: var(--text1); margin: 0; }
+html[data-visual="novo"] .vn-cabecalho .vn-sub { font-size: 12.5px; color: var(--text4); margin-top: 3px; display: flex; gap: 8px; align-items: center;
+  min-height: 17px; } /* reserva a linha do "Atualizado às…" (o painel esconde e mostra a cada carga; o logo se alinha por ela) */
+/* Cabeçalho: título | ícones (Saúde, Dicas, +, tema) | período (comparar, datas, Aplicar). Em tela larga, uma linha;
+   sem espaço (zoom/tela menor), o período desce INTEIRO para a linha de baixo, alinhado à direita (antes quebrava aos
+   pedaços e o Aplicar ficava sozinho), e os ícones ficam na linha do título. Sem ponto de quebra fixo: vale p/ qualquer zoom. */
+html[data-visual="novo"] .vn-cabecalho > div:first-child { flex: 1 1 auto; min-width: 0; }
+html[data-visual="novo"] .vn-icones { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+html[data-visual="novo"] .vn-icones .health-button { height: 38px; }
+html[data-visual="novo"] .vn-cabecalho .vn-acoes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 1 auto;
+  justify-content: flex-end; margin-left: auto; max-width: 100%; }
+html[data-visual="novo"] .vn-periodo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+html[data-visual="novo"] .vn-cabecalho .vn-acoes > * { flex-shrink: 0; }
+/* O painel esconde o texto da Saúde abaixo de 1500/1400 px (barra antiga); aqui há espaço na linha do título */
+html[data-visual="novo"] .vn-icones .health-label, html[data-visual="novo"] .vn-icones .health-status { display: inline; }
+@media (max-width: 760px) {
+  html[data-visual="novo"] .vn-cabecalho .vn-acoes { flex-wrap: wrap; justify-content: flex-start; }
+  html[data-visual="novo"] .vn-icones .health-label { display: none; }
+}
+html[data-visual="novo"] .date-pill { height: 38px; border-radius: 10px; background: var(--surface); box-shadow: var(--vn-sombra); }
+html[data-visual="novo"] .btn-compare { height: 38px; border-radius: 10px; background: var(--surface); box-shadow: var(--vn-sombra); }
+html[data-visual="novo"] .btn-filter { height: 38px; border-radius: 10px; background: var(--blue); box-shadow: 0 4px 12px rgba(10, 36, 233, 0.25);
+  padding: 0 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; }
+html[data-visual="novo"] .btn-filter:hover { background: var(--blue2); }
+
+/* ---------- Cartões de KPI ---------- */
+html[data-visual="novo"] .kpi-grid { gap: 16px; }
+html[data-visual="novo"] .kpi-card { border-radius: 16px; padding: 18px 18px 16px; box-shadow: var(--vn-sombra); gap: 6px; }
+html[data-visual="novo"] .kpi-card::before { display: none; }
+html[data-visual="novo"] .kpi-card:hover { transform: none; box-shadow: 0 6px 18px rgba(16, 24, 40, 0.08); }
+html[data-visual="novo"] .kpi-top { flex-direction: row-reverse; justify-content: space-between; align-items: flex-start; }
+html[data-visual="novo"] .kpi-label { font-size: 13.5px; font-weight: 600; color: var(--text2); text-transform: none; letter-spacing: 0; }
+html[data-visual="novo"] .kpi-icon { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font-size: 15px;
+  background: color-mix(in srgb, var(--kpi-accent, var(--blue)) 12%, transparent); color: var(--kpi-accent, var(--blue)); }
+html[data-visual="novo"] .kpi-icon svg { width: 16px; height: 16px; }
+html[data-visual="novo"] .kpi-value { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--text1) !important;
+  filter: none !important; margin-top: 4px; }
+html[data-visual="novo"] .kpi-sub { font-size: 12px; color: var(--text5); }
+html[data-visual="novo"] .kpi-py-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+html[data-visual="novo"] .kpi-py-delta { border-radius: 999px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; }
+html[data-visual="novo"] .kpi-py-delta.pos { background: var(--vn-ok-bg); color: var(--green); }
+html[data-visual="novo"] .kpi-py-delta.neg { background: var(--vn-ruim-bg); color: var(--red); }
+html[data-visual="novo"] .kpi-py-base { font-size: 12px; color: var(--text5); }
+html[data-visual="novo"] .qual-titulo { font-size: 15px; font-weight: 700; color: var(--text1); text-transform: none; letter-spacing: -0.01em;
+  margin: 8px 0 12px; }
+html[data-visual="novo"] .qual-titulo::after { display: none; }
+
+/* ---------- Gráficos (visual-novo.js) ---------- */
+html[data-visual="novo"] .vn-graficos { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; margin: 4px 0 24px; }
+html[data-visual="novo"] .vn-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+html[data-visual="novo"] .vn-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px;
+  box-shadow: var(--vn-sombra); min-width: 0; }
+html[data-visual="novo"] .vn-card-topo { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+html[data-visual="novo"] .vn-card-titulo { font-size: 15px; font-weight: 650; color: var(--text1); }
+html[data-visual="novo"] .vn-card-legenda { margin-left: auto; display: flex; gap: 14px; font-size: 12px; color: var(--text4); }
+html[data-visual="novo"] .vn-card-legenda i { display: inline-block; width: 14px; height: 0; border-top: 2px solid var(--blue); margin-right: 6px;
+  vertical-align: middle; }
+html[data-visual="novo"] .vn-card-legenda i.base { border-top: 2px dashed var(--text5); }
+html[data-visual="novo"] .vn-destaque { display: flex; align-items: flex-end; gap: 10px; margin: 6px 0 10px; }
+html[data-visual="novo"] .vn-destaque b { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; color: var(--text1); line-height: 1; }
+html[data-visual="novo"] .vn-destaque span { font-size: 12.5px; color: var(--text4); padding-bottom: 3px; }
+html[data-visual="novo"] .vn-svg { width: 100%; height: auto; display: block; overflow: visible; }
+html[data-visual="novo"] .vn-svg .eixo { font-size: 11px; fill: var(--text5); font-family: inherit; }
+html[data-visual="novo"] .vn-svg .grade { stroke: var(--vn-grade); stroke-width: 1; }
+html[data-visual="novo"] .vn-vazio { padding: 26px 8px; text-align: center; color: var(--text4); font-size: 13px; }
+html[data-visual="novo"] .vn-vazio button { margin-top: 10px; height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--blue); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+html[data-visual="novo"] .vn-tip { position: fixed; z-index: 950; pointer-events: none; background: var(--text1); color: var(--surface);
+  font-size: 12px; padding: 6px 9px; border-radius: 8px; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+html[data-visual="novo"] #vnLinha, html[data-visual="novo"] #vnBarras, html[data-visual="novo"] #vnMedidor,
+html[data-visual="novo"] .vn-linha2 #secOcc { flex: 1; display: flex; flex-direction: column; }
+html[data-visual="novo"] #vnBarras .vn-svg { margin-top: auto; }
+html[data-visual="novo"] .vn-linha2 #secOcc { margin: 0; justify-content: space-between; gap: 18px; }
+html[data-visual="novo"] #vnMedidor .vn-svg { max-width: 260px; margin: 4px auto 0; }
+/* Visão do dia (um dia só no filtro) */
+html[data-visual="novo"] .vn-dia-cab { display: flex; align-items: center; gap: 14px; }
+html[data-visual="novo"] .vn-dia-cal { width: 52px; height: 56px; border-radius: 12px; flex-shrink: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; background: var(--vn-ativo-bg); border: 1px solid color-mix(in srgb, var(--blue) 20%, transparent); }
+html[data-visual="novo"] .vn-dia-cal b { font-size: 21px; line-height: 1; font-weight: 700; color: var(--blue); }
+html[data-visual="novo"] .vn-dia-cal span { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--blue); margin-top: 3px; }
+html[data-visual="novo"] .vn-dia-tit { min-width: 0; flex: 1; }
+html[data-visual="novo"] .vn-dia-tit .vn-card-titulo { font-size: 17px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+html[data-visual="novo"] .vn-tag-hoje { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; background: var(--vn-ok-bg); color: var(--green); }
+html[data-visual="novo"] .vn-dia-sub { font-size: 12.5px; color: var(--text4); margin-top: 3px; }
+html[data-visual="novo"] .vn-dia-occ { text-align: right; flex-shrink: 0; }
+html[data-visual="novo"] .vn-dia-occ b { display: block; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+html[data-visual="novo"] .vn-dia-occ span { font-size: 11.5px; color: var(--text5); }
+html[data-visual="novo"] .vn-dia-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 14px; }
+html[data-visual="novo"] .vn-dia-stats div { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 9px 12px; }
+html[data-visual="novo"] .vn-dia-stats span { display: block; font-size: 11.5px; color: var(--text4); }
+html[data-visual="novo"] .vn-dia-stats b { font-size: 19px; font-weight: 700; color: var(--text1); font-variant-numeric: tabular-nums; }
+html[data-visual="novo"] .vn-dia-stats b small { font-size: 12px; font-weight: 500; color: var(--text5); }
+html[data-visual="novo"] .vn-dia-stats b.ok { color: var(--green); }
+html[data-visual="novo"] .vn-dia-stats b.ruim { color: var(--red); }
+html[data-visual="novo"] .vn-dia-ctrl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+html[data-visual="novo"] .vn-chips { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0; }
+html[data-visual="novo"] .vn-chip { height: 28px; padding: 0 11px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text3); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
+html[data-visual="novo"] .vn-chip:hover { border-color: color-mix(in srgb, var(--blue) 40%, transparent); color: var(--text1); }
+html[data-visual="novo"] .vn-chip.ativo { background: var(--blue); border-color: var(--blue); color: #fff; }
+html[data-visual="novo"] .vn-seg { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border); }
+html[data-visual="novo"] .vn-seg button { height: 24px; padding: 0 10px; border: 0; border-radius: 7px; background: none; color: var(--text4);
+  font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; }
+html[data-visual="novo"] .vn-seg button.ativo { background: var(--surface); color: var(--text1); font-weight: 600; box-shadow: 0 1px 2px rgba(16,24,40,.08); }
+html[data-visual="novo"] .vn-dia-leg { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--text4); margin: 0 0 6px 2px; }
+html[data-visual="novo"] .vn-dia-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+html[data-visual="novo"] .vn-dia-lista { display: flex; flex-direction: column; gap: 2px; max-height: 320px; overflow: auto;
+  margin: 0 -6px; padding: 0 6px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+html[data-visual="novo"] .vn-dia-linha { display: grid; grid-template-columns: 34px minmax(0, 1.25fr) minmax(0, 2fr) 74px; align-items: center;
+  gap: 12px; padding: 8px; border-radius: 12px; cursor: default; transition: background .12s; }
+html[data-visual="novo"] .vn-dia-linha:hover { background: var(--surface2); }
+html[data-visual="novo"] .vn-av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+  font-size: 11.5px; font-weight: 700; }
+html[data-visual="novo"] .vn-dia-nome { min-width: 0; }
+html[data-visual="novo"] .vn-dia-nome b, html[data-visual="novo"] .vn-dia-nome span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html[data-visual="novo"] .vn-dia-nome b { font-size: 13px; font-weight: 600; color: var(--text1); }
+html[data-visual="novo"] .vn-dia-nome span { font-size: 11.5px; color: var(--text5); margin-top: 2px; }
+html[data-visual="novo"] .vn-livres { font-style: normal; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; margin-left: 4px;
+  background: var(--vn-ok-bg); color: var(--green); }
+html[data-visual="novo"] .vn-dia-barra { display: flex; height: 10px; border-radius: 999px; background: var(--vn-grade); overflow: hidden; gap: 2px; }
+html[data-visual="novo"] .vn-dia-barra i, html[data-visual="novo"] .vn-dia-leg i { display: block; }
+html[data-visual="novo"] .vn-dia-barra i { height: 100%; border-radius: 2px; }
+html[data-visual="novo"] .vn-dia-barra i:first-child { border-radius: 999px 2px 2px 999px; }
+html[data-visual="novo"] .vn-dia-barra i[style^="width:0.00%"] { display: none; }
+html[data-visual="novo"] i.ag { background: var(--blue); }
+html[data-visual="novo"] i.fa { background: var(--red); }
+html[data-visual="novo"] i.li { background: color-mix(in srgb, var(--green) 55%, transparent); }
+html[data-visual="novo"] i.ou { background: var(--vn-grade); }
+html[data-visual="novo"] .vn-dia-leg i { display: inline-block; }
+html[data-visual="novo"] .vn-dia-pct { text-align: right; }
+html[data-visual="novo"] .vn-dia-pct b { display: block; font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+html[data-visual="novo"] .vn-dia-pct span { font-size: 11px; color: var(--text5); }
+/* Ocupação por unidade (ao lado da Taxa de Ocupação Geral) e legenda da média nas barras */
+html[data-visual="novo"] .vn-unis { flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 4px; margin-top: 8px; }
+html[data-visual="novo"] .vn-uni { display: flex; align-items: center; gap: 12px; padding: 7px 8px; border-radius: 12px; transition: background .12s; }
+html[data-visual="novo"] .vn-uni:hover { background: var(--surface2); }
+html[data-visual="novo"] .vn-uni-anel { width: 40px; height: 40px; flex-shrink: 0; }
+html[data-visual="novo"] .vn-uni-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+html[data-visual="novo"] .vn-uni-topo { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+html[data-visual="novo"] .vn-uni-topo b { font-size: 13px; font-weight: 600; color: var(--text1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html[data-visual="novo"] .vn-uni-topo span { font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+html[data-visual="novo"] .vn-uni-sub { font-size: 11.5px; color: var(--text5); }
+html[data-visual="novo"] .vn-uni-sub .li { color: var(--green); font-weight: 600; }
+html[data-visual="novo"] .vn-uni .vn-dia-barra { height: 7px; }
+html[data-visual="novo"] .vn-barras-leg { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--text4); margin-top: 8px; }
+html[data-visual="novo"] .vn-barras-leg i { width: 16px; border-top: 1.5px dashed var(--text4); }
+
+/* Turnos do dia (um dia só no filtro) */
+html[data-visual="novo"] .vn-turnos { flex: 1; display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+html[data-visual="novo"] .vn-turno { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px;
+  padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface2); transition: border-color .15s; }
+html[data-visual="novo"] .vn-turno:hover { border-color: color-mix(in srgb, var(--blue) 35%, transparent); }
+html[data-visual="novo"] .vn-turno.maior { background: var(--vn-ativo-bg); border-color: color-mix(in srgb, var(--blue) 30%, transparent); }
+html[data-visual="novo"] .vn-turno-cab { display: flex; align-items: center; gap: 8px; }
+html[data-visual="novo"] .vn-turno-cab b { font-size: 14px; font-weight: 650; color: var(--text1); }
+html[data-visual="novo"] .vn-turno-cab em { margin-left: auto; font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: var(--blue); color: #fff; }
+html[data-visual="novo"] .vn-turno-ico { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--surface); border: 1px solid var(--border); color: var(--amber); }
+html[data-visual="novo"] .vn-turno-ico svg { width: 16px; height: 16px; }
+html[data-visual="novo"] .vn-turno-corpo { display: flex; align-items: center; gap: 16px; }
+html[data-visual="novo"] .vn-turno-anel { position: relative; width: 74px; height: 74px; flex-shrink: 0; }
+html[data-visual="novo"] .vn-anel { width: 100%; height: 100%; display: block; }
+html[data-visual="novo"] .vn-turno-anel span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums; }
+html[data-visual="novo"] .vn-turno-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+html[data-visual="novo"] .vn-turno-num { font-size: 12.5px; color: var(--text4); }
+html[data-visual="novo"] .vn-turno-num b { font-size: 20px; font-weight: 700; color: var(--text1); margin-right: 2px; }
+html[data-visual="novo"] .vn-turno-det { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11.5px; color: var(--text4); }
+html[data-visual="novo"] .vn-turno-det .li { color: var(--green); font-weight: 600; }
+html[data-visual="novo"] .vn-turno-det .fa { color: var(--red); }
+html[data-visual="novo"] .vn-turno-dica { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 10px 12px; border-radius: 12px;
+  font-size: 12.5px; color: var(--text2); background: var(--vn-ok-bg); }
+html[data-visual="novo"] .vn-turno-dica svg { width: 17px; height: 17px; color: var(--green); flex-shrink: 0; }
+html[data-visual="novo"] .vn-turno-dica b { color: var(--text1); }
+@media (max-width: 680px) {
+  html[data-visual="novo"] .vn-dia-stats { grid-template-columns: 1fr 1fr; }
+  html[data-visual="novo"] .vn-dia-linha { grid-template-columns: 34px minmax(0, 1fr) 64px; }
+  html[data-visual="novo"] .vn-dia-barra { grid-column: 2 / 4; }
+}
+html[data-visual="novo"] .vn-medidor-formula { text-align: center; font-size: 11.5px; color: var(--text5); margin: 2px 0 8px; }
+html[data-visual="novo"] .occ-title > span:first-child { display: none; }
+html[data-visual="novo"] .vn-medidor-rodape { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+html[data-visual="novo"] .vn-medidor-rodape div { background: var(--surface2); border-radius: 10px; padding: 8px 10px; }
+html[data-visual="novo"] .vn-medidor-rodape span { display: block; font-size: 11.5px; color: var(--text4); }
+html[data-visual="novo"] .vn-medidor-rodape b { font-size: 15px; color: var(--text1); }
+
+/* ---------- Seções, tabelas e cartões existentes ---------- */
+html[data-visual="novo"] .section-title { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin: 30px 0 12px; }
+html[data-visual="novo"] .section-accent, html[data-visual="novo"] .section-title > span:not([id]):first-of-type { display: none; }
+html[data-visual="novo"] .occ-card, html[data-visual="novo"] .table-card, html[data-visual="novo"] .info-card {
+  border-radius: 16px; box-shadow: var(--vn-sombra); }
+html[data-visual="novo"] .occ-card:hover, html[data-visual="novo"] .info-card:hover { transform: none; }
+html[data-visual="novo"] .table-card thead tr { background: transparent; }
+html[data-visual="novo"] .table-card thead th { background: var(--surface); font-size: 11px; font-weight: 600; color: var(--text5);
+  text-transform: uppercase; letter-spacing: 0.04em; }
+html[data-visual="novo"] tbody td { font-size: 13px; border-bottom: 1px solid var(--border); }
+html[data-visual="novo"] tbody tr:last-child td { border-bottom: 0; }
+html[data-visual="novo"] tbody tr:hover { background: var(--surface2); }
+html[data-visual="novo"] .prof-name { font-weight: 600; }
+html[data-visual="novo"] .info-card-icon { border-radius: 10px; background: var(--surface2); }
+html[data-visual="novo"] .chat-head { background: linear-gradient(135deg, #152eae, #0a24e9); }
+html[data-visual="novo"] .chat-msg.user { background: var(--blue); }
+html[data-visual="novo"] .chat-panel { border-radius: 18px; }
+html[data-visual="novo"] .chat-fab { background: linear-gradient(135deg, #0a24e9, #152eae); box-shadow: 0 10px 26px rgba(10, 36, 233, 0.35); }
+
+/* Recolher o menu fixo: alça na borda (fica visível recolhido); recolhido = só ícones + o "S" do logo */
+html[data-visual="novo"] .vn-alca { display: none; }
+@media (min-width: 1100px) {
+  html[data-visual="novo"] body { transition: padding-left .25s ease; }
+  html[data-visual="novo"] .sidebar { transition: width .25s ease; }
+  html[data-visual="novo"] .vn-alca { position: fixed; z-index: 160; left: 248px; top: 50%; transform: translate(-50%, -50%);
+    width: 25px; height: 48px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 8px;
+    color: var(--blue); background: var(--surface); cursor: pointer; box-shadow: 0 3px 10px rgba(39, 50, 74, .07);
+    transition: left .25s ease, background .15s ease; }
+  html[data-visual="novo"] .vn-alca:hover { background: var(--vn-ativo-bg); }
+  html[data-visual="novo"] .vn-alca svg { transition: transform .25s ease; }
+  html.vn-recolhido[data-visual="novo"] body { padding-left: 72px; }
+  html.vn-recolhido[data-visual="novo"] .sidebar { width: 72px; }
+  html.vn-recolhido[data-visual="novo"] .vn-alca { left: 72px; }
+  html.vn-recolhido[data-visual="novo"] .vn-alca svg { transform: rotate(180deg); }
+  /* recolhido: some a palavra e entra o quadrado laranja do logo */
+  html.vn-recolhido[data-visual="novo"] .sidebar-badge.marca { height: 44px; }
+  html.vn-recolhido[data-visual="novo"] .sidebar-badge.marca img:not(.vn-icone-recolhido) { display: none; }
+  html.vn-recolhido[data-visual="novo"] .sidebar-badge.marca img.vn-icone-recolhido { display: block; width: 44px; height: 44px; border-radius: 12px;
+    transform: none !important; box-shadow: 0 4px 12px rgba(236, 120, 10, .25); }
+  html.vn-recolhido[data-visual="novo"] .sec-h,
+  html.vn-recolhido[data-visual="novo"] .sidebar-link .left span:last-child,
+  html.vn-recolhido[data-visual="novo"] .sidebar-link .hint,
+  html.vn-recolhido[data-visual="novo"] .vn-nexa-lateral b,
+  html.vn-recolhido[data-visual="novo"] .vn-nexa-lateral p,
+  html.vn-recolhido[data-visual="novo"] .vn-nexa-lateral button { display: none; }
+  html.vn-recolhido[data-visual="novo"] .sidebar-content { padding: 14px 10px; }
+  html.vn-recolhido[data-visual="novo"] .sidebar-link { justify-content: center; padding: 10px 0; }
+  html.vn-recolhido[data-visual="novo"] .sidebar-link .left { justify-content: center; }
+  html.vn-recolhido[data-visual="novo"] .sidebar-link.vn-ativo::before { left: -10px; }
+  html.vn-recolhido[data-visual="novo"] .vn-nexa-lateral { margin: 10px auto; padding: 10px; cursor: pointer; }
+}
+
+/* Menu em gaveta (abaixo de 1100 px / zoom alto): botão ☰ ao lado do logo; o logo sem o traço vertical solto */
+html[data-visual="novo"] .vn-menu-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text2); display: grid; place-items: center; cursor: pointer; flex-shrink: 0; }
+html[data-visual="novo"] .vn-menu-btn svg { width: 19px; height: 19px; }
+html[data-visual="novo"] .vn-menu-btn:hover { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 40%, transparent); }
+@media (max-width: 1099px) {
+  html[data-visual="novo"] .topbar-logo.marca { border-right: 0; padding-right: 0; }
+}
+
+/* ---------- Telas menores ---------- */
+@media (max-width: 1280px) { html[data-visual="novo"] .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1100px) {
+  html[data-visual="novo"] .vn-graficos { grid-template-columns: 1fr; }
+  html[data-visual="novo"] .vn-nexa-lateral { display: none; }
+}
+@media (max-width: 680px) {
+  html[data-visual="novo"] .kpi-grid { grid-template-columns: 1fr 1fr; }
+  html[data-visual="novo"] .main, html[data-visual="novo"] .topbar { padding-left: 14px; padding-right: 14px; }
+  html[data-visual="novo"] .vn-cabecalho .vn-acoes { margin-left: 0; width: 100%; }
+}

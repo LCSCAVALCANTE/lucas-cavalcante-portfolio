@@ -1,0 +1,1 @@
+import{o as e}from"./page-shell-3N5xICNH.js";import{o as t,s as n}from"./index-DzbfY9kC.js";var r=e();function i(){let{status:e}=t.useSearch();return(0,r.jsx)(n,{selecaoInicial:e===void 0?void 0:e===`todos`?{}:{status:[e]}})}export{i as component};

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MODO DEMO: logo neutro e ficticio (mesmo formato 500x500 do logo original). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <g fill="none" stroke="#E8830F" stroke-width="13" stroke-linecap="round">
+    <circle cx="250" cy="150" r="58"/>
+    <path d="M250 118v64M218 150h64"/>
+  </g>
+  <g fill="#E8830F" font-family="'Segoe UI', Helvetica, Arial, sans-serif" text-anchor="middle">
+    <text x="250" y="300" font-size="96" font-weight="600" letter-spacing="3">CLÍNICA</text>
+    <text x="250" y="388" font-size="80" font-weight="300" letter-spacing="14">DEMO</text>
+  </g>
+  <text x="250" y="436" fill="#8a8378" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="21" letter-spacing="5" text-anchor="middle">PAINEL DE DEMONSTRAÇÃO</text>
+</svg>

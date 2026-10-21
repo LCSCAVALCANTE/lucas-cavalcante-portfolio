@@ -10,14 +10,26 @@
   .pbx { --ac:#E8830F; --ac-d:#cf7400; --ac-soft:rgba(232,131,15,.14); --ac-tint:#fdf1e3; --ac-text:#9a5a06;
          font-family: "Segoe UI", system-ui, sans-serif; color: #2b2a28; background: #f4f2ef; border: 1px solid #e3ded7; border-radius: 14px; overflow: hidden; max-width: 1520px; margin: 0 auto; box-shadow: 0 10px 30px rgba(80,50,10,.08); }
   .pbx * { box-sizing: border-box; }
-  .pbx .gate { min-height: 520px; display: flex; align-items: center; justify-content: center; background: radial-gradient(120% 120% at 50% 0%, #fff 0%, #faf7f2 60%, #f4ede2 100%); padding: 24px; }
-  .pbx .gate-card { width: 340px; background: #fff; border: 1px solid #efe7da; border-radius: 16px; padding: 32px 28px; box-shadow: 0 12px 34px rgba(120,70,10,.12); text-align: center; }
+  .pbx .gate { min-height: 520px; display: flex; align-items: center; justify-content: center; background: radial-gradient(120% 120% at 50% 0%, #fff 0%, #faf8f5 60%, #f3f0eb 100%); padding: 24px; }
+  .pbx .gate-card { width: 340px; background: #fff; border: 1px solid #e8e0d6; border-radius: 16px; padding: 32px 28px; box-shadow: 0 12px 34px rgba(54,42,28,.12); text-align: center; }
+  /* Enquanto a tela de LOGIN esta visivel, o container .pbx perde a
+     aparencia de "caixa" (fundo/borda/sombra/max-width) e o gate ocupa a
+     tela inteira - mesmo layout do painel comercial, onde o login fica
+     fora do card do app. A classe e' colocada/removida no <body> pelo
+     componente Login (useEffect), entao so' vale enquanto ele esta na tela. */
+  body.login-mode { padding: 0; }
+  body.login-mode .pbx { background: none; border: 0; border-radius: 0; box-shadow: none; max-width: none; }
+  body.login-mode .pbx .gate { min-height: 100vh; }
   .pbx .gate-card img.logo { width: 170px; height: auto; margin: 0 auto 6px; display: block; }
   .pbx .gate-sub { color: #8a8378; font-size: 12.5px; margin: 0 0 18px; }
   .pbx label { display: block; font-size: 12px; color: #8a8378; margin: 12px 0 5px; text-align: left; }
   .pbx input { width: 100%; height: 40px; padding: 0 12px; border: 1px solid #d9d2c7; border-radius: 9px; font-size: 14px; background: #fff; color: #2b2a28; transition: border-color .15s, box-shadow .15s; }
   .pbx input:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px var(--ac-soft); }
-  .pbx .btn { width: 100%; height: 42px; margin-top: 20px; background: var(--ac); color: #fff; border: 0; border-radius: 9px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .15s, transform .08s; }
+  /* Anel de foco dos campos de LOGIN especificamente com o tom opaco
+     (nao translucido) usado no painel comercial - so' dentro de .gate,
+     nao mexe no foco dos outros inputs do app. */
+  .pbx .gate input:focus { box-shadow: 0 0 0 3px #fff2e2; }
+  .pbx .btn { width: 100%; height: 42px; margin-top: 20px; background: var(--ac); color: #fff; border: 0; border-radius: 9px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .15s, transform .08s; }
   .pbx .btn:hover { background: var(--ac-d); }
   .pbx .btn:active { transform: scale(.985); }
   .pbx .btn:disabled { opacity: .6; cursor: default; }
@@ -120,59 +132,251 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- MODO DEMO: supabase-js (CDN) removido; cliente falso e dados ficticios neste script -->
+<script>
+// MODO DEMO ================================================================
+// Preview publico do portfolio. Este bloco substitui o supabase-js (CDN) por
+// um cliente FALSO, em memoria: nenhuma chamada de rede acontece e todos os
+// dados sao ficticios, gerados aqui no navegador. A semente e' fixa por
+// dia/unidade/profissional (o mesmo dia sempre gera os mesmos numeros) e a
+// janela acompanha a data de hoje, para o painel nunca abrir vazio.
+// O restante da pagina e' o codigo de producao; as unicas alteracoes estao
+// marcadas com "MODO DEMO".
+// ==========================================================================
+var MODO_DEMO = (function () {
+  "use strict";
+
+  // PRNG com semente em texto (FNV-1a + mulberry32): deterministico.
+  function rng(semente) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < semente.length; i++) { h ^= semente.charCodeAt(i); h = Math.imul(h, 16777619); }
+    let s = h >>> 0;
+    return function () {
+      s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const pad = n => String(n).padStart(2, "0");
+  const iso = dt => dt.getFullYear() + "-" + pad(dt.getMonth() + 1) + "-" + pad(dt.getDate());
+  const partes = s => s.split("-").map(Number);
+  const addDays = (s, n) => { const [y, m, d] = partes(s); return iso(new Date(y, m - 1, d + n)); };
+  const addMonths = (s, n) => {
+    const [y, m, d] = partes(s);
+    const ultimo = new Date(y, m - 1 + n + 1, 0).getDate();
+    return iso(new Date(y, m - 1 + n, Math.min(d, ultimo)));
+  };
+  const hoje = iso(new Date());
+  // 1o dia do mes, "meses" meses antes do mes atual
+  const inicioJanela = meses => { const [y, m] = partes(hoje); return iso(new Date(y, m - 1 - meses, 1)); };
+  function dias(desde) { const out = []; for (let s = desde; s <= hoje; s = addDays(s, 1)) out.push(s); return out; }
+  const diaDaSemana = s => { const [y, m, d] = partes(s); return new Date(y, m - 1, d).getDay(); };
+  const r2 = v => Math.round(v * 100) / 100;
+  const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+  function pickW(r, pares) {
+    let t = 0; pares.forEach(p => { t += p[1]; });
+    let x = r() * t;
+    for (const p of pares) { x -= p[1]; if (x < 0) return p[0]; }
+    return pares[pares.length - 1][0];
+  }
+  function binom(r, n, p) { let k = 0; for (let i = 0; i < n; i++) if (r() < p) k++; return k; }
+  const gauss = r => Math.sqrt(-2 * Math.log(r() || 1e-9)) * Math.cos(2 * Math.PI * r());
+
+  // GROUP BY keys, SUM(...) - imita as views agregadas do banco.
+  function agg(linhas, chaves, somas) {
+    const m = new Map();
+    for (const l of linhas) {
+      const k = chaves.map(c => l[c]).join("\u0001");
+      let o = m.get(k);
+      if (!o) { o = {}; chaves.forEach(c => { o[c] = l[c]; }); somas.forEach(([c]) => { o[c] = 0; }); m.set(k, o); }
+      somas.forEach(([c, fn]) => { o[c] += fn(l); });
+    }
+    const out = [...m.values()];
+    out.forEach(o => somas.forEach(([c]) => { o[c] = r2(o[c]); }));
+    return out;
+  }
+
+  // Cliente falso com a mesma API encadeavel que o painel usa:
+  // from().select().eq().gte().lt().order().range() / maybeSingle() / single()
+  // e auth.signInWithPassword/signOut. Respeita range() (paginacao) e order().
+  function instalarSupabase(gerarViews) {
+    let views = null;
+    const cache = {};
+    const tabela = nome => { if (!views) views = gerarViews(); return views[nome]; };
+
+    class Consulta {
+      constructor(view) { this.view = view; this.filtros = []; this.ordem = []; this.sig = view; this.ini = null; this.fim = null; this.um = null; }
+      select() { return this; }
+      eq(c, v) { this.filtros.push(r => r[c] === v); this.sig += "|" + c + "=" + v; return this; }
+      gte(c, v) { this.filtros.push(r => r[c] != null && r[c] >= v); this.sig += "|" + c + ">=" + v; return this; }
+      lt(c, v) { this.filtros.push(r => r[c] != null && r[c] < v); this.sig += "|" + c + "<" + v; return this; }
+      order(c, o) { const asc = !(o && o.ascending === false); this.ordem.push([c, asc]); this.sig += "|o:" + c + (asc ? "" : ":desc"); return this; }
+      range(a, b) { this.ini = a; this.fim = b; return this; }
+      limit(n) { this.ini = 0; this.fim = n - 1; return this; }
+      maybeSingle() { this.um = "talvez"; return this; }
+      single() { this.um = "um"; return this; }
+      executar() {
+        const base = tabela(this.view);
+        if (!base) {
+          console.warn("[MODO DEMO] view sem dados ficticios:", this.view);
+          return { data: null, error: { message: 'relation "' + this.view + '" does not exist (MODO DEMO)' } };
+        }
+        let linhas = cache[this.sig];
+        if (!linhas) {
+          linhas = base.filter(r => this.filtros.every(f => f(r)));
+          const ordem = this.ordem;
+          if (ordem.length) linhas.sort((x, y) => {
+            for (const [c, asc] of ordem) {
+              const a = x[c], b = y[c];
+              if (a === b) continue;
+              if (a == null) return 1;            // nulls last, como o PostgREST
+              if (b == null) return -1;
+              return (a < b ? -1 : 1) * (asc ? 1 : -1);
+            }
+            return 0;
+          });
+          cache[this.sig] = linhas;
+        }
+        linhas = this.ini === null ? linhas.slice() : linhas.slice(this.ini, this.fim + 1);
+        if (this.um) {
+          if (this.um === "um" && linhas.length !== 1) return { data: null, error: { message: "JSON object requested, multiple (or no) rows returned" } };
+          return { data: linhas[0] || null, error: null };
+        }
+        return { data: linhas, error: null };
+      }
+      then(ok, falha) { return new Promise(res => setTimeout(res, 10)).then(() => this.executar()).then(ok, falha); }
+    }
+
+    const auth = {
+      signInWithPassword: async ({ email }) => ({ data: { user: { id: "demo-user", email: email }, session: { access_token: "demo" } }, error: null }),
+      signOut: async () => ({ error: null }),
+      getSession: async () => ({ data: { session: null }, error: null }),
+      getUser: async () => ({ data: { user: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } })
+    };
+    window.supabase = { createClient: () => ({ from: v => new Consulta(v), auth: auth }) };
+  }
+
+  return { rng, pad, iso, addDays, addMonths, hoje, inicioJanela, dias, diaDaSemana, r2, pick, pickW, binom, gauss, agg, instalarSupabase };
+})();
+// MODO DEMO: dados ficticios do Painel de Propostas. Gera propostas com
+// itens (12 meses ate hoje) e monta cada view do schema "propostas_cofre"
+// com as mesmas colunas que o painel le, por agregacao dessas propostas -
+// assim os numeros batem entre as abas, como no banco real.
+MODO_DEMO.instalarSupabase(function () {
+  const D = MODO_DEMO;
+  const UNIDADES = [["Unidade Centro", 1.25], ["Unidade Jardins", 1.0], ["Unidade Paulista", 0.9], ["Unidade Norte", 0.75], ["Unidade Sul", 0.65]];
+  const PROFS = {
+    "Unidade Centro": ["ANA CLARA MENDES", "BRUNO FARIAS LIMA", "CAMILA ROCHA DUARTE", "DANIEL PRADO SOUZA", "FERNANDA ALVES COSTA", "MARIANA TEIXEIRA"],
+    "Unidade Jardins": ["GABRIELA NUNES", "HELENA CASTRO VIANA", "IGOR MATOS RIBEIRO", "JULIANA PIRES", "ANA CLARA MENDES"],
+    "Unidade Paulista": ["KARINA MOURA", "LEONARDO BARRETO", "PATRICIA LEMOS", "RENATA SOARES", "BRUNO FARIAS LIMA"],
+    "Unidade Norte": ["SABRINA FONTES", "TATIANA REIS", "VANESSA QUEIROZ", "RODRIGO SALES"],
+    "Unidade Sul": ["ALINE CARVALHO", "BEATRIZ MONTEIRO", "CAROLINA DIAS", "EDUARDO FREITAS"]
+  };
+  // [procedimento, preco de tabela, qtd minima, qtd maxima, peso]
+  const PROCS = [
+    ["Toxina botulínica", 1800, 1, 1, 10],
+    ["Preenchimento com ácido hialurônico", 2400, 1, 2, 7],
+    ["Bioestimulador de colágeno", 3200, 1, 2, 5],
+    ["Laser fracionado", 1500, 1, 3, 6],
+    ["Depilação a laser", 380, 4, 10, 8],
+    ["Ultrassom microfocado", 4200, 1, 1, 3],
+    ["Peeling químico", 380, 2, 4, 5],
+    ["Limpeza de pele", 220, 1, 4, 6],
+    ["Microagulhamento", 650, 2, 4, 4],
+    ["Radiofrequência", 480, 3, 6, 4],
+    ["Criolipólise", 1300, 1, 3, 4],
+    ["Fios de PDO", 2800, 1, 1, 2],
+    ["Skinbooster", 1700, 1, 2, 4],
+    ["Luz pulsada", 420, 3, 6, 4]
+  ];
+  const PACOTES = [
+    ["Pacote Rejuvenescimento", ["Toxina botulínica", "Preenchimento com ácido hialurônico", "Skinbooster"]],
+    ["Pacote Verão", ["Depilação a laser", "Luz pulsada", "Limpeza de pele"]],
+    ["Pacote Corpo em Forma", ["Criolipólise", "Radiofrequência"]],
+    ["Programa Pele Perfeita", ["Laser fracionado", "Peeling químico", "Microagulhamento"]],
+    ["Pacote Noiva", ["Limpeza de pele", "Toxina botulínica", "Skinbooster", "Peeling químico"]],
+    ["Combo Facial Premium", ["Ultrassom microfocado", "Bioestimulador de colágeno", "Fios de PDO"]]
+  ];
+  // "Aprovada pelo cliente" existe na origem e o painel esconde (STATUS_OCULTOS).
+  const STATUS = [["Executada", 55], ["Aguardando aprovação do cliente", 22], ["Rejeitada pelo cliente", 18], ["Aprovada pelo cliente", 5]];
+  const PROC = {}; PROCS.forEach(p => { PROC[p[0]] = p; });
+  const PESOS = PROCS.map(p => [p[0], p[4]]);
+
+  const props = [], itens = [];
+  D.dias(D.inicioJanela(12)).forEach(dia => {
+    const wd = D.diaDaSemana(dia);
+    if (wd === 0) return;                                   // domingo fechado
+    const sazonal = 1 + 0.15 * Math.sin(Number(dia.slice(5, 7)) / 12 * 2 * Math.PI);
+    UNIDADES.forEach(([u, fator]) => {
+      const r = D.rng("propostas|" + u + "|" + dia);
+      const n = Math.round((wd === 6 ? 2.5 : 5.5) * fator * sazonal * (0.6 + r() * 0.8));
+      for (let i = 0; i < n; i++) {
+        const prof = D.pick(r, PROFS[u]);
+        const status = D.pickW(r, STATUS);
+        const pac = r() < 0.35 ? D.pick(r, PACOTES) : null;
+        const nomes = pac ? pac[1].filter(() => r() < 0.75) : [];
+        if (pac && !nomes.length) nomes.push(pac[1][0]);
+        if (!pac) {
+          const k = 1 + Math.floor(r() * r() * 3);
+          for (let j = 0; j < k; j++) { const p = D.pickW(r, PESOS); if (!nomes.includes(p)) nomes.push(p); }
+        }
+        const desconto = r() < 0.4 ? 0 : 0.03 + r() * 0.12;
+        let tabela = 0, final = 0, qtdItens = 0;
+        nomes.forEach(nome => {
+          const [, preco, qmin, qmax] = PROC[nome];
+          const qtd = qmin + Math.floor(r() * (qmax - qmin + 1));
+          const bruto = Math.round(preco * (0.9 + r() * 0.25) / 10) * 10 * qtd;
+          const valor = D.r2(bruto * (1 - desconto));
+          tabela += bruto; final += valor; qtdItens += qtd;
+          itens.push({ unidade_nome: u, status_proposta: status, dia, profissional_proposta: prof,
+            nome_procedimento: nome, nome_pacote: pac ? pac[0] : null, valor, qtd });
+        });
+        props.push({ unidade_nome: u, status_proposta: status, dia, profissional_proposta: prof,
+          nome_pacote: pac ? pac[0] : null, valor_itens: final, valor_proposta: tabela, qtd_itens: qtdItens });
+      }
+    });
+  });
+
+  const comPacote = itens.filter(x => x.nome_pacote), propsPacote = props.filter(x => x.nome_pacote);
+  const valor = x => x.valor, valorItens = x => x.valor_itens, valorProposta = x => x.valor_proposta, um = () => 1;
+  return {
+    app_user_unidade: [{ user_id: "demo-user", unidade_nome: null, is_master: true }],
+    // grao item: valor = valor_final_item
+    vw_dia: D.agg(props, ["unidade_nome", "status_proposta", "dia"], [["valor", valorItens], ["qtd_propostas", um], ["qtd_itens", x => x.qtd_itens]]),
+    vw_prof_dia: D.agg(props, ["unidade_nome", "status_proposta", "profissional_proposta", "dia"], [["valor", valorItens]]),
+    vw_proc_dia: D.agg(itens, ["unidade_nome", "status_proposta", "nome_procedimento", "dia"], [["valor", valor], ["qtd_itens", x => x.qtd]]),
+    vw_pacote_dia: D.agg(comPacote, ["unidade_nome", "status_proposta", "nome_pacote", "dia"], [["valor", valor]]),
+    vw_prof_proc: D.agg(itens, ["unidade_nome", "status_proposta", "profissional_proposta", "dia", "nome_procedimento"], [["valor", valor], ["qtd", x => x.qtd]]),
+    vw_pacote_solic: D.agg(comPacote, ["unidade_nome", "status_proposta", "dia", "profissional_proposta", "nome_pacote", "nome_procedimento"], [["valor", valor]]),
+    // grao proposta: valor = valor_proposta (status != Executada)
+    vw_dia_proposta: D.agg(props, ["unidade_nome", "status_proposta", "dia"], [["valor", valorProposta]]),
+    vw_prof_dia_proposta: D.agg(props, ["unidade_nome", "status_proposta", "profissional_proposta", "dia"], [["valor", valorProposta]]),
+    vw_pacote_dia_proposta: D.agg(propsPacote, ["unidade_nome", "status_proposta", "nome_pacote", "dia"], [["valor", valorProposta]])
+  };
+});
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-  // MODO DEMO: preview publico do portfolio. Nenhuma chamada de rede real
-  // acontece aqui - todos os dados abaixo sao gerados no navegador so para
-  // esta demonstracao. A logica de agregacao, filtros, graficos e
-  // drill-down e a mesma do painel de producao; só a fonte dos dados muda.
+  // Backend PRÓPRIO (Postgres + PostgREST no Dokploy, schema "propostas_cofre"),
+  // NÃO é o Supabase do poew-app — mesmo padrão do painel-estoque, reaproveitando
+  // o Postgres/PostgREST que já existem lá, só que com schema novo.
+  // MODO DEMO: URLs e chaves reais removidas. "supabase" aqui e' o cliente
+  // falso definido no script anterior (dados ficticios em memoria).
+  const SUPA_URL = "demo"; // MODO DEMO
+  const SUPA_ANON = "demo"; // MODO DEMO
   const AC = "#E8830F";
-  const DEMO_UNIDADES = ["Unidade Centro", "Unidade Sul", "Unidade Norte"];
-  const DEMO_PROFISSIONAIS = ["Ana Souza", "Bruno Lima", "Camila Rocha", "Diego Alves", "Elaine Prado"];
-  const DEMO_PROCEDIMENTOS = ["Procedimento A", "Procedimento B", "Procedimento C", "Procedimento D"];
-  const DEMO_PACOTES = ["Pacote Basico", "Pacote Premium", "Pacote Anual"];
-  function seededRandom(seed){ let s = seed % 2147483647; if(s <= 0) s += 2147483646; return () => (s = s * 16807 % 2147483647) / 2147483647; }
-  const demoRnd = seededRandom(42);
-  function buildDemoEvents(){
-    const events = []; const today = new Date();
-    for(let i = 0; i < 150; i++){
-      const d = new Date(today); d.setDate(d.getDate() - i);
-      const dia = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-      DEMO_UNIDADES.forEach(unidade => {
-        const n = 1 + Math.floor(demoRnd()*4);
-        for(let j = 0; j < n; j++){
-          const r = demoRnd();
-          const status = r<0.55 ? "Executada" : r<0.78 ? "Aguardando aprovação" : r<0.85 ? "Aprovada pelo cliente" : "Rejeitada";
-          const profissional = DEMO_PROFISSIONAIS[Math.floor(demoRnd()*DEMO_PROFISSIONAIS.length)];
-          const procedimento = DEMO_PROCEDIMENTOS[Math.floor(demoRnd()*DEMO_PROCEDIMENTOS.length)];
-          const pacote = demoRnd() < 0.3 ? DEMO_PACOTES[Math.floor(demoRnd()*DEMO_PACOTES.length)] : null;
-          const valor = Math.round((800 + demoRnd()*3600) * 100) / 100;
-          events.push({ unidade, status, profissional, procedimento, pacote, dia, valor });
-        }
-      });
-    }
-    return events;
-  }
-  const DEMO_EVENTS = buildDemoEvents();
-  function demoGroup(rows, keys, valueFn){
-    const map = {};
-    rows.forEach(r => {
-      const k = keys.map(k2 => r[k2]).join("||");
-      if(!map[k]) map[k] = Object.assign({}, Object.fromEntries(keys.map(k2 => [k2, r[k2]])), { valor:0, qtd_propostas:0, qtd_itens:0, qtd:0 });
-      map[k].valor += valueFn(r); map[k].qtd_propostas += 1; map[k].qtd_itens += 1; map[k].qtd += 1;
-    });
-    return Object.values(map);
-  }
-  const DEMO_VIEWS = {
-    vw_dia: demoGroup(DEMO_EVENTS, ["unidade","status","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, dia:r.dia, valor:r.valor, qtd_propostas:r.qtd_propostas, qtd_itens:r.qtd_itens })),
-    vw_prof_dia: demoGroup(DEMO_EVENTS, ["unidade","status","profissional","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, profissional_proposta:r.profissional, dia:r.dia, valor:r.valor })),
-    vw_proc_dia: demoGroup(DEMO_EVENTS, ["unidade","status","procedimento","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, nome_procedimento:r.procedimento, dia:r.dia, valor:r.valor })),
-    vw_pacote_dia: demoGroup(DEMO_EVENTS.filter(r=>r.pacote), ["unidade","status","pacote","dia"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, nome_pacote:r.pacote, dia:r.dia, valor:r.valor })),
-    vw_prof_proc: demoGroup(DEMO_EVENTS, ["unidade","status","profissional","dia","procedimento"], r=>r.valor).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, profissional_proposta:r.profissional, dia:r.dia, nome_procedimento:r.procedimento, valor:r.valor, qtd:r.qtd })),
-    vw_dia_proposta: demoGroup(DEMO_EVENTS, ["unidade","status","dia"], r=>r.valor*1.12).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, dia:r.dia, valor:r.valor })),
-    vw_prof_dia_proposta: demoGroup(DEMO_EVENTS, ["unidade","status","profissional","dia"], r=>r.valor*1.12).map(r => ({ unidade_nome:r.unidade, status_proposta:r.status, profissional_proposta:r.profissional, dia:r.dia, valor:r.valor }))
-  };
+  const sb = supabase.createClient(SUPA_URL, SUPA_ANON, { db: { schema: "propostas_cofre" } });
+  // Client SEPARADO, so' pra LOGIN - reaproveita o mesmo Supabase Auth e a
+  // mesma tabela app_user_unidade do poew-app (mesmas credenciais por
+  // unidade + master). Os DADOS deste painel continuam vindo do "sb" acima
+  // (nosso Postgres/PostgREST proprio) - os dois nunca se misturam.
+  const AUTH_URL = "demo"; // MODO DEMO
+  const AUTH_ANON = "demo"; // MODO DEMO
+  const DOMINIO = "@clinicademo.com.br"; // MODO DEMO
+  const sbAuth = supabase.createClient(AUTH_URL, AUTH_ANON);
   const { useState, useEffect } = React;
   const html = htm.bind(React.createElement);
 
@@ -201,12 +405,40 @@
   // dados, pra não precisar filtrar em cada lugar separado.
   const STATUS_OCULTOS = ["Aprovada pelo cliente"];
 
+  // Lista fechada de unidades que o painel deve mostrar - todo o resto
+  // (outras clínicas do mesmo Redshift, ou unidade nula) some do painel
+  // inteiro (filtro, gráficos, tabelas), igual ao STATUS_OCULTOS acima.
+  // MODO DEMO: nomes ficticios no lugar das unidades reais.
+  const UNIDADES_PERMITIDAS = [
+    "Unidade Centro",
+    "Unidade Jardins",
+    "Unidade Norte",
+    "Unidade Paulista",
+    "Unidade Sul",
+  ];
+
+  // Profissionais de teste/fake que nao devem aparecer em nenhuma lista
+  // (ranking, filtro, drill-down) - mesmo padrao dos dois de cima.
+  const PROFISSIONAIS_OCULTOS = ["PROFISSIONAL TESTE"]; // MODO DEMO: nome ficticio
+
   // orderCols: colunas pra ordenar de forma 100% determinística - sem isso,
   // paginar em lotes (range) pode perder ou duplicar linha entre uma página
   // e outra, porque o Postgres nao garante ordem estavel sem ORDER BY.
   async function fetchAll(view, orderCols){
-    const rows = DEMO_VIEWS[view] || [];
-    return rows.filter(r => !STATUS_OCULTOS.includes(r.status_proposta));
+    const out = []; let from = 0; const size = 1000;
+    while(true){
+      let q = sb.from(view).select("*");
+      (orderCols||[]).forEach(c => { q = q.order(c); });
+      const { data, error } = await q.range(from, from+size-1);
+      if(error) throw error;
+      out.push(...data);
+      if(data.length < size) break;
+      from += size;
+    }
+    return out
+      .filter(r => !STATUS_OCULTOS.includes(r.status_proposta))
+      .filter(r => UNIDADES_PERMITIDAS.includes(r.unidade_nome))
+      .filter(r => !PROFISSIONAIS_OCULTOS.includes(r.profissional_proposta));
   }
 
   // Carga "essencial" (o que a Análise Geral/Comparação mostram de cara) -
@@ -235,7 +467,7 @@
     const su = r => sidx[r.status_proposta || "Sem status"];
     const du = dRows.map(r => [uidx[r.unidade_nome], su(r), r.dia, Number(r.valor), Number(r.qtd_propostas), Number(r.qtd_itens)]);
     const dm = {}; pRows.forEach(r => { const k = r.profissional_proposta || "(sem profissional)"; (dm[k] = dm[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
-    const dproc = {}; cRows.forEach(r => { const k = r.nome_procedimento || "(sem procedimento)"; (dproc[k] = dproc[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
+    const dproc = {}; cRows.forEach(r => { const k = r.nome_procedimento || "(sem procedimento)"; (dproc[k] = dproc[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor), Number(r.qtd_itens||0)]); });
     const dpac = {}; kRows.forEach(r => { const k = r.nome_pacote || "(sem pacote)"; (dpac[k] = dpac[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
     const dates = du.map(r => r[2]).sort();
     const anoAtual = String(new Date().getFullYear());
@@ -244,7 +476,7 @@
     const calMin = (dmin ? dmin.slice(0,4) : anoAtual) + "-01-01";
     const statExecutada = statuses.indexOf("Executada");
     return { units, statuses, statExecutada, du, dm, dproc, dpac, dmin, dmax, calMin, calMax: dmax, months,
-      dmd: null, dmp: null, duP: null, dmProp: null };
+      dmd: null, dmp: null, duP: null, dmProp: null, dmPacProp: null };
   }
 
   // Sob demanda: drill profissional -> dia -> procedimento (abas
@@ -264,21 +496,24 @@
   // Sob demanda: metrica valor_proposta (dia + por profissional), so'
   // usada quando o Status selecionado != Executada.
   async function loadPropostaMetrics(user, store){
-    const [diaProp, profProp] = await Promise.all([
+    const [diaProp, profProp, pacProp] = await Promise.all([
       fetchAll("vw_dia_proposta", ["unidade_nome","status_proposta","dia"]).catch(() => []),
-      fetchAll("vw_prof_dia_proposta", ["unidade_nome","status_proposta","profissional_proposta","dia"]).catch(() => [])
+      fetchAll("vw_prof_dia_proposta", ["unidade_nome","status_proposta","profissional_proposta","dia"]).catch(() => []),
+      fetchAll("vw_pacote_dia_proposta", ["unidade_nome","status_proposta","nome_pacote","dia"]).catch(() => [])
     ]);
-    let dpRows = diaProp, ppfRows = profProp;
+    let dpRows = diaProp, ppfRows = profProp, pkRows = pacProp;
     if(!user.isMaster){
       dpRows = dpRows.filter(r => r.unidade_nome === user.unidade);
       ppfRows = ppfRows.filter(r => r.unidade_nome === user.unidade);
+      pkRows = pkRows.filter(r => r.unidade_nome === user.unidade);
     }
     const uidx = {}; store.units.forEach((u,i) => uidx[u] = i);
     const sidx = {}; store.statuses.forEach((s,i) => sidx[s] = i);
     const su = r => sidx[r.status_proposta || "Sem status"];
     const duP = dpRows.map(r => [uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]);
     const dmProp = {}; ppfRows.forEach(r => { const k = r.profissional_proposta || "(sem profissional)"; (dmProp[k] = dmProp[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
-    return { duP, dmProp };
+    const dmPacProp = {}; pkRows.forEach(r => { const k = r.nome_pacote || "Sem pacote"; (dmPacProp[k] = dmPacProp[k]||[]).push([uidx[r.unidade_nome], su(r), r.dia, Number(r.valor)]); });
+    return { duP, dmProp, dmPacProp };
   }
 
   // stat: indice do UNICO status selecionado (nao soma mais de um -
@@ -332,12 +567,15 @@
     store.du.forEach(([u,s,d,vf,qtdp,qtdi]) => { if(pred(u,s,d)){ m[d]=(m[d]||0)+vf; qp[d]=(qp[d]||0)+qtdp; qi[d]=(qi[d]||0)+qtdi; } });
     return Object.keys(m).sort().reverse().map(d => [d, m[d], qp[d], qi[d]]);
   }
+  // 5o elemento da tupla (qtd) e' opcional - so' vw_proc_dia carrega hoje.
+  // Vai como 3o item de cada [dia, valor] -> [dia, valor, qtd], sem quebrar
+  // quem so' desestrutura [d,v] (elemento extra e' ignorado nesses casos).
   function aggEntity(data, pred){
     return Object.entries(data).map(([name, arr]) => {
-      const days = {};
-      arr.forEach(([u,s,d,vf]) => { if(pred(u,s,d)) days[d]=(days[d]||0)+vf; });
-      const dl = Object.keys(days).sort().reverse().map(d => [d, days[d]]);
-      return { name, days: dl, total: dl.reduce((s,r) => s+r[1], 0) };
+      const days = {}, qdays = {};
+      arr.forEach(([u,s,d,vf,qtd]) => { if(pred(u,s,d)){ days[d]=(days[d]||0)+vf; if(qtd!==undefined) qdays[d]=(qdays[d]||0)+qtd; } });
+      const dl = Object.keys(days).sort().reverse().map(d => [d, days[d], qdays[d]||0]);
+      return { name, days: dl, total: dl.reduce((s,r) => s+r[1], 0), qtdTotal: dl.reduce((s,r) => s+(r[2]||0), 0) };
     }).filter(e => e.days.length > 0).sort((a,b) => b.total - a.total);
   }
 
@@ -352,13 +590,18 @@
   }
   // meses: array de "YYYY-MM" - permite comparar grupos com mais de um mes
   // (ex.: mes anterior = [jan/25,fev/25] x mes posterior = [jan/26,fev/26]).
-  function predGrupo(store, unis, meses){
-    return (u,s,d) => (unis.length===0||unis.includes(u)) && s===store.statExecutada && meses.includes(d.slice(0,7));
+  // stat: indice do status selecionado (igual ao resto do painel - um
+  // unico status por vez, valor_final_item x valor_proposta nao se somam).
+  function predGrupo(store, unis, meses, stat){
+    return (u,s,d) => (unis.length===0||unis.includes(u)) && s===stat && meses.includes(d.slice(0,7));
   }
-  function kpiGrupo(store, unis, meses){
-    const pred = predGrupo(store, unis, meses);
+  function kpiGrupo(store, unis, meses, stat, isExecutada){
+    const pred = predGrupo(store, unis, meses, stat);
+    // qtd/dias sempre vem do grao item (qtd_propostas nao muda por metrica de valor);
+    // vf vem de valor_final_item quando Executada, senao de valor_proposta (duP).
     let vf=0, qtd=0;
-    store.du.forEach(([u,s,d,valor,qtdp]) => { if(pred(u,s,d)){ vf+=valor; qtd+=qtdp; } });
+    store.du.forEach(([u,s,d,valor,qtdp]) => { if(pred(u,s,d)){ qtd+=qtdp; if(isExecutada) vf+=valor; } });
+    if(!isExecutada) (store.duP||[]).forEach(([u,s,d,valor]) => { if(pred(u,s,d)) vf+=valor; });
     let dias = 0;
     meses.forEach(ym => { const [y,m] = ym.split("-").map(Number); dias += new Date(y, m, 0).getDate(); });
     return { vf, qtd, ticket: qtd?vf/qtd:0, media: dias?vf/dias:0, dias };
@@ -434,9 +677,11 @@
           : html`<div class="lock"><i class="ti ti-lock"></i>${user.unidade}</div>`}
       </div>
       <div class="fld"><span>Status</span>
-        <select class="uni" value=${stat} onChange=${e => setStat(Number(e.target.value))}>
-          ${store.statuses.map((s,i) => html`<option key=${i} value=${i}>${s}</option>`)}
-        </select>
+        ${page==="proc"
+          ? html`<div class="lock" title="Procedimentos - Detalhado só funciona com Executada: não dá pra medir o valor de um procedimento pelo valor da proposta inteira."><i class="ti ti-lock"></i>Executada</div>`
+          : html`<select class="uni" value=${stat} onChange=${e => setStat(Number(e.target.value))}>
+              ${store.statuses.map((s,i) => html`<option key=${i} value=${i}>${s}</option>`)}
+            </select>`}
       </div>
       <div class="fld"><span>Período</span>
         <div class="seg">
@@ -531,11 +776,11 @@
     const toggleDay = k => setOpenDay(o => ({ ...o, [k]: !o[k] }));
     return html`<${React.Fragment}>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking | top ${top.length} profissionais</div>
+        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking — top ${top.length} profissionais</div>
         <${Chartjs} horizontal=${true} labels=${top.map(e=>e.name)} data=${top.map(e=>e.total)} height=${Math.max(150, top.length*34)} />
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-user"></i>Profissionais | detalhe por dia <small>· ${brl0(grand)}</small></div>
+        <div class="visual-h"><i class="ti ti-user"></i>Profissionais — detalhe por dia <small>· ${brl0(grand)}</small></div>
         <div class="subh">Por dia</div>
         <table>
           <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
@@ -587,8 +832,16 @@
     </>`;
   }
   // Sem filtro de profissional: procedimentos gerais. Com filtro: procedimentos do(s) profissional(is) escolhido(s).
-  function ProcedimentosDetailPage({ entities, dmd, pred, fProfs, topProfs }){
+  function ProcedimentosDetailPage({ entities, dmd, pred, fProfs, topProfs, isExecutada }){
     const [open, setOpen] = useState({});
+    // Fora de "Executada" o valor_final_item do item não é confiável
+    // (proposta ainda não teve preço fechado) e valor_proposta não da
+    // pra dividir por procedimento (1 proposta pode ter varios) - por
+    // isso so' lista os nomes, sem valor, mesma regra da Analise Geral.
+    if(!isExecutada){
+      const nomes = [...new Set(entities.map(e => e.name))].sort();
+      return html`<${ProcCanceladoList} entities=${nomes.map(name => ({ name }))} />`;
+    }
     let procEntities;
     if(fProfs.length === 0){
       procEntities = entities;
@@ -600,13 +853,15 @@
         procs.forEach(p => {
           if(!pred(p.un, p.st, day)) return;
           const pm = procMap[p.proc] = procMap[p.proc] || {};
-          pm[day] = (pm[day]||0) + p.valor;
+          const rec = pm[day] = pm[day] || { valor: 0, qtd: 0 };
+          rec.valor += p.valor; rec.qtd += (p.qtd||0);
         });
       });
       procEntities = Object.entries(procMap).map(([name, days]) => ({
         name,
-        days: Object.entries(days).sort((a,b) => b[0].localeCompare(a[0])).map(([d,v]) => [d,v]),
-        total: Object.values(days).reduce((s,v)=>s+v, 0)
+        days: Object.entries(days).sort((a,b) => b[0].localeCompare(a[0])).map(([d,o]) => [d,o.valor,o.qtd]),
+        total: Object.values(days).reduce((s,o)=>s+o.valor, 0),
+        qtdTotal: Object.values(days).reduce((s,o)=>s+o.qtd, 0),
       })).filter(e=>e.total>0).sort((a,b)=>b.total-a.total);
     }
     const grand = procEntities.reduce((s,e)=>s+e.total,0)||1, maxEnt = Math.max(1, ...procEntities.map(e=>e.total));
@@ -622,11 +877,11 @@
     </div>` : null;
     return html`<${React.Fragment}>${banner}
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking | top ${top.length} procedimentos</div>
+        <div class="visual-h"><i class="ti ti-chart-bar"></i>Ranking — top ${top.length} procedimentos</div>
         <${Chartjs} horizontal=${true} labels=${top.map(e=>e.name)} data=${top.map(e=>e.total)} height=${Math.max(150, top.length*34)} />
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-clipboard-list"></i>Procedimentos | detalhe por dia <small>· ${brl0(grand)}</small></div>
+        <div class="visual-h"><i class="ti ti-clipboard-list"></i>Procedimentos — detalhe por dia <small>· ${brl0(grand)}</small></div>
         <div class="subh">Por dia</div>
         <table>
           <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
@@ -641,44 +896,76 @@
         </table>
         <div class="subh">Por procedimento e dia <small>(clique no nome para expandir)</small></div>
         <table>
-          <thead><tr><th>Procedimento / Dia</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
+          <thead><tr><th>Procedimento / Dia</th><th class="num">Quantidade</th><th class="num">Valor</th><th class="num">% do Total</th></tr></thead>
           <tbody>
             ${procEntities.map(e => html`<${React.Fragment} key=${e.name}>
               <tr class="grp" onClick=${() => toggle(e.name)}>
                 <td><i class=${"ti "+(open[e.name]?"ti-chevron-down":"ti-chevron-right")}></i>${e.name}</td>
+                <td class="num">${(e.qtdTotal||0).toLocaleString("pt-BR")}</td>
                 <td class="num barcell"><div class="bar" style=${{width:(e.total/maxEnt*100)+"%"}}></div><span>${brl(e.total)}</span></td>
                 <td class="num pct">${pct(e.total/grand*100)}</td>
               </tr>
               ${open[e.name] ? e.days.map(d => html`<tr class="day" key=${d[0]}>
-                <td class="ind">${fmtD(d[0])}</td><td class="num">${brl(d[1])}</td><td class="num">${pct(d[1]/grand*100)}</td>
+                <td class="ind">${fmtD(d[0])}</td><td class="num">${(d[2]||0).toLocaleString("pt-BR")}</td><td class="num">${brl(d[1])}</td><td class="num">${pct(d[1]/grand*100)}</td>
               </tr>`) : null}
             </>`)}
-            <tr class="total"><td>Total geral</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
+            <tr class="total"><td>Total geral</td><td class="num">${procEntities.reduce((s,e)=>s+(e.qtdTotal||0),0).toLocaleString("pt-BR")}</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
           </tbody>
         </table>
       </div>
     </>`;
   }
   // Pacotes por profissional solicitante · Pacotes por dia · Pacote x Procedimento
-  function PacotesDetailPage({ user, store, unis, pmode, months, de, ate }){
+  // (so' faz sentido no grao item, ou seja, so' quando o status = Executada -
+  // fora disso, valor_final_item nao e confiavel e valor_proposta nao tem
+  // profissional/procedimento por baixo, so' pacote+dia - ver aggPacoteProposta).
+  function PacotesDetailPage({ user, store, unis, pmode, months, de, ate, statusAtual, isExecutada, pred }){
     const [data, setData] = useState(null);
     const [fProf, setFProf] = useState("");
     const [fProc, setFProc] = useState("");
     const [fPac, setFPac] = useState("");
     const [open, setOpen] = useState({});
     useEffect(() => {
+      if(!isExecutada) return;
       let cancel = false; setData(null);
       fetchAll("vw_pacote_solic", ["unidade_nome","status_proposta","dia","profissional_proposta","nome_pacote","nome_procedimento"]).catch(() => []).then(ps => { if(!cancel) setData({ ps }); });
       return () => { cancel = true; };
-    }, []);
+    }, [isExecutada]);
+    if(!isExecutada){
+      if(store.dmPacProp === null) return html`<div class="visual"><div class="visual-h"><i class="ti ti-package"></i>Pacotes</div><div style=${{padding:"30px 16px",color:"#8a8378"}}><i class="ti ti-loader"></i> Carregando…</div></div>`;
+      const entities = aggEntity(store.dmPacProp || {}, pred);
+      const grand = entities.reduce((s,e)=>s+e.total,0)||1, maxEnt = Math.max(1, ...entities.map(e=>e.total));
+      const dmap = {}; entities.forEach(e => e.days.forEach(([d,v]) => { dmap[d]=(dmap[d]||0)+v; }));
+      const daily = Object.keys(dmap).sort().reverse().map(d => [d, dmap[d]]);
+      const maxDay = Math.max(1, ...daily.map(d=>d[1]));
+      return html`<${React.Fragment}>
+        <${Matrix} title="Por pacote" icon="ti-package" entities=${entities} nameHead="Pacote" />
+        <div class="visual">
+          <div class="visual-h"><i class="ti ti-calendar"></i>Pacotes — por dia <small>· ${daily.length} dia(s) · ${brl0(grand)}</small></div>
+          <table>
+            <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
+            <tbody>
+              ${daily.map(d => html`<tr key=${d[0]}>
+                <td>${fmtD(d[0])}</td>
+                <td class="num barcell"><div class="bar" style=${{width:(d[1]/maxDay*100)+"%"}}></div><span>${brl(d[1])}</span></td>
+                <td class="num pct">${pct(d[1]/grand*100)}</td>
+              </tr>`)}
+              <tr class="total"><td>Total</td><td class="num">${brl(grand)}</td><td class="num">100,0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style=${{padding:"10px 16px",color:"#8a8378",fontSize:"12.5px"}}>Detalhamento por profissional e por procedimento fica disponível só quando o status é Executada (o valor da proposta inteira não dá pra dividir entre profissional/procedimento).</div>
+      </>`;
+    }
     if(!data) return html`<div class="visual"><div class="visual-h"><i class="ti ti-package"></i>Pacotes</div><div style=${{padding:"30px 16px",color:"#8a8378"}}>Carregando…</div></div>`;
     const uniNames = user.isMaster ? unis.map(i => store.units[i]) : [user.unidade];
     const inP = d => pmode === "mes" ? months.includes(d.slice(0,7)) : (d >= de && d <= ate);
     const okUni = un => !user.isMaster || uniNames.length === 0 || uniNames.includes(un);
+    const okStatus = s => s === statusAtual;
     const terms = s => s.split(",").map(t => t.trim().toLowerCase()).filter(Boolean);
     const matchAny = (val, ts) => ts.length === 0 || ts.some(t => (val||"").toLowerCase().includes(t));
     const tProf = terms(fProf), tProc = terms(fProc), tPac = terms(fPac);
-    const psf = data.ps.filter(r => okUni(r.unidade_nome) && inP(r.dia) && matchAny(r.profissional_proposta,tProf) && matchAny(r.nome_procedimento,tProc) && matchAny(r.nome_pacote,tPac));
+    const psf = data.ps.filter(r => okUni(r.unidade_nome) && okStatus(r.status_proposta) && inP(r.dia) && matchAny(r.profissional_proposta,tProf) && matchAny(r.nome_procedimento,tProc) && matchAny(r.nome_pacote,tPac));
 
     const pacMap = {};
     psf.forEach(r => { const nome = r.nome_pacote || "(sem pacote)"; const p = pacMap[nome] = pacMap[nome] || { total:0, solic:{} }; const v = Number(r.valor); p.total += v; p.solic[r.profissional_proposta] = (p.solic[r.profissional_proposta]||0) + v; });
@@ -707,7 +994,7 @@
         <div style=${{fontSize:"11px",color:"#a59c8d",paddingBottom:"7px"}}>separe por vírgula p/ vários termos</div>
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-package"></i>Pacotes | por profissional solicitante <small>· ${pacotes.length} pacote(s) · ${brl0(grandPac)}</small></div>
+        <div class="visual-h"><i class="ti ti-package"></i>Pacotes — por profissional solicitante <small>· ${pacotes.length} pacote(s) · ${brl0(grandPac)}</small></div>
         <table>
           <thead><tr><th>Pacote / Profissional</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
           <tbody>
@@ -724,7 +1011,7 @@
         </table>
       </div>
       <div class="visual">
-        <div class="visual-h"><i class="ti ti-calendar"></i>Pacotes | por dia <small>· ${porDia.length} dia(s) · ${brl0(totalDia)}</small></div>
+        <div class="visual-h"><i class="ti ti-calendar"></i>Pacotes — por dia <small>· ${porDia.length} dia(s) · ${brl0(totalDia)}</small></div>
         <table>
           <thead><tr><th>Dia</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
           <tbody>
@@ -746,7 +1033,7 @@
             <tr class="total"><td>Total</td><td></td><td class="num">${brl(pacProcTot)}</td></tr>
           </tbody>
         </table>
-        ${pacProc.length>200 ? html`<div style=${{padding:"6px 14px 12px",fontSize:"11px",color:"#a59c8d"}}>Mostrando 200 de ${pacProc.length} | use os filtros acima pra refinar.</div>` : null}
+        ${pacProc.length>200 ? html`<div style=${{padding:"6px 14px 12px",fontSize:"11px",color:"#a59c8d"}}>Mostrando 200 de ${pacProc.length} — use os filtros acima pra refinar.</div>` : null}
       </div>
     </>`;
   }
@@ -767,8 +1054,8 @@
   // KPI que se reforma de acordo com o Status escolhido).
   const TAXA_LABEL_POR_STATUS = {
     "Executada": "Taxa de Execução",
-    "Aguardando aprovação": "Taxa de Pendência",
-    "Rejeitada": "Taxa de Rejeição",
+    "Aguardando aprovação do cliente": "Taxa de Pendência",
+    "Rejeitada pelo cliente": "Taxa de Rejeição",
   };
   // % que a qtd. de propostas do status selecionado representa sobre a
   // qtd. de propostas geral - reaproveita a mesma base do grafico
@@ -780,12 +1067,12 @@
   }
   function ProcCanceladoList({ entities }){
     return html`<div class="visual">
-      <div class="visual-h"><i class="ti ti-clipboard-list"></i>Por procedimento <small>· cancelados neste status</small></div>
+      <div class="visual-h"><i class="ti ti-clipboard-list"></i>Por procedimento</div>
       <table>
         <thead><tr><th>Procedimento</th></tr></thead>
         <tbody>
           ${entities.map(e => html`<tr key=${e.name}><td>${e.name}</td></tr>`)}
-          ${entities.length===0 ? html`<tr><td style=${{color:"#a59c8d"}}>Nenhum procedimento cancelado no período.</td></tr>` : null}
+          ${entities.length===0 ? html`<tr><td style=${{color:"#a59c8d"}}>Nenhum procedimento neste período.</td></tr>` : null}
         </tbody>
       </table>
     </div>`;
@@ -802,7 +1089,7 @@
         <td class="num">${fmt(v1)}</td>
         <td class="num">${fmt(v2)}</td>
         <td class="num" style=${{color: variacao===null?"#a59c8d":(up?"#2e7d32":"#b3261e"),fontWeight:600}}>
-          ${variacao===null ? "-" : html`<i class=${"ti "+(up?"ti-trending-up":"ti-trending-down")}></i> ${(up?"+":"")}${variacao.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})}%`}
+          ${variacao===null ? "—" : html`<i class=${"ti "+(up?"ti-trending-up":"ti-trending-down")}></i> ${(up?"+":"")}${variacao.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})}%`}
         </td>
       </tr>`;
     };
@@ -821,15 +1108,25 @@
   }
   // Aba "Comparação" - solta, filtro proprio (Unidade + 2 meses fechados),
   // sempre status Executada. Reaproveita Matrix/store, sem novas buscas.
-  function Comparacao({ store }){
+  function Comparacao({ store, ensurePropostaMetrics }){
     const closedMonths = closedMonthsFrom(store);
     const [unis, setUnis] = useState([]);
+    const [stat, setStat] = useState(store.statExecutada >= 0 ? store.statExecutada : 0);
     const [mesAnt, setMesAnt] = useState(closedMonths.length>1 ? [closedMonths[closedMonths.length-2][0]] : (closedMonths[0] ? [closedMonths[0][0]] : []));
     const [mesPos, setMesPos] = useState(closedMonths.length>0 ? [closedMonths[closedMonths.length-1][0]] : []);
     const uniOpts = store.units.map((u,i) => [i, u]);
+    const statusAtual = store.statuses[stat];
+    const isExecutada = statusAtual === "Executada";
+    useEffect(() => { if(!isExecutada) ensurePropostaMetrics(); }, [isExecutada]);
+    const propMetricsLoading = !isExecutada && store.duP === null;
     if(closedMonths.length === 0) return html`<div class="visual"><div class="visual-h">Comparação</div><div style=${{padding:"20px 16px",color:"#8a8378"}}>Não há meses fechados suficientes (2025-2026) para comparar ainda.</div></div>`;
     const filterBar = html`<div class="fbar">
       <div class="fld"><span>Unidade</span><${MultiSelect} options=${uniOpts} value=${unis} onChange=${setUnis} placeholder="Todas as unidades" /></div>
+      <div class="fld"><span>Status</span>
+        <select class="uni" value=${stat} onChange=${e => setStat(Number(e.target.value))}>
+          ${store.statuses.map((s,i) => html`<option key=${i} value=${i}>${s}</option>`)}
+        </select>
+      </div>
       <div class="fld"><span>Mês anterior</span><${MultiSelect} options=${closedMonths} value=${mesAnt} onChange=${setMesAnt} placeholder="Selecione o(s) mês(es)" /></div>
       <div class="fld"><span>Mês posterior</span><${MultiSelect} options=${closedMonths} value=${mesPos} onChange=${setMesPos} placeholder="Selecione o(s) mês(es)" /></div>
     </div>`;
@@ -839,45 +1136,49 @@
     if(mesAnt.length !== mesPos.length){
       return html`<${React.Fragment}>${filterBar}<div class="canvas"><div class="visual"><div style=${{padding:"20px 16px",color:"#b3261e"}}>Selecione a mesma quantidade de meses em "Mês anterior" (${mesAnt.length}) e "Mês posterior" (${mesPos.length}) pra comparar.</div></div></div></>`;
     }
+    if(propMetricsLoading){
+      return html`<${React.Fragment}>${filterBar}<div class="canvas"><div class="visual"><div style=${{padding:"20px 16px",color:"#8a8378"}}><i class="ti ti-loader"></i> Carregando dados desse status pela primeira vez…</div></div></div></>`;
+    }
     const antLabel = groupLabel(mesAnt), posLabel = groupLabel(mesPos);
-    const k1 = kpiGrupo(store, unis, mesAnt), k2 = kpiGrupo(store, unis, mesPos);
-    const pred1 = predGrupo(store, unis, mesAnt), pred2 = predGrupo(store, unis, mesPos);
+    const k1 = kpiGrupo(store, unis, mesAnt, stat, isExecutada), k2 = kpiGrupo(store, unis, mesPos, stat, isExecutada);
+    const pred1 = predGrupo(store, unis, mesAnt, stat), pred2 = predGrupo(store, unis, mesPos, stat);
     const nDias = Math.max(...[...mesAnt, ...mesPos].map(ym => { const [y,m]=ym.split("-").map(Number); return new Date(y,m,0).getDate(); }));
-    const baseOk = (u,s) => (unis.length===0||unis.includes(u)) && s===store.statExecutada;
+    const baseOk = (u,s) => (unis.length===0||unis.includes(u)) && s===stat;
     const porDia = {};
-    store.du.forEach(([u,s,d,valor]) => { if(baseOk(u,s)) porDia[d] = (porDia[d]||0)+valor; });
+    (isExecutada ? store.du : (store.duP||[])).forEach(([u,s,d,valor]) => { if(baseOk(u,s)) porDia[d] = (porDia[d]||0)+valor; });
     const sumGrupoPorDia = meses => Array.from({length:nDias}, (_,i) => {
       const dia = String(i+1).padStart(2,"0");
       return meses.reduce((s,ym) => s + (porDia[ym+"-"+dia]||0), 0);
     });
     const dataAnt = sumGrupoPorDia(mesAnt), dataPos = sumGrupoPorDia(mesPos);
     const labels = Array.from({length:nDias}, (_,i) => String(i+1).padStart(2,"0"));
-    const prof1 = aggEntity(store.dm, pred1), prof2 = aggEntity(store.dm, pred2);
+    const prof1 = aggEntity(isExecutada ? store.dm : (store.dmProp||{}), pred1), prof2 = aggEntity(isExecutada ? store.dm : (store.dmProp||{}), pred2);
     const proc1 = aggEntity(store.dproc, pred1), proc2 = aggEntity(store.dproc, pred2);
-    const pac1 = aggEntity(store.dpac||{}, pred1), pac2 = aggEntity(store.dpac||{}, pred2);
+    const pac1 = aggEntity(isExecutada ? (store.dpac||{}) : (store.dmPacProp||{}), pred1), pac2 = aggEntity(isExecutada ? (store.dpac||{}) : (store.dmPacProp||{}), pred2);
     return html`<${React.Fragment}>
       ${filterBar}
       <div class="canvas">
         <${KpiCompareTable} mes1Label=${antLabel} mes2Label=${posLabel} k1=${k1} k2=${k2} />
         <div class="visual">
-          <div class="visual-h"><i class="ti ti-chart-line"></i>Valor por dia | ${antLabel} x ${posLabel}</div>
+          <div class="visual-h"><i class="ti ti-chart-line"></i>Valor por dia — ${antLabel} x ${posLabel}</div>
           <${ComboChartjs} labels=${labels} dataBar=${dataAnt} dataLine=${dataPos} labelBar=${antLabel} labelLine=${posLabel} height=${260} />
         </div>
         <div class="grid2">
-          <${Matrix} title=${"Por profissional | "+antLabel} icon="ti-user" entities=${prof1} nameHead="Profissional" />
-          <${Matrix} title=${"Por profissional | "+posLabel} icon="ti-user" entities=${prof2} nameHead="Profissional" />
+          <${Matrix} title=${"Por profissional — "+antLabel} icon="ti-user" entities=${prof1} nameHead="Profissional" />
+          <${Matrix} title=${"Por profissional — "+posLabel} icon="ti-user" entities=${prof2} nameHead="Profissional" />
         </div>
         <div class="grid2">
-          <${Matrix} title=${"Por procedimento | "+antLabel} icon="ti-clipboard-list" entities=${proc1} nameHead="Procedimento" />
-          <${Matrix} title=${"Por procedimento | "+posLabel} icon="ti-clipboard-list" entities=${proc2} nameHead="Procedimento" />
+          ${isExecutada ? html`<${Matrix} title=${"Por procedimento — "+antLabel} icon="ti-clipboard-list" entities=${proc1} nameHead="Procedimento" />` : html`<${ProcCanceladoList} entities=${[...new Set(proc1.map(e=>e.name))].sort().map(name=>({name}))} />`}
+          ${isExecutada ? html`<${Matrix} title=${"Por procedimento — "+posLabel} icon="ti-clipboard-list" entities=${proc2} nameHead="Procedimento" />` : html`<${ProcCanceladoList} entities=${[...new Set(proc2.map(e=>e.name))].sort().map(name=>({name}))} />`}
         </div>
         <div class="grid2">
-          <${Matrix} title=${"Por pacote | "+antLabel} icon="ti-package" entities=${pac1} nameHead="Pacote" />
-          <${Matrix} title=${"Por pacote | "+posLabel} icon="ti-package" entities=${pac2} nameHead="Pacote" />
+          <${Matrix} title=${"Por pacote — "+antLabel} icon="ti-package" entities=${pac1} nameHead="Pacote" />
+          <${Matrix} title=${"Por pacote — "+posLabel} icon="ti-package" entities=${pac2} nameHead="Pacote" />
         </div>
       </div>
     </>`;
   }
+  const ROBOT_IMG = new Date() <= new Date("2026-07-19T23:59:59") ? "robobrasil.png" : "robozinho.png";
   const NOTAS = [
     { v:"1.6", tag:"Geral", ico:"ti-tag", txt:"Painel renomeado para \"Painel de Propostas\", e este aviso de novidades foi adicionado. Assim fica fácil ver o que mudou sem precisar perguntar." },
     { v:"1.5", tag:"Velocidade", ico:"ti-bolt", txt:"O painel agora abre bem mais rápido. Antes, tudo era carregado de uma vez, mesmo o que você não ia ver. Agora, cada aba só busca os dados dela na hora que você entra." },
@@ -892,7 +1193,7 @@
       <div onClick=${e => e.stopPropagation()} style=${{background:"#fff",borderRadius:"14px",boxShadow:"0 24px 64px rgba(0,0,0,.18)",width:"100%",maxWidth:"480px",maxHeight:"84vh",display:"flex",flexDirection:"column",overflow:"hidden",border:"1px solid #e3ded7"}}>
         <div style=${{padding:"18px 20px",borderBottom:"1px solid #eee6da",display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:"12px",flexShrink:0}}>
           <div style=${{display:"flex",alignItems:"center",gap:"12px"}}>
-            <div style=${{width:"42px",height:"42px",borderRadius:"10px",background:"#fdf1e3",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,border:"1px solid #eee6da"}}><i class="ti ti-robot" style=${{fontSize:"20px",color:AC}}></i></div>
+            <img src=${ROBOT_IMG} alt="bot" style=${{width:"42px",height:"42px",borderRadius:"10px",objectFit:"cover",flexShrink:0,border:"1px solid #eee6da"}} />
             <div>
               <div style=${{fontSize:"14.5px",fontWeight:600,color:"#2b2a28",letterSpacing:"-.01em"}}>Registro de Atualizações</div>
               <div style=${{fontSize:"11.5px",color:"#a59c8d",marginTop:"2px"}}>Aqui estão todas as melhorias do painel</div>
@@ -902,7 +1203,7 @@
         </div>
         <div style=${{overflowY:"auto",flex:1}}>
           ${NOTAS.map((n,i) => html`<div key=${i} style=${{padding:"14px 20px",borderBottom:"1px solid #f5f1ea",display:"flex",gap:"12px",alignItems:"flex-start"}}>
-            <div style=${{width:"32px",height:"32px",borderRadius:"8px",background:"#fdf1e3",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:"1px",border:"1px solid #eee6da"}}><i class="ti ti-robot" style=${{fontSize:"16px",color:AC}}></i></div>
+            <img src=${ROBOT_IMG} alt="bot" style=${{width:"32px",height:"32px",borderRadius:"8px",objectFit:"cover",flexShrink:0,marginTop:"1px",border:"1px solid #eee6da"}} />
             <div style=${{flex:1,minWidth:0}}>
               <div style=${{display:"flex",alignItems:"center",gap:"8px",marginBottom:"5px"}}>
                 <code style=${{fontSize:"10.5px",fontWeight:700,color:"#E8830F",background:"#fdf1e3",padding:"2px 7px",borderRadius:"5px",fontFamily:"monospace",letterSpacing:".02em"}}>v${n.v}</code>
@@ -934,13 +1235,15 @@
     });
     const [de, setDe] = useState(store.dmin);
     const [ate, setAte] = useState(store.dmax);
-    const [kpi, setKpi] = useState(null);
     const statusAtual = store.statuses[stat];
     const isExecutada = statusAtual === "Executada";
     // Dados sob demanda: so' busca quando realmente preciso (aba de
     // drill-down aberta, ou status != Executada selecionado).
     useEffect(() => { if(page==="prof" || page==="proc") ensureProfProc(); }, [page]);
     useEffect(() => { if(!isExecutada) ensurePropostaMetrics(); }, [isExecutada]);
+    // Procedimentos - Detalhado so' faz sentido em Executada (valor_proposta
+    // nao da pra dividir por procedimento) - trava o Status ao entrar na aba.
+    useEffect(() => { if(page==="proc" && store.statExecutada>=0 && stat!==store.statExecutada) setStat(store.statExecutada); }, [page]);
     const propMetricsLoading = !isExecutada && store.duP === null;
     const profProcLoading = (page==="prof" || page==="proc") && store.dmd === null;
     const pred = buildPred(unis, stat, pmode, months, de, ate);
@@ -952,31 +1255,30 @@
     const prof = aggEntity(isExecutada ? store.dm : (store.dmProp||{}), pred);
     const proc = aggEntity(store.dproc, pred);
     const procSemValor = proc;
-    const pac = aggEntity(store.dpac || {}, pred);
+    const pac = aggEntity(isExecutada ? (store.dpac || {}) : (store.dmPacProp || {}), pred);
     const statusChart = propostasPorStatus(store, unis, pmode, months, de, ate);
     const profOpts = [...new Set(Object.keys(store.dmd||{}).map(k => k.split("||")[0]))].sort().map(m => [m, m]);
     const procOpts = Object.keys(store.dproc||{}).sort().map(p => [p, p]);
     const periodOk = d => pmode === "mes" ? months.includes(d.slice(0,7)) : (d >= de && d <= ate);
-    useEffect(() => {
-      let cancel = false; setKpi(null);
-      const dias = periodDays(pmode, months, de, ate, store.calMin, store.calMax);
-      const p_unidade = user.isMaster ? (unis.length === 1 ? store.units[unis[0]] : null) : user.unidade;
-      const p_status = store.statuses[stat];
-      const diasSet = new Set(dias);
-      const kpiRows = DEMO_EVENTS.filter(r => (!p_unidade || r.unidade === p_unidade) && r.status === p_status && diasSet.has(r.dia));
-      setTimeout(() => {
-        if(cancel) return;
-        const vf = kpiRows.reduce((a,r) => a + r.valor, 0);
-        setKpi({ vf, qtd: kpiRows.length, itens: kpiRows.length, dias: dias.length });
-      }, 120);
-      return () => { cancel = true; };
-    }, [unis.join(","), stat, pmode, months.join(","), de, ate]);
+    // KPI calculado 100% no navegador, a partir do mesmo "daily" que
+    // alimenta "Totais Gerais" - antes vinha de uma funcao no banco
+    // (kpis()) que so aceitava 1 unidade por vez; com 2+ unidades
+    // marcadas (nem todas, nem so' 1) ela caia pra "sem filtro" e somava
+    // TODAS as unidades, inflando o Valor Final em relacao ao Total
+    // geral (que sempre foi calculado aqui no cliente, corretamente).
+    const dias = periodDays(pmode, months, de, ate, store.calMin, store.calMax);
+    const kpi = {
+      vf: daily.reduce((s,r) => s+r[1], 0),
+      qtd: daily.reduce((s,r) => s+r[2], 0),
+      itens: daily.reduce((s,r) => s+r[3], 0),
+      dias: dias.length,
+    };
     const dchart = daily.slice().reverse();
-    const ini = (user.isMaster ? "D" : (user.unidade||"U")).replace("Unidade ","").charAt(0).toUpperCase();
+    const ini = (user.isMaster ? "D" : (user.unidade||"U")).replace("Unidade ","").charAt(0).toUpperCase(); // MODO DEMO: prefixo ficticio; logo.svg (neutro) no header abaixo
     return html`<div>
       ${showNotes ? html`<${PatchNotes} onClose=${() => setShowNotes(false)} />` : null}
       <div class="hdr">
-        <div class="hdr-l"><img class="logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23E8830F'/%3E%3Ctext x='32' y='41' font-size='26' font-family='Segoe UI, sans-serif' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E" alt="Painel demo" /><b>Painel de Propostas</b></div>
+        <div class="hdr-l"><img class="logo" src="logo.svg" alt="Clínica Demo" /><b>Painel de Propostas</b></div>
         <div class="hdr-r"><button class=${"lo"+(showNotes?"":" lo-pulse")} onClick=${() => setShowNotes(true)} aria-label="Novidades" title="Ver novidades"><span class="inbox-ico"></span></button><span class="chip"><span class="av">${ini}</span>${user.isMaster ? "diretoria" : user.login}</span><button class="lo" onClick=${onLogout} aria-label="Sair"><i class="ti ti-logout"></i></button></div>
       </div>
       <div class="body">
@@ -989,7 +1291,7 @@
           <div class=${"nav"+(page==="comp"?" active":"")} onClick=${() => setPage("comp")}><i class="ti ti-chart-line"></i>Comparação</div>
         </div>
         <div class="main">
-          ${page==="comp" ? html`<${Comparacao} store=${store} />` : html`<${React.Fragment}>
+          ${page==="comp" ? html`<${Comparacao} store=${store} ensurePropostaMetrics=${ensurePropostaMetrics} />` : html`<${React.Fragment}>
           <${FilterBar} store=${store} user=${user} unis=${unis} setUnis=${setUnis} stat=${stat} setStat=${setStat} pmode=${pmode} setPmode=${setPmode} months=${months} setMonths=${setMonths} de=${de} setDe=${setDe} ate=${ate} setAte=${setAte} page=${page} fProfs=${fProfs} setFProfs=${setFProfs} profOpts=${profOpts} fProcs=${fProcs} setFProcs=${setFProcs} procOpts=${procOpts} />
           <div class="canvas">
         ${page==="geral" ? html`<${React.Fragment}>
@@ -1007,12 +1309,12 @@
             <${Matrix} title="Por profissional (solicitante)" icon="ti-user" entities=${prof} nameHead="Profissional" />
             ${isExecutada ? html`<${Matrix} title="Por procedimento" icon="ti-clipboard-list" entities=${proc} nameHead="Procedimento" />` : html`<${ProcCanceladoList} entities=${procSemValor} />`}
           </div>
-          ${isExecutada ? html`<${Matrix} title="Por pacote" icon="ti-package" entities=${pac} nameHead="Pacote" />` : null}
+          <${Matrix} title="Por pacote" icon="ti-package" entities=${pac} nameHead="Pacote" />
           <${TotalTable} daily=${daily} />
         </>` : null}
         ${page==="prof" ? (profProcLoading ? html`<div class="visual"><div style=${{padding:"30px 16px",color:"#8a8378"}}><i class="ti ti-loader"></i> Carregando detalhes de profissionais…</div></div>` : html`<${ProfissionaisDetailPage} entities=${prof} dmd=${store.dmd} dmp=${store.dmp} unis=${unis} stat=${stat} fProcs=${fProcs} periodOk=${periodOk} />`) : null}
-        ${page==="proc" ? (profProcLoading ? html`<div class="visual"><div style=${{padding:"30px 16px",color:"#8a8378"}}><i class="ti ti-loader"></i> Carregando detalhes de procedimentos…</div></div>` : html`<${ProcedimentosDetailPage} entities=${proc} dmd=${store.dmd} pred=${pred} fProfs=${fProfs} topProfs=${prof} />`) : null}
-        ${page==="pac" ? html`<${PacotesDetailPage} user=${user} store=${store} unis=${unis} pmode=${pmode} months=${months} de=${de} ate=${ate} />` : null}
+        ${page==="proc" ? (profProcLoading ? html`<div class="visual"><div style=${{padding:"30px 16px",color:"#8a8378"}}><i class="ti ti-loader"></i> Carregando detalhes de procedimentos…</div></div>` : html`<${ProcedimentosDetailPage} entities=${proc} dmd=${store.dmd} pred=${pred} fProfs=${fProfs} topProfs=${prof} isExecutada=${isExecutada} />`) : null}
+        ${page==="pac" ? html`<${PacotesDetailPage} user=${user} store=${store} unis=${unis} pmode=${pmode} months=${months} de=${de} ate=${ate} statusAtual=${statusAtual} isExecutada=${isExecutada} pred=${pred} />` : null}
           </div>
         </>`}
         </div>
@@ -1020,31 +1322,61 @@
     </div>`;
   }
   function Login({ onLogin, err, busy }){
-    const [u, setU] = useState(""); const [p, setP] = useState("");
+    const [u, setU] = useState("diretoria"); const [p, setP] = useState("demo"); // MODO DEMO: pre-preenchido (qualquer login entra)
+    // Enquanto o login esta na tela, tira a aparencia de "caixa" do
+    // container .pbx (ver CSS body.login-mode) - some sozinho quando o
+    // componente sai da tela, ou seja, assim que o usuario entra.
+    useEffect(() => {
+      document.body.classList.add("login-mode");
+      return () => document.body.classList.remove("login-mode");
+    }, []);
     const go = () => { if(!busy && u.trim() && p) onLogin(u, p); };
+    // MODO DEMO: logo neutro (logo.svg) e placeholder ficticio abaixo.
     return html`<div class="gate"><div class="gate-card">
-      <img class="logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23E8830F'/%3E%3Ctext x='32' y='41' font-size='26' font-family='Segoe UI, sans-serif' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E" alt="Painel demo" />
+      <img class="logo" src="logo.svg" alt="Clínica Demo" />
       <p class="gate-sub">Painel de Propostas</p>
       <label>Login</label>
-      <input type="text" value=${u} onChange=${e => setU(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="ex.: Unidade Centro" />
+      <input type="text" value=${u} onChange=${e => setU(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="ex.: centro" />
       <label>Senha</label>
       <input type="password" value=${p} onChange=${e => setP(e.target.value)} onKeyDown=${e => e.key==="Enter" && go()} placeholder="••••••" />
       <button class="btn" onClick=${go} disabled=${busy}>${busy ? "Entrando..." : "Entrar"}</button>
       <div class="err">${err}</div>
-      <div class="hint">Ambiente de demonstração | qualquer login e senha funcionam</div>
+      <div class="hint">Use o login da sua unidade (ou diretoria)</div>
     </div></div>`;
   }
+  // So' pra teste local (protótipo) - em producao (dominio real) o hostname
+  // nunca bate com nenhum desses, entao o login normal continua obrigatorio.
+  const DEV_HOSTS = ["localhost", "127.0.0.1", ""];
+  const isDevHost = true; // MODO DEMO: entra direto como master, pelo fluxo de prototipo do proprio app
   function App(){
-    // Ambiente de previa: sem tela de login - entra direto no dashboard
-    // com os dados ficticios ja carregados.
     const [user, setUser] = useState(null);
     const [store, setStore] = useState(null);
-    const inFlight = React.useRef({});
+    const [err, setErr] = useState("");
+    const [busy, setBusy] = useState(false);
+    const [devLoading, setDevLoading] = useState(isDevHost);
+    const inFlight = React.useRef({}); // evita disparar o mesmo fetch sob-demanda 2x
     useEffect(() => {
-      const u = { login: "demo", unidade: DEMO_UNIDADES[0], isMaster: true };
-      loadCore(u).then(s => { setUser(u); setStore(s); });
+      if(!isDevHost) return;
+      const u = { login: "prototipo", unidade: null, isMaster: true };
+      loadCore(u).then(s => { setUser(u); setStore(s); setDevLoading(false); });
     }, []);
-    function logout(){ location.reload(); }
+    async function onLogin(login, pwd){
+      setBusy(true); setErr("");
+      try {
+        const lg = login.trim().toLowerCase();
+        const email = lg.includes("@") ? lg : lg + DOMINIO;
+        const { data, error } = await sbAuth.auth.signInWithPassword({ email, password: pwd });
+        if(error) throw new Error("Login ou senha inválidos.");
+        const { data: m } = await sbAuth.from("app_user_unidade").select("unidade_nome,is_master").eq("user_id", data.user.id).maybeSingle();
+        if(!m) throw new Error("Usuário sem unidade vinculada (verifique o mapeamento).");
+        const u = { login: lg, unidade: m.unidade_nome, isMaster: !!m.is_master };
+        const s = await loadCore(u);
+        setUser(u); setStore(s);
+      } catch(e){ setErr(e.message || "Falha ao entrar."); }
+      finally { setBusy(false); }
+    }
+    function logout(){ sbAuth.auth.signOut(); setUser(null); setStore(null); setErr(""); }
+    // ensureX: so busca se ainda nao foi buscado (campo null) e nao ha um fetch em andamento
     const ensureProfProc = () => {
       if(!store || store.dmd !== null || inFlight.current.profProc) return;
       inFlight.current.profProc = true;
@@ -1062,7 +1394,8 @@
       });
     };
     if(user && store) return html`<${Dashboard} user=${user} store=${store} ensureProfProc=${ensureProfProc} ensurePropostaMetrics=${ensurePropostaMetrics} onLogout=${logout} />`;
-    return html`<div style=${{padding:"40px",textAlign:"center",color:"#8a8378"}}>Carregando…</div>`;
+    if(devLoading || (user && !store)) return html`<div style=${{padding:"40px",textAlign:"center",color:"#8a8378"}}>Carregando…</div>`;
+    return html`<${Login} onLogin=${onLogin} err=${err} busy=${busy} />`;
   }
   ReactDOM.createRoot(document.getElementById("pbx-root")).render(html`<${App} />`);
 </script>

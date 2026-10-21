@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="398" height="84" viewBox="0 0 398 84"><!-- MODO DEMO: logo neutro fictício -->
+  <rect x="4" y="10" width="64" height="64" rx="16" fill="#4361ee"/>
+  <rect x="30" y="24" width="12" height="36" rx="3" fill="#fff"/>
+  <rect x="18" y="36" width="36" height="12" rx="3" fill="#fff"/>
+  <text x="82" y="56" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="-0.5" fill="#4361ee">Clínica Demo</text>
+</svg>

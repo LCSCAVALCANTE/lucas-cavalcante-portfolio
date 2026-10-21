@@ -1,0 +1,1 @@
+import{o as e}from"./page-shell-3N5xICNH.js";import{s as t}from"./index-DzbfY9kC.js";var n=e();function r(){return(0,n.jsx)(t,{somenteAltoCusto:!0})}export{r as component};

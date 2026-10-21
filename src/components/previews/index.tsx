@@ -6,35 +6,23 @@ import { ImagePreview } from "./ImagePreview";
 // exibido na secao "Previa" da pagina de detalhes. Projetos sem entrada
 // aqui continuam com o placeholder padrao.
 //
-// - painel-propostas-executadas: reusa o HTML/CSS/JS real do projeto
-//   (public/previews/painel-propostas-demo.html), so' com a fonte de dados
-//   trocada por dados ficticios gerados no proprio arquivo.
-// - dashboard-ocupacao-agenda: o app real (fluxo n8n) embute os dados do
-//   cliente diretamente na resposta HTML - nao da' pra clonar o HTML 1:1
-//   sem arrastar dados reais. Reconstruido do zero usando a mesma paleta
-//   de cores e estrutura (nav, KPIs, tabelas) do dashboard real, com
-//   dados 100% ficticios (public/previews/dashboard-ocupacao-demo.html).
+// Os quatro paineis reusam o HTML/CSS/JS que esta em producao (copiado do
+// Dokploy em 21/10/2026), so' com a fonte de dados trocada por dados
+// ficticios gerados no navegador e a marca da empresa removida - nenhuma
+// chamada de rede real acontece. Cada demo fica numa pasta de
+// public/previews/ (a de estoque e' um build estatico do app real).
 export const projectPreviews: Record<string, ComponentType> = {
   "painel-propostas-executadas": () => (
-    <IframePreview src="/previews/painel-propostas-demo.html" label="Painel de Propostas (demo)" />
+    <IframePreview src="/previews/painel-propostas/index.html" label="Painel de Propostas, demonstração com dados fictícios" />
   ),
   "dashboard-ocupacao-agenda": () => (
-    <IframePreview src="/previews/dashboard-ocupacao-demo.html" label="Dashboard de Ocupação de Agenda (demo)" />
+    <IframePreview src="/previews/painel-ocupacao/index.html" label="Painel de Ocupação de Agenda, demonstração com dados fictícios" />
   ),
   "painel-comercial": () => (
-    <IframePreview src="/previews/painel-comercial-demo.html" label="Painel Comercial (demo)" />
+    <IframePreview src="/previews/painel-comercial/index.html" label="Painel Comercial, demonstração com dados fictícios" />
   ),
   "gestor-de-estoque": () => (
-    <IframePreview
-      src="/previews/gestor-estoque-demo.html"
-      label="Gestor de Estoque, demonstração com dados fictícios"
-    />
-  ),
-  "cerebro-financeiro": () => (
-    <IframePreview
-      src="/previews/cerebro-financeiro-demo.html"
-      label="Painel e-commerce, demonstração com dados fictícios"
-    />
+    <IframePreview src="/previews/gestao-estoque/index.html" label="Gestão de Estoque, demonstração com dados fictícios" />
   ),
   "insertvalue-feegow": () => (
     <ImagePreview
