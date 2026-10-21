@@ -91,11 +91,6 @@
 }
 
 @media (max-width: 767px) {
-  body {
-    background-image: none;
-    background-attachment: scroll;
-  }
-
   .copy-panel,
   .glass-card {
     backdrop-filter: blur(8px);
