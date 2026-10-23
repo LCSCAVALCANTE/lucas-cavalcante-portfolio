@@ -5,7 +5,6 @@ import { projects } from "@/data/projects";
 import { StatusBadge } from "@/components/StatusBadge";
 import { projectPreviews } from "@/components/previews";
 import { NavigationBurst } from "@/components/NavigationBurst";
-import { PageBackground } from "@/components/PageBackground";
 
 export const Route = createFileRoute("/projetos")({
   head: () => ({
@@ -52,7 +51,6 @@ function ProjectsPage() {
 
   return (
     <div className="relative isolate overflow-hidden">
-      <PageBackground />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-24">
         {burst && <NavigationBurst key={burst.key} x={burst.x} y={burst.y} />}
       <div className="glass-card animate-fade-up rounded-2xl p-5 sm:p-10">

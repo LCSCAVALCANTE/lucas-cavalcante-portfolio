@@ -2,7 +2,6 @@ import { createElement, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { profile } from "@/data/profile";
-import { PageBackground } from "@/components/PageBackground";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
@@ -80,7 +79,6 @@ function ContactPage() {
 
   return (
     <div className="relative isolate min-h-[calc(100vh-5rem)] overflow-hidden">
-      <PageBackground />
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-24">
         <div className="copy-panel relative overflow-hidden p-5 sm:min-h-[320px] sm:p-8 lg:p-10">
